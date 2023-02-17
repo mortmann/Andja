@@ -14,7 +14,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class NeedGroup : INeedGroup {
-        private readonly float _fulfillmentLimit = 0;
+        private readonly float _fulfillmentLimit = 0.05f;
 
         #region Prototype
 
@@ -28,51 +28,54 @@ namespace Andja.Model {
         #endregion Prototype
 
         [JsonPropertyAttribute] public string ID { get; protected set; }
-        [JsonPropertyAttribute] public List<Need> Needs { get; protected set; }
+        [JsonPropertyAttribute] public List<INeed> Needs { get; protected set; }
         [JsonPropertyAttribute] public float LastFulfillmentPercentage { get; protected set; }
 
         #region Runtime
-        public List<Need> CombinedNeeds { get; protected set; }
+        public List<INeed> CombinedNeeds { get; protected set; }
         #endregion Runtime
 
         public NeedGroup() {
-            CombinedNeeds = new List<Need>();
+            CombinedNeeds = new List<INeed>();
         }
 
         public NeedGroup(string ID) {
-            Needs = new List<Need>();
+            Needs = new List<INeed>();
             this.ID = ID;
-            CombinedNeeds = new List<Need>();
+            CombinedNeeds = new List<INeed>();
         }
 
         public NeedGroup(NeedGroup needGroup) {
             ID = needGroup.ID;
             prototypeData = needGroup.Data;
-            Needs = new List<Need>();
-            foreach (Need n in needGroup.Needs) {
+            Needs = new List<INeed>();
+            foreach (INeed n in needGroup.Needs) {
                 Needs.Add(n.Clone());
             }
-            CombinedNeeds = new List<Need>();
+            CombinedNeeds = new List<INeed>();
         }
 
-        public NeedGroup Clone() {
+        public INeedGroup Clone() {
             return new NeedGroup(this);
         }
-
-        public void AddNeeds(IEnumerable<Need> need) {
-            Needs.AddRange(need);
+        public INeedGroup CloneEmptyList() {
+            return new NeedGroup(ID);
         }
 
-        public void CalculateFulfillment(ICity city, PopulationLevel populationLevel) {
+        public void AddNeeds(IEnumerable<INeed> INeed) {
+            Needs.AddRange(INeed);
+        }
+
+        public void CalculateFulfillment(ICity city, IPopulationLevel populationLevel) {
             float currentValue = 0;
             int number = 0;
-            foreach (Need need in Needs) {
-                if (need.IsStructureNeed()) {
+            foreach (INeed Need in Needs) {
+                if (Need.IsStructureNeed()) {
                     continue;
                 }
                 number++;
-                need.CalculateFulfillment(city, populationLevel);
-                currentValue += need.GetCombinedFulfillment();
+                Need.CalculateFulfillment(city, populationLevel);
+                currentValue += Need.GetCombinedFulfillment();
             }
             currentValue = CalculateRealPercentage(currentValue, number);
             LastFulfillmentPercentage = currentValue; // currently not needed! but maybe nice to have
@@ -82,14 +85,14 @@ namespace Andja.Model {
             CombinedNeeds.AddRange(ng.Needs);
         }
 
-        public void AddNeed(Need need) {
+        public void AddNeed(INeed need) {
             Needs.Add(need);
             CombinedNeeds.Add(need);
         }
 
-        public void UpdateNeeds(Player player) {
-            List<Need> currNeeds = new List<Need>(Needs);
-            foreach (Need need in currNeeds) {
+        public void UpdateNeeds(IPlayer player) {
+            List<INeed> currNeeds = new List<INeed>(Needs);
+            foreach (INeed need in currNeeds) {
                 if (player.HasNeedUnlocked(need) == false) {
                     Needs.Remove(need);
                 }
@@ -107,17 +110,17 @@ namespace Andja.Model {
             return percentage;
         }
 
-        public Tuple<float, bool> GetFulfillmentForHome(HomeStructure homeStructure) {
+        public Tuple<float, bool> GetFulfillmentForHome(IHomeStructure homeStructure) {
             float currentValue = 0;
             bool missing = false;
-            foreach (Need need in Needs) {
-                if (need.IsStructureNeed()) {
-                    bool structureFulfilled = homeStructure.IsStructureNeedFulfilled(need);
+            foreach (INeed INeed in Needs) {
+                if (INeed.IsStructureNeed()) {
+                    bool structureFulfilled = homeStructure.IsStructureNeedFulfilled(INeed);
                     missing &= structureFulfilled;
                     currentValue += structureFulfilled ? 1 : 0;
                 }
                 else {
-                    float Fulfilled = need.GetFulfillment(homeStructure.PopulationLevel);
+                    float Fulfilled = INeed.GetFulfillment(homeStructure.PopulationLevel);
                     missing |= Fulfilled < _fulfillmentLimit;
                     currentValue += Fulfilled;
                 }
@@ -125,7 +128,7 @@ namespace Andja.Model {
             return new Tuple<float, bool>(CalculateRealPercentage(currentValue, Needs.Count), missing);
         }
 
-        public bool HasNeed(Need need) {
+        public bool HasNeed(INeed need) {
             return Needs.Contains(need);
         }
 

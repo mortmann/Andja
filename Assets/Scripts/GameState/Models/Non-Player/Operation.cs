@@ -87,7 +87,7 @@ namespace Andja.Model {
         bool ToShip;
         public UnitCityMoveItemOperation(AIPlayer player, Unit unit, ICity city, Item[] items, bool toShip) : base(player, unit) {
             City = city;
-            Items = items;
+            Items = items.Where(i => i != null).ToArray();
             ToShip = toShip;
         }
         public override bool Do() {

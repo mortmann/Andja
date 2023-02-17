@@ -644,7 +644,6 @@ namespace Andja.Model {
             if (tile == null) {
                 return;
             }
-
             if (CanReach(tile.Vector2) == false) {
                 return;
             }

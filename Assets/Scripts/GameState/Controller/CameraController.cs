@@ -52,7 +52,6 @@ namespace Andja.Controller {
             }
             Instance = this;
 #if UNITY_EDITOR
-            Debug.Log("LOCKED FRAMERATE 100");
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 100;
 #endif

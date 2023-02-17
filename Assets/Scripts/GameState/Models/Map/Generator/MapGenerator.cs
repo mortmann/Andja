@@ -138,7 +138,7 @@ namespace Andja.Model.Generator {
             started = true;
             MapSeed = seed;
             mapThreadRandom = new ThreadRandom(seed);
-            Debug.Log("GENERATING MAP with Seed: " + seed + "" 
+            Log.GENERATION_WARNING("GENERATING MAP with Seed: " + seed + "" 
                 + Environment.NewLine 
                 + (hasToUseIslands == null || hasToUseIslands.Count==0? "" : "Islands: " + string.Join(",", hasToUseIslands)));
             //THIS MUST BE THE FIRST RANDOM NUMBER!
@@ -156,7 +156,7 @@ namespace Andja.Model.Generator {
             islandsToGenerate = new List<IslandGenInfo>();
             foreach (IslandGenInfo genInfo in numberRangeOfIslandsSizes.Keys) {
                 if (genInfo.generate) {
-                    Debug.LogWarning("Generating Island still in alpha! Use with absolute caution. Note: it is still not guaranteed to have usable islands.");
+                    Log.GENERATION_WARNING("Generating Island still in alpha! Use with absolute caution. Note: it is still not guaranteed to have usable islands.");
                     Range range = numberRangeOfIslandsSizes[genInfo];
                     int numberOfIslands = range.GetRandomCount(mapThreadRandom);
                     for (int i = 0; i < numberOfIslands; i++) {
@@ -349,8 +349,8 @@ namespace Andja.Model.Generator {
             }
             if (ReadyToFillWorld) {
                 stopwatch.Stop();
-                Debug.Log("Generated map (Seed:" + MapSeed + ")  with island number " + toPlaceIslands.Count + " in a Map " + Width + " : " + Height
-                    + " in " + stopwatch.ElapsedMilliseconds + "ms (" + stopwatch.Elapsed.TotalSeconds + "s)! ");
+                Log.GENERATION_INFO("Generated map (Seed:" + MapSeed + ")  with island number " + toPlaceIslands.Count + " in a Map " + Width + " : " +
+                    Height  + " in " + stopwatch.ElapsedMilliseconds + "ms (" + stopwatch.Elapsed.TotalSeconds + "s)! ");
                 if (SaveController.IsLoadingSave == false && WorldController.Instance != null) {
                     //Find the "spawn" of the ships
                     Vector2 center = new Vector2(Width / 2, Height / 2);
@@ -462,7 +462,7 @@ namespace Andja.Model.Generator {
                     }
                 }
             }
-            Debug.Log("RANDOM RESOURCES DONE " + s.Elapsed.TotalSeconds);
+            Log.GENERATION_INFO("RANDOM RESOURCES DONE " + s.Elapsed.TotalSeconds);
             
         }
 

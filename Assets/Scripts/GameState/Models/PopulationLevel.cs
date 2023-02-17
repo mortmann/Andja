@@ -2,22 +2,23 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
 
     public class PopulationLevelPrototypData : LanguageVariables {
-        public List<NeedGroup> needGroupList; //not used as "copy" of the USED in "ticks" just as a reference which Needs gets unlocked with this level!
+        public List<INeedGroup> needGroupList; //not used as "copy" of the USED in "ticks" just as a reference which Needs gets unlocked with this level!
         public int LEVEL; // cant be negative!
         public string iconSpriteName;
         public int taxPerPerson = 1;
         [Ignore] public HomeStructure HomeStructure { get; set; }
-        public List<NeedGroup> GetCopyGroupNeedList() {
-            List<NeedGroup> newList = new List<NeedGroup>();
+        public List<INeedGroup> GetCopyGroupNeedList() {
+            List<INeedGroup> newList = new List<INeedGroup>();
             if (needGroupList == null)
                 return newList;
             for (int i = 0; i < needGroupList.Count; i++) {
-                newList.Add(needGroupList[i].Clone());
+                newList.Add(needGroupList[i].CloneEmptyList());
             }
             return newList;
         }
@@ -28,14 +29,14 @@ namespace Andja.Model {
     /// and the Taxpercentage for income.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class PopulationLevel {
+    public class PopulationLevel : IPopulationLevel {
 
-        [JsonPropertyAttribute] public int Level;
-        [JsonPropertyAttribute] private List<NeedGroup> _needGroupList;
+        [JsonPropertyAttribute] public int Level { get; set; }
+        [JsonPropertyAttribute] private List<INeedGroup> _needGroupList;
         [JsonPropertyAttribute] public PopulationLevel previousLevel;
         [JsonPropertyAttribute] public float taxPercentage = 1f;
         private ICity _city;
-        public int populationCount = 0;
+        public int PopulationCount { get; set; } = 0;
         public string IconSpriteName => Data.iconSpriteName;
 
         private PopulationLevelPrototypData _data;
@@ -54,10 +55,16 @@ namespace Andja.Model {
             this.Level = level;
             _needGroupList = Data.GetCopyGroupNeedList();
             AllNeedGroupList = new List<INeedGroup>(_needGroupList);
-            AllNeedGroupList.AddRange(GetAllPreviousNeedGroups());
+            LoadPreviouseNeedGroups();
             this.previousLevel = previous;
             this._city = city;
+            UpdateNeeds();
             city.GetOwner().RegisterNeedUnlock(OnUnlockedNeed);
+        }
+
+        private void LoadPreviouseNeedGroups() {
+            if (previousLevel == null) return;
+            AllNeedGroupList.AddRange(previousLevel.GetAllPreviousNeedGroups());
         }
 
         public PopulationLevel(PopulationLevel pl) {
@@ -68,8 +75,6 @@ namespace Andja.Model {
             foreach (INeedGroup group in AllNeedGroupList) {
                 group.CalculateFulfillment(_city, this);
             }
-            //Debug.Log("City " + city.Name + " - " + Level + " Fulfilled: " + Fulfilled);
-            //TODO: make it trend towards the happiness? so it doesnt swing like crazy
         }
 
         public void SetTaxPercentage(float percentage) {
@@ -77,7 +82,7 @@ namespace Andja.Model {
         }
 
         public int GetTaxIncome() {
-            return Mathf.FloorToInt(taxPercentage * TaxPerPerson * populationCount);
+            return Mathf.FloorToInt(taxPercentage * TaxPerPerson * PopulationCount);
         }
 
         public void RegisterNeedUnlock(Action<Need> onNeedUnlock) {
@@ -93,19 +98,18 @@ namespace Andja.Model {
                 return;
             }
             //IF there is better way to stop People after upgrading -- change this 
-            populationCount += count;
-            _city.GetOwner().UpdateMaxPopulationCount(Level, populationCount);
+            PopulationCount += count;
+            _city.GetOwner().UpdateMaxPopulationCount(Level, PopulationCount);
         }
 
         public void RemovePeople(int count) {
             if (count < 0) {
                 return;
-            } 
-            populationCount -= count;
+            }
+            PopulationCount -= count;
         }
-
-        public List<NeedGroup> GetAllPreviousNeedGroups() {
-            List<NeedGroup> temp = new List<NeedGroup>();
+        public List<INeedGroup> GetAllPreviousNeedGroups() {
+            List<INeedGroup> temp = new List<INeedGroup>();
             if (_needGroupList != null) {
                 temp.AddRange(_needGroupList);
             }
@@ -123,26 +127,28 @@ namespace Andja.Model {
             if (previousLevel == null || previousLevel.Exists() == false)
                 previousLevel = city.GetPreviousPopulationLevel(Level);
             AllNeedGroupList = new List<INeedGroup>(_needGroupList);
-            AllNeedGroupList.AddRange(GetAllPreviousNeedGroups());
+            LoadPreviouseNeedGroups();
             UpdateNeeds();
         }
 
         private void UpdateNeeds() {
-            _needGroupList ??= new List<NeedGroup>();
+            _needGroupList ??= new List<INeedGroup>();
             for (int i = 0; i < _needGroupList.Count; i++) {
                 if (_needGroupList[i].ID == null || Data.needGroupList.Find(x => x.ID == _needGroupList[i].ID) == null) {
+                    AllNeedGroupList.Remove(_needGroupList[i]);
                     _needGroupList.Remove(_needGroupList[i]);
                 }
             }
             if (Data.needGroupList == null)
                 return;
-            Player player = PlayerController.Instance.GetPlayer(_city.PlayerNumber);
+            IPlayer player = _city.GetOwner();
             player.RegisterNeedUnlock(OnUnlockedNeed);
-            foreach (NeedGroup ng in Data.needGroupList) {
-                NeedGroup inList = _needGroupList.Find(x => x.ID == ng.ID);
+            foreach (INeedGroup ng in Data.needGroupList) {
+                INeedGroup inList = _needGroupList.Find(x => x.ID == ng.ID);
                 if (inList == null) {
-                    inList = new NeedGroup(ng.ID);
+                    inList = ng.CloneEmptyList();
                     _needGroupList.Add(inList);
+                    AllNeedGroupList.Add(inList);
                 }
                 inList.UpdateNeeds(_city.GetOwner());
             }
@@ -161,7 +167,7 @@ namespace Andja.Model {
         private void OnUnlockedNeed(Need need) {
             if (need.StartLevel != Level)
                 return;
-            NeedGroup ng = _needGroupList.Find(x => x.ID == need.Group.ID);
+            INeedGroup ng = _needGroupList.Find(x => x.ID == need.Group.ID);
             if (ng == null) {
                 Debug.LogError("UnlockedNeed " + need.ID + " doesnt have the right group inside this level " + Level);
                 return;

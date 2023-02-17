@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -21,7 +22,8 @@ namespace Andja.Controller {
             damageConverter = new BaseConverter<DamageType>(
                 (id) => new DamageType() { ID = id },
                 "combatTypes/damageType",
-                (id, data) => idToDamageType[id] = data
+                (id, data) => idToDamageType[id] = data,
+                DamageTypeAdditionalRead
                 );
         }
 
@@ -30,29 +32,19 @@ namespace Andja.Controller {
             xmlDoc.LoadXml(fileContent); // load the file.
             armorConverter.ReadFile(xmlDoc);
             damageConverter.ReadFile(xmlDoc);
-
-            //XmlNodeList listDamageType = xmlDoc.SelectNodes("combatTypes/damageType");
-            //if (listDamageType != null) {
-            //    foreach (XmlElement node in listDamageType) {
-            //        DamageType at = new DamageType();
-            //        string id = node.GetAttribute("ID");
-            //        at.ID = id;
-            //        SetData<DamageType>(node, ref at);
-            //        XmlNode dict = node.SelectSingleNode("damageMultiplier");
-            //        at.damageMultiplier = new Dictionary<ArmorType, float>();
-            //        foreach (XmlElement child in dict.ChildNodes) {
-            //            string armorID = child.GetAttribute("ArmorTyp");
-            //            if (string.IsNullOrEmpty(armorID))
-            //                continue;
-            //            if (float.TryParse(child.InnerText, out float multiplier) == false) {
-            //                Debug.LogError("ID is not an float for ArmorType ");
-            //            }
-            //            at.damageMultiplier[_armorTypeDatas[armorID]] = multiplier;
-            //        }
-            //        _damageTypeDatas[id] = at;
-            //    }
-            //}
         }
-
+        private void DamageTypeAdditionalRead(DamageType type, XmlNode node) {
+            XmlNode dict = node.SelectSingleNode("damageMultiplier");
+            type.damageMultiplier = new Dictionary<ArmorType, float>();
+            foreach (XmlElement child in dict.ChildNodes) {
+                string armorID = child.GetAttribute("ArmorTyp");
+                if (string.IsNullOrEmpty(armorID))
+                    continue;
+                if (float.TryParse(child.InnerText, out float multiplier) == false) {
+                    Debug.LogError("ID is not an float for ArmorType ");
+                }
+                type.damageMultiplier[idToArmorType[armorID]] = multiplier;
+            }
+        }
     }
 }

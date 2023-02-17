@@ -95,7 +95,7 @@ namespace Andja.Model {
         void RegisterTileAdded(Action<ICity, Tile> callbackfunc);
         bool HasFertility(Fertility fer);
         bool IsCurrentPlayerCity();
-        Player GetOwner();
+        IPlayer GetOwner();
         string ToString();
         float GetPopulationItemUsage(Item item);
         bool HasOwnerEnoughMoney(int nextLevelBuildCost);

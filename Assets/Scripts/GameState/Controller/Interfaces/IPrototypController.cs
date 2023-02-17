@@ -36,7 +36,7 @@ namespace Andja.Controller {
         IReadOnlyDictionary<string, NeedGroupPrototypeData> NeedGroupDatas { get; }
         int NumberOfPopulationLevels { get; }
         IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas { get; }
-        IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup { get; }
+        IReadOnlyDictionary<int, List<INeedGroup>> PopulationLevelToNeedGroup { get; }
         List<ResourceGenerationInfo> ResourceGenerations { get; }
         IReadOnlyDictionary<Climate, List<SpawnStructureGenerationInfo>> SpawnStructureGeneration { get; }
         IReadOnlyList<StartingLoadout> StartingLoadouts { get; }
@@ -64,7 +64,7 @@ namespace Andja.Controller {
         int GetNeedCountLevel(int level);
         NeedGroupPrototypeData GetNeedGroupPrototypDataForID(string ID);
         NeedPrototypeData GetNeedPrototypDataForID(string ID);
-        List<NeedGroup> GetNeedPrototypDataForLevel(int level);
+        List<INeedGroup> GetNeedPrototypDataForLevel(int level);
         Unlocks GetNextUnlocks(int populationLevel, int populationCount);
         Ship GetPirateShipPrototyp();
         PopulationLevelPrototypData GetPopulationLevelPrototypDataForLevel(int level);

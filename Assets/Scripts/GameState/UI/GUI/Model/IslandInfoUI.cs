@@ -81,8 +81,8 @@ namespace Andja.UI.Model {
             } 
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 PopulationLevel pl = CurrentCity.GetPopulationLevel(i);
-                if (pl.populationCount > 0) {
-                    itemToText[pl.Level + ""].SetText("" + pl.populationCount);
+                if (pl.PopulationCount > 0) {
+                    itemToText[pl.Level + ""].SetText("" + pl.PopulationCount);
                     populationLevelToGO[pl.Level].SetActive(true);
                 }
                 else {

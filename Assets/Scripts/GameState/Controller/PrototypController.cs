@@ -69,7 +69,7 @@ namespace Andja.Controller {
         public IReadOnlyDictionary<Climate, List<Fertility>> AllFertilities => _allFertilities;
         public IReadOnlyDictionary<string, Fertility> IdToFertilities => _idToFertilities;
         public IReadOnlyDictionary<int, PopulationLevelPrototypData> PopulationLevelDatas => _populationLevelDatas;
-        public IReadOnlyDictionary<int, List<NeedGroup>> PopulationLevelToNeedGroup => _populationLevelToNeedGroup;
+        public IReadOnlyDictionary<int, List<INeedGroup>> PopulationLevelToNeedGroup => _populationLevelToNeedGroup;
         public IReadOnlyDictionary<string, List<Produce>> ItemIDToProduce => _itemIdToProduce;
 
         public virtual Item[] BuildItems => _buildItems.CloneArray();
@@ -94,7 +94,7 @@ namespace Andja.Controller {
         private Dictionary<string, NeedGroup> _idToNeedGroup;
         private Dictionary<string, Item> _allItems;
         private Dictionary<Climate, List<SpawnStructureGenerationInfo>> _spawnStructureGeneration;
-        private Dictionary<int, List<NeedGroup>> _populationLevelToNeedGroup;
+        private Dictionary<int, List<INeedGroup>> _populationLevelToNeedGroup;
         private Dictionary<Climate, List<Fertility>> _allFertilities;
         private Dictionary<Climate, List<FertilityPrototypeData>> _allFertilitiesDatasPerClimate;
         private Dictionary<string, IslandFeaturePrototypeData> _islandFeaturePrototypeDatas;
@@ -258,7 +258,7 @@ namespace Andja.Controller {
             return _gameEventPrototypeDatas[ID];
         }
 
-        public List<NeedGroup> GetNeedPrototypDataForLevel(int level) {
+        public List<INeedGroup> GetNeedPrototypDataForLevel(int level) {
             return _populationLevelToNeedGroup[level];
         }
 
@@ -503,7 +503,7 @@ namespace Andja.Controller {
 
         private void ReadNeedsFromXml(string file) {
             _allNeeds = new List<Need>();
-            _populationLevelToNeedGroup = new Dictionary<int, List<NeedGroup>>();
+            _populationLevelToNeedGroup = new Dictionary<int, List<INeedGroup>>();
             _needPrototypeDatas = new Dictionary<string, NeedPrototypeData>();
             _needGroupDatas = new Dictionary<string, NeedGroupPrototypeData>();
             _idToNeedGroup = new Dictionary<string, NeedGroup>();
@@ -516,7 +516,7 @@ namespace Andja.Controller {
             Dictionary<int, List<Need>> levelToNeedList = _allNeeds.GroupBy(need => need.StartLevel).ToDictionary(g => g.Key, g => g.ToList());
             HomeRoadsNotNeeded = _allNeeds.All(x => x.HasToReachPerRoad == false);
             foreach (int level in levelToNeedList.Keys) {
-                List<NeedGroup> ngs = new List<NeedGroup>();
+                List<INeedGroup> ngs = new List<INeedGroup>();
                 _populationLevelToNeedGroup.Add(level, ngs);
                 foreach (Need need in levelToNeedList[level]) {
                     if (ngs.Exists(x => x.ID == need.Group.ID) == false) {
@@ -537,7 +537,7 @@ namespace Andja.Controller {
             ModLoader.LoadXMLs(XmlFilesTypes.Structures, structureConverter.ReadFile);
 
             FirstLevelWarehouse = _structurePrototypes[GetFirstLevelStructureIDForStructureType(typeof(WarehouseStructure))] as WarehouseStructure;
-            HomePrototypeData[] sorted = StructurePrototypes.OfType<HomePrototypeData>()
+            HomePrototypeData[] sorted = StructurePrototypeDatas.Values.OfType<HomePrototypeData>()
                 .OrderBy(x => x.populationLevel).ToArray();
             for (int i = 0; i < sorted.Length; i++) {
                 if (i > 0) {

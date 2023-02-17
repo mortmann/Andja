@@ -51,7 +51,7 @@ namespace Andja.Model {
 
         public int TradeItemCount => Warehouse?.TradeItemCount ?? 0;
 
-        public int PopulationCount => PopulationLevels.Sum(p => p.populationCount);
+        public int PopulationCount => PopulationLevels.Sum(p => p.PopulationCount);
 
         protected List<IHomeStructure> Homes;
         public List<MarketStructure> MarketStructures { get; set; }
@@ -322,7 +322,7 @@ namespace Andja.Model {
         public void AddPeople(int level, int count) {
             if (IsWilderness())
                 return;
-            if (GetPopulationLevel(level).populationCount == 0)
+            if (GetPopulationLevel(level).PopulationCount == 0)
                 TempHomeUpgradeFixFulfillNeedsAndCalcHappiness(level);
             PopulationLevels[level].AddPeople(count);
         }
@@ -334,12 +334,12 @@ namespace Andja.Model {
         }
 
         public int GetPopulationCount(int level) {
-            return PopulationLevels[level].populationCount;
+            return PopulationLevels[level].PopulationCount;
         }
 
         public int GetPopulationLevel() {
             foreach (PopulationLevel level in PopulationLevels) {
-                if (level.populationCount == 0) {
+                if (level.PopulationCount == 0) {
                     return level.previousLevel?.Level ?? 0;
                 }
             }
@@ -603,7 +603,7 @@ namespace Andja.Model {
             return PlayerNumber == PlayerController.currentPlayerNumber;
         }
 
-        public Player GetOwner() {
+        public IPlayer GetOwner() {
             return PlayerController.Instance.GetPlayer(PlayerNumber);
         }
 
@@ -614,7 +614,7 @@ namespace Andja.Model {
         public float GetPopulationItemUsage(Item item) {
             if (PopulationCount == 0)
                 return 0;
-            return PopulationLevels.Sum(level => item.Data.TotalUsagePerLevel[level.Level] * level.populationCount);
+            return PopulationLevels.Sum(level => item.Data.TotalUsagePerLevel[level.Level] * level.PopulationCount);
         }
 
         public bool HasOwnerEnoughMoney(int buildCost) {

@@ -284,7 +284,7 @@ namespace Andja.Model {
         private string DecideNeedStructure(string need) {
             NeedStructure[] structures = PrototypController.Instance.NeedPrototypeDatas[need].structures;
             if (structures == null || structures.Length == 0) {
-                Debug.LogError($"No structures for {need}");
+                Log.AI_ERROR($"No structures for {need}");
                 return null;
             }
             if (structures.Length == 1)
@@ -372,7 +372,7 @@ namespace Andja.Model {
             Block block = grid.ValidBlocks.MaxBy(x => x.Value);
             var structure = PrototypController.Instance.GetStructureCopy(structureID);
             if(structure.TileWidth > block.WIDTH - 1 || structure.TileHeight > block.HEIGHT - 1) {
-                Debug.Log($"{structureID} is to big for current cityblock limits");
+                Log.AI_INFO($"{structureID} is to big for current cityblock limits");
                 return;
             }
             toBuildStructures.Enqueue(new PlaceStructure {
@@ -387,7 +387,7 @@ namespace Andja.Model {
             var produces = PrototypController.Instance.ItemIDToProduce[item.ID].Where(x => Player.HasStructureUnlocked(x.ProducerStructure.ID));
             var sorted = produces.SelectMany(x => x.SupplyChains.Where(y => y.IsValid && y.IsUnlocked(Player)));
             if (sorted.Count() == 0) {
-                Debug.LogWarning("AI cannot find a valid SupplyChain for " + item.ID + "! Wanted behaviour?");
+                Log.AI_WARNING("AI cannot find a valid SupplyChain for " + item.ID + "! Wanted behaviour?");
                 return;
             }
             sorted.OrderBy(z => z.cost);
@@ -464,7 +464,7 @@ namespace Andja.Model {
                             )
                         );
                     } else {
-                        Debug.LogWarning("Path not found for roads to structure: " + os);
+                        Log.AI_WARNING("Path not found for roads to structure: " + os);
                     }
                     if(os is FarmStructure fs) {
                         if(fs.Growable != null) {
@@ -493,9 +493,9 @@ namespace Andja.Model {
         }
 
         internal void OperationFailure(Operation op) {
-            Debug.LogWarning("Operation Failure: " + op.GetType());
+            Log.AI_WARNING("Operation Failure: " + op.GetType());
             if (op is BuildStructureOperation bso)
-                Debug.LogWarning(bso.Structure + " " + bso.BuildTile);
+                Log.AI_WARNING(bso.Structure + " " + bso.BuildTile);
             currentOperationPending.Remove(op);
         }
 
@@ -575,7 +575,7 @@ namespace Andja.Model {
                     };
                 }
             }
-            Debug.LogWarning("AI did not FindStructurePlace " + key + "!");
+            Log.AI_WARNING("AI did not FindStructurePlace " + key + "!");
             return null;
         }
 
@@ -617,7 +617,7 @@ namespace Andja.Model {
                     }
                 if (os is ProductionStructure ps) {
                     if (ps.InputTyp == InputTyp.OR) {
-                        Debug.LogWarning("AI CAN'T HANDLE OR INTAKE YET!");
+                        Log.AI_WARNING("AI CAN'T HANDLE OR INTAKE YET!");
                         return;
                     }
                     foreach (Item p in ps.Intake) {
@@ -655,7 +655,7 @@ namespace Andja.Model {
             if(startIslands && neededFertilities.Count > 0) {
                 islandScores.RemoveAll(x => x.Island.Fertilities.Any(y => neededFertilities.Contains(y)) == false);
                 if (islandScores.Count == 0) {
-                    Debug.Log("No island found that would be a possible start for ai (anyone).");
+                    Log.AI_INFO("No island found that would be a possible start for ai (anyone).");
                     return null;
                 }
                 if(islandScores.Count < PlayerController.Instance.PlayerCount) {
@@ -693,7 +693,7 @@ namespace Andja.Model {
                 }
                 index++;
             }
-            Debug.LogError("AI Player " + Player.Name + " did not find any possible build location for warehouse. Please report seed/save.");
+            Log.AI_ERROR("AI Player " + Player.Name + " did not find any possible build location for warehouse. Please report seed/save.");
             return null;
         }
 
@@ -810,7 +810,7 @@ namespace Andja.Model {
                 islandScores.Add(score);
                 debugCalcValues += (score.Island.StartTile.Vector2 + " " + score.EndScore + "=" + score + "\n");
             }
-            Debug.Log(debugCalcValues);
+            Log.AI_INFO(debugCalcValues);
         }
 
         public void CalculatePlayersCombatValue() {

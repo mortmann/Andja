@@ -11,7 +11,7 @@ namespace Andja.UI.Model {
         public Text percentageText;
         public Image image;
 
-        protected Need need;
+        protected INeed need;
         protected HomeStructure home;
         private bool locked;
         private TranslationData notInRange;
@@ -52,7 +52,7 @@ namespace Andja.UI.Model {
                 return;
             }
             home = homeStructure;
-            Need n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?
+            INeed n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?
                                           .Needs.Find(x => x.ID == need.ID);
             slider.value = 0;
             if (n == null) {

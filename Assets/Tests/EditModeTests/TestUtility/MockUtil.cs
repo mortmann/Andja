@@ -16,7 +16,9 @@ public class MockUtil {
     public Mock<ICity> CityMock;
     public Mock<ICity> OtherCityMock;
     public Mock<IWarfare> IWarfareMock;
+    public Mock<IPlayer> IPlayerMock;
 
+    public IPlayer Player => IPlayerMock.Object;
     public ICity City => CityMock.Object;
     public ICity OtherCity => OtherCityMock.Object;
     public Mock<IGEventable> EventableMock;
@@ -24,6 +26,8 @@ public class MockUtil {
     public Mock<IPlayerController> PlayerControllerMock;
     public Mock<IBuildController> BuildControllerMock;
     public Mock<PathfindingThreadHandler> pathfindingMock;
+    public Mock<IPopulationLevel> PopulationMock;
+    public IPopulationLevel PopulationLevel => PopulationMock.Object;
 
     public Island WorldIsland;
     Dictionary<(int, int), Tile> tiles = new Dictionary<(int, int), Tile>();
@@ -85,6 +89,8 @@ public class MockUtil {
 
         EventSpriteControllerMock = new Mock<IEventSpriteController>();
         EventSpriteController.Instance = EventSpriteControllerMock.Object;
+
+        IPlayerMock = new Mock<IPlayer>();
     }
 
     public MockUtil WithOnePopulationLevels() {
@@ -92,6 +98,10 @@ public class MockUtil {
         PrototypControllerMock.Setup(p => p.GetPopulationLevelPrototypDataForLevel(0)).Returns(plpd);
         PrototypControllerMock.Setup(p => p.GetPopulationLevels(It.IsAny<ICity>()))
             .Returns<ICity>((c) => new List<PopulationLevel>() { new PopulationLevel(0, c, null) });
+        return this;
+    }
+    public MockUtil WithPopulationLevelMock() {
+        PopulationMock = new Mock<IPopulationLevel>();
         return this;
     }
 

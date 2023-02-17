@@ -55,7 +55,6 @@ namespace Andja.Controller {
         }
 
         public void OnEnable() {
-            Debug.Log("Intializing World Controller");
             if (Instance != null) {
                 Debug.LogError("There should never be two world controllers.");
             }

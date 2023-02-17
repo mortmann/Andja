@@ -26,7 +26,7 @@ namespace Andja.Model {
     /// </summary>
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Need {
+    public class Need : INeed {
         protected NeedPrototypeData _prototypData;
 
         public NeedPrototypeData Data => _prototypData ??= PrototypController.Instance.GetNeedPrototypDataForID(ID);
@@ -48,7 +48,7 @@ namespace Andja.Model {
         public int StartPopulationCount => Data.startPopulationCount;
 
         [JsonPropertyAttribute]
-        public string ID;
+        public string ID { get; set; }
 
         [JsonPropertyAttribute]
         public float[] lastNeededNotConsumed;
@@ -90,12 +90,13 @@ namespace Andja.Model {
             this.ID = id;
         }
 
-        public void CalculateFulfillment(ICity city, PopulationLevel level) {
-            TryToConsumeThisIn(city, level.populationCount, level.Level);
+        public void CalculateFulfillment(ICity city, IPopulationLevel level) {
+            TryToConsumeThisIn(city, level.PopulationCount, level.Level);
         }
 
-        public void TryToConsumeThisIn(ICity city, int people, int level) {
+        protected void TryToConsumeThisIn(ICity city, int people, int level) {
             if (people == 0) {
+                PercentageAvailability[level] = 1;
                 return;
             }
             if (Item == null) {
@@ -105,7 +106,7 @@ namespace Andja.Model {
             }
             float neededConsumAmount = 0;
             // how much do we need to consum?
-            neededConsumAmount += Uses[level] * ((float)people);
+            neededConsumAmount += Uses[level] * people;
             if (neededConsumAmount <= 0) {
                 //we dont need anything to consum so no need to go anyfurther
                 PercentageAvailability[level] = 0;
@@ -124,7 +125,7 @@ namespace Andja.Model {
 
             float availableAmount = city.GetAmountForThis(Item);
             //either we need to get 1 ton or as much as we need
-            neededConsumAmount = Mathf.CeilToInt(neededConsumAmount);
+            int neededTonsOfItem = Mathf.CeilToInt(neededConsumAmount);
             //now how much do we have in the city
             //if we have none?
             if (availableAmount == 0) {
@@ -135,37 +136,24 @@ namespace Andja.Model {
             }
 
             // how much to we consum of the avaible?
-            float usedAmount = Mathf.Clamp(availableAmount, 0, neededConsumAmount);
+            float usedAmount = Mathf.Clamp(availableAmount, 0, neededTonsOfItem);
             //now remove that amount of items
             if (usedAmount > neededConsumAmount)
                 notUsedOfTon = usedAmount - neededConsumAmount;
 
             city.RemoveItem(Item, Mathf.CeilToInt(usedAmount));
-            //minimum is 1 because if 0 -> ERROR due dividing through 0
-            //calculate the Percentage of availability
-            PercentageAvailability[level] = (usedAmount / neededConsumAmount);
+            PercentageAvailability[level] = Mathf.Clamp01(usedAmount / neededConsumAmount);
         }
 
-        internal bool IsSatisfiedThroughStructure(List<NeedStructure> strs) {
+        public bool IsSatisfiedThroughStructure(List<NeedStructure> strs) {
             return Array.Exists(Structures, x => strs.Exists(y => y.ID == x.ID));
         }
 
-        internal void SetStructureFulfilled(bool Fulfilled) {
-            if (IsItemNeed())
-                return;
-            if (Fulfilled) {
-                Array.ForEach(PercentageAvailability, x => x = 1);
-            }
-            else {
-                Array.ForEach(PercentageAvailability, x => x = 0);
-            }
-        }
-
-        internal float GetFulfillment(int populationLevel) {
+        public float GetFulfillment(int populationLevel) {
             return PercentageAvailability[populationLevel];
         }
 
-        internal float GetCombinedFulfillment() {
+        public float GetCombinedFulfillment() {
             return PercentageAvailability.Sum() / PercentageAvailability.Length;
         }
 

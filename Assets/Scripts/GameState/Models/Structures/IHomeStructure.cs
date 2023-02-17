@@ -2,6 +2,7 @@
 
 namespace Andja.Model {
     public interface IHomeStructure {
+        int PopulationLevel { get; }
         bool CanBeUpgraded { get; }
         HomeStructure.CitizenMoods CurrentMood { get; }
         float DecreaseTime { get; }
@@ -19,7 +20,7 @@ namespace Andja.Model {
         List<INeedGroup> GetNeedGroups();
         float GetTaxPercentage();
         bool IsMaxLevel();
-        bool IsStructureNeedFulfilled(Need need);
+        bool IsStructureNeedFulfilled(INeed need);
         void OnBuild();
         void OnCityChange(Structure str, ICity old, ICity newOne);
         void OnDestroy();

@@ -1,4 +1,5 @@
 using Andja.Controller;
+using Andja.Utility;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -101,7 +102,7 @@ namespace Andja.Pathfinding {
                 //         + job.agent.PathingMode + "-job-" + job.Path.Count + " @"
                 //         + StopWatch.ElapsedMilliseconds + " took " + (StopWatch.Elapsed.TotalSeconds - started) + "s)");
             }
-            Debug.Log("Shutting down Pathfinding Thread: " + (threadNumber + 1) + "/" + NumberOfThreads);
+            Log.GAME_INFO("Shutting down Pathfinding Thread: " + (threadNumber + 1) + "/" + NumberOfThreads);
             stopWatch.Stop();
         }
 

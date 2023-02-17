@@ -52,8 +52,8 @@ namespace Andja.Model {
                                 && IsMaxLevel() == false // if there is smth to be upgraded to
                                 && base.CanBeUpgraded // set through xml prototype file
                                 && City.HasEnoughOfItems(NextLevel.BuildingItems) // city has enough items to build
-                                && City.HasOwnerEnoughMoney(NextLevel.BuildCost)
-                                && City.HasOwnerUnlockedAllNeeds(PopulationLevel); // player has enough money
+                                && City.HasOwnerEnoughMoney(NextLevel.BuildCost) // player has enough money
+                                && City.HasOwnerUnlockedAllNeeds(PopulationLevel);
 
         public List<INeedGroup> GetNeedGroups() {
             return City.GetPopulationNeedGroups(PopulationLevel);
@@ -196,7 +196,7 @@ namespace Andja.Model {
                 base.OpenExtraUI();
         }
 
-        public bool IsStructureNeedFulfilled(Need need) {
+        public bool IsStructureNeedFulfilled(INeed need) {
             if (!need.HasToReachPerRoad)
                 return need.IsSatisfiedThroughStructure(NeedStructures.Where((x) => x.City == City).ToList());
             if (GetRoutes().Count == 0)

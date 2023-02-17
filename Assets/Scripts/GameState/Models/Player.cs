@@ -21,11 +21,11 @@ namespace Andja.Model {
     /// AI's also have this but the calculations are handled by AIPlayer.cs 
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class Player : GEventable {
+    public class Player : GEventable, IPlayer {
 
         #region Not Serialized
 
-        internal bool HasEnoughMoney(int buildCost) {
+        public bool HasEnoughMoney(int buildCost) {
             return TreasuryBalance + MaximumDebt > buildCost;
         }
 
@@ -47,7 +47,7 @@ namespace Andja.Model {
         private int _treasuryChange;
         public bool IsHuman => _IsHuman;
         public string Name => _name ?? "Number " + Number; //FOR NOW
-        
+
         /// <summary>
         /// How the Balance CHANGES foreach Tick that happens
         /// </summary>
@@ -140,7 +140,7 @@ namespace Andja.Model {
         }
 
 
-        public int CurrentPopulationLevel { get; internal set; }
+        public int CurrentPopulationLevel { get; protected set; }
 
         #endregion Serialized
 
@@ -188,23 +188,23 @@ namespace Andja.Model {
             }
         }
 
-        internal IEnumerable<IIsland> GetIslandList() {
+        public IEnumerable<IIsland> GetIslandList() {
             HashSet<IIsland> islands = new HashSet<IIsland>();
             foreach (City c in Cities)
                 islands.Add(c.Island);
             return islands;
         }
 
-        internal IEnumerable<Unit> GetLandUnits() {
+        public IEnumerable<Unit> GetLandUnits() {
             List<Unit> units = new List<Unit>(Units);
             return units.OfType<Unit>();
         }
 
-        internal IEnumerable<Ship> GetShipUnits() {
+        public IEnumerable<Ship> GetShipUnits() {
             return Ships;
         }
 
-        internal void Load() {
+        public void Load() {
             for (int i = 0; i <= MaxPopulationLevel; i++) {
                 int maxCount = MaxPopulationCounts[i];
                 foreach (int count in PrototypController.Instance.LevelCountToUnlocks[i].Keys) {
@@ -220,7 +220,7 @@ namespace Andja.Model {
             AI?.Load(this);
         }
         //TODO: make this not so cpu heavy
-        internal IReadOnlyList<int> GetUnitCityEnterable() {
+        public IReadOnlyList<int> GetUnitCityEnterable() {
             List<int> enter = new List<int> { Number, GameData.WorldNumber };
             enter.AddRange(PlayerController.Instance.GetPlayersWithRelationTypeFor(Number, DiplomacyType.Alliance, DiplomacyType.War));
             return enter;
@@ -286,7 +286,7 @@ namespace Andja.Model {
                 }
             }
         }
-        internal bool HasUnitUnlocked(string ID) {
+        public bool HasUnitUnlocked(string ID) {
             return UnlockedUnits.Contains(ID);
         }
         public HashSet<string> GetUnlockedStructureNeeds(int level) {
@@ -305,7 +305,7 @@ namespace Andja.Model {
             return UnlockedItemNeeds[level].Count + UnlockedStructureNeeds[level].Count == PrototypController.Instance.GetNeedCountLevel(level);
         }
 
-        public bool HasNeedUnlocked(Need need) {
+        public bool HasNeedUnlocked(INeed need) {
             if (need.IsItemNeed())
                 return UnlockedItemNeeds[need.StartLevel].Contains(need.ID);
             return UnlockedStructureNeeds[need.StartLevel].Contains(need.ID);
@@ -400,7 +400,7 @@ namespace Andja.Model {
         }
 
         private void OnUnitTakesDamage(Unit unit, IWarfare from) {
-            if(PlayerController.currentPlayerNumber == Number) {
+            if (PlayerController.currentPlayerNumber == Number) {
                 UI.Model.EventUIManager.Instance.Show(unit, from);
             }
         }
@@ -413,12 +413,12 @@ namespace Andja.Model {
                 Ships.Remove((Ship)unit);
             CheckIfLost();
         }
-        internal Vector2 GetMainCityPosition() {
+        public Vector2 GetMainCityPosition() {
             if (Cities.Count == 0)
                 return World.Current.Center;
             return Cities.First()?.Warehouse != null ? Cities.First().Warehouse.Center : Cities.First().Island.Center;
         }
-        internal List<Need> GetCopyStructureNeeds(int level) {
+        public List<Need> GetCopyStructureNeeds(int level) {
             List<Need> list = new List<Need>();
             foreach (string n in UnlockedStructureNeeds[level]) {
                 list.Add(new Need(n));
@@ -426,31 +426,31 @@ namespace Andja.Model {
             return list;
         }
 
-        internal void RegisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
+        public void RegisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
             cbStructureNeedUnlocked += onStructureNeedUnlock;
         }
 
-        internal bool HasStructureUnlocked(string iD) {
+        public bool HasStructureUnlocked(string iD) {
             return UnlockedStructures.Contains(iD);
         }
 
-        internal bool IsCurrent() {
+        public bool IsCurrent() {
             return PlayerController.currentPlayerNumber == Number;
         }
 
-        internal void RegisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
+        public void RegisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
             cbStructuresUnlocked += onStructuresUnlock;
         }
 
-        internal void UnregisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
+        public void UnregisterStructuresUnlock(Action<IEnumerable<Structure>> onStructuresUnlock) {
             cbStructuresUnlocked -= onStructuresUnlock;
         }
 
-        internal void RegisterUnitsUnlock(Action<IEnumerable<Unit>> onUnitsUnlock) {
+        public void RegisterUnitsUnlock(Action<IEnumerable<Unit>> onUnitsUnlock) {
             cbUnitsUnlocked += onUnitsUnlock;
         }
 
-        internal void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
+        public void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
             cbStructureNeedUnlocked -= onStructureNeedUnlock;
         }
         public void UnregisterNeedUnlock(Action<Need> callbackfunc) {

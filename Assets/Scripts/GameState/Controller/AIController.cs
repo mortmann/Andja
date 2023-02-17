@@ -70,6 +70,10 @@ namespace Andja.Controller {
         }
 
         public void Start() {
+            if (PlayerController.Instance.PlayerCount == 1) {
+                Destroy(this);
+                return;
+            }
             AIOperationsPerFrame = PlayerController.Instance.PlayerCount - 1;
             _cityToCurrentSpaceValueTiles = new ConcurrentDictionary<ICity, ConcurrentDictionary<Tile, TileValue>>();
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);

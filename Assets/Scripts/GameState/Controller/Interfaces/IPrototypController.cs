@@ -32,6 +32,8 @@ namespace Andja.Controller {
         IReadOnlyDictionary<string, ItemPrototypeData> ItemPrototypeDatas { get; }
         IReadOnlyDictionary<int, Unlocks>[] LevelCountToUnlocks { get; }
         IReadOnlyDictionary<string, NeedGroup> NeedGroups { get; }
+
+
         IReadOnlyDictionary<string, NeedPrototypeData> NeedPrototypeDatas { get; }
         IReadOnlyDictionary<string, NeedGroupPrototypeData> NeedGroupDatas { get; }
         int NumberOfPopulationLevels { get; }
@@ -46,7 +48,7 @@ namespace Andja.Controller {
         IReadOnlyDictionary<Type, int> StructureTypeToMaxStructureLevel { get; }
         IReadOnlyDictionary<string, UnitPrototypeData> UnitPrototypeDatas { get; }
         IReadOnlyDictionary<string, Unit> UnitPrototypes { get; }
-
+        void AddOnFertilityDependingItem(Item item, Fertility fertility);
         bool ExistsNeed(Need need);
         bool GameEventExists(string id);
         ReadOnlyCollection<Need> GetAllNeeds();

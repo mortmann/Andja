@@ -21,11 +21,11 @@ public class PopulationLevelTest {
         MockUtil = new MockUtil();
         NeedGroupMock = new Mock<INeedGroup>();
         NeedGroupMock.SetupGet(g => g.ID).Returns("NeedGroupPrototypeData");
-        NeedGroupMock.Setup(g => g.Clone()).Returns(() => NeedGroupMock.Object);
+        NeedGroupMock.Setup(g => g.CloneEmptyList()).Returns(() => NeedGroupMock.Object);
         NeedGroupMock.Setup(g => g.HasNeed(It.IsAny<Need>())).Returns(false);
         NeedGroupMock2 = new Mock<INeedGroup>();
         NeedGroupMock2.SetupGet(g => g.ID).Returns("NeedGroupPrototypeData2");
-        NeedGroupMock2.Setup(g => g.Clone()).Returns(() => NeedGroupMock2.Object);
+        NeedGroupMock2.Setup(g => g.CloneEmptyList()).Returns(() => NeedGroupMock2.Object);
 
         PrototypData = new PopulationLevelPrototypData() {
             needGroupList = new List<INeedGroup>() { NeedGroupMock.Object, NeedGroupMock2.Object }
@@ -35,6 +35,8 @@ public class PopulationLevelTest {
             .Returns(new NeedPrototypeData() { group = new NeedGroupPrototypeData() { ID = "NeedGroupPrototypeData" } });
 
         MockUtil.CityMock.Setup(c => c.GetOwner()).Returns(MockUtil.Player);
+        MockUtil.IPlayerMock.SetupGet(p => p.UnlockedItemNeeds).Returns(new HashSet<string>[] { new HashSet<string>() });
+        MockUtil.IPlayerMock.SetupGet(p => p.UnlockedStructureNeeds).Returns(new HashSet<string>[] { new HashSet<string>() });
         Level = new PopulationLevel(0, MockUtil.City, null);
     }
 
@@ -52,7 +54,7 @@ public class PopulationLevelTest {
         PrototypData.needGroupList.Clear();
         var newNeedGroupMock = new Mock<INeedGroup>();
         newNeedGroupMock.SetupGet(g => g.ID).Returns("NeedGroupPrototypeData3");
-        newNeedGroupMock.Setup(g => g.Clone()).Returns(() => newNeedGroupMock.Object);
+        newNeedGroupMock.Setup(g => g.CloneEmptyList()).Returns(() => newNeedGroupMock.Object);
         PrototypData.needGroupList.Add(newNeedGroupMock.Object);
         PrototypData.needGroupList.Add(NeedGroupMock.Object);
         Level.Load(MockUtil.City);

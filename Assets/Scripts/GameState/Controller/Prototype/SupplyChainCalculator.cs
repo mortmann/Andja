@@ -49,8 +49,8 @@ namespace Andja.Controller {
                     produceDebug += fpd.ID + ": " + ppm + "\n";
                     fpd.ProducePerMinute = ppm;
                     Produce p = new Produce {
-                        item = outItem,
-                        producePerMinute = ppm,
+                        Item = outItem,
+                        ProducePerMinute = ppm,
                         ProducerStructure = fpd
                     };
                     p.CalculateSupplyChains();
@@ -71,8 +71,8 @@ namespace Andja.Controller {
                     float ppm = mpd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / mpd.produceTime);
                     mpd.ProducePerMinute = ppm;
                     Produce p = new Produce {
-                        item = outItem,
-                        producePerMinute = ppm,
+                        Item = outItem,
+                        ProducePerMinute = ppm,
                         ProducerStructure = mpd
                     };
                     p.CalculateSupplyChains();
@@ -93,10 +93,10 @@ namespace Andja.Controller {
                     float ppm = ppd.produceTime == 0 ? float.MaxValue : outItem.count * (60f / ppd.produceTime);
                     ppd.ProducePerMinute = ppm;
                     Produce p = new Produce {
-                        item = outItem,
-                        producePerMinute = ppm,
+                        Item = outItem,
+                        ProducePerMinute = ppm,
                         ProducerStructure = ppd,
-                        needed = ppd.intake
+                        Needed = ppd.intake
                     };
                     produceDebug += ppd.ID + ": " + ppm + "\n";
                     productionsProduces.Add(p);
@@ -110,16 +110,16 @@ namespace Andja.Controller {
             }
             Debug.Log(produceDebug);
             foreach (Produce currentProduce in productionsProduces) {
-                if (currentProduce.needed == null)
+                if (currentProduce.Needed == null)
                     continue;
-                foreach (Item need in currentProduce.needed) {
+                foreach (Item need in currentProduce.Needed) {
                     if (ItemIdToProduce.ContainsKey(need.ID) == false) {
                         Debug.LogWarning("NEEDED ITEM CANNOT BE PRODUCED! -- Wanted beahviour? Item-ID:" + need.ID);
                         continue;
                     }
                     foreach (Produce itemProducer in ItemIdToProduce[need.ID]) {
                         float f1 = (((float)need.count * (60f / currentProduce.ProducerStructure.produceTime)));
-                        float f2 = (((float)itemProducer.item.count * itemProducer.producePerMinute));
+                        float f2 = (((float)itemProducer.Item.count * itemProducer.ProducePerMinute));
                         if (f2 == 0)
                             continue;
                         float ratio = f1 / f2;
@@ -148,7 +148,7 @@ namespace Andja.Controller {
             Debug.Log(proportionDebug);
             string supplyChains = "SupplyChains";
             foreach (Produce currentProduce in productionsProduces) {
-                supplyChains += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.item.ID + "): ";
+                supplyChains += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.Item.ID + "): ";
                 foreach (SupplyChain sc in currentProduce.SupplyChains) {
                     supplyChains += "[";
                     for (int i = 0; i < sc.tiers.Count; i++) {
@@ -162,7 +162,7 @@ namespace Andja.Controller {
             Debug.Log(supplyChains);
             string supplyChainsCosts = "SupplyChainsCosts";
             foreach (Produce currentProduce in productionsProduces) {
-                supplyChainsCosts += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.item.ID + "): ";
+                supplyChainsCosts += "\n" + currentProduce.ProducerStructure.ID + "(" + currentProduce.Item.ID + "): ";
                 foreach (SupplyChain sc in currentProduce.SupplyChains) {
                     supplyChainsCosts += "[";
                     supplyChainsCosts += "TBC " + sc.cost.TotalBuildCost;

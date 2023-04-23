@@ -205,6 +205,8 @@ namespace Andja.Model {
         }
 
         public void Load() {
+            UnlockedStructureNeeds = IncreaseUnlockedArrayIfNeeded(UnlockedItemNeeds);
+            UnlockedStructureNeeds = IncreaseUnlockedArrayIfNeeded(UnlockedStructureNeeds);
             for (int i = 0; i <= MaxPopulationLevel; i++) {
                 int maxCount = MaxPopulationCounts[i];
                 foreach (int count in PrototypController.Instance.LevelCountToUnlocks[i].Keys) {
@@ -219,6 +221,19 @@ namespace Andja.Model {
             CalculateBalance();
             AI?.Load(this);
         }
+
+        private static HashSet<string>[] IncreaseUnlockedArrayIfNeeded(HashSet<string>[] temp) {
+            if (temp.Length >= PrototypController.Instance.NumberOfPopulationLevels) {
+                return temp;
+            }
+            Array.Resize(ref temp, PrototypController.Instance.NumberOfPopulationLevels);
+            for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
+                if (temp[i] == null)
+                    temp[i] = new HashSet<string>();
+            }
+            return temp;
+        }
+
         //TODO: make this not so cpu heavy
         public IReadOnlyList<int> GetUnitCityEnterable() {
             List<int> enter = new List<int> { Number, GameData.WorldNumber };

@@ -48,7 +48,7 @@ namespace Andja.Controller {
                         populationLevel = Mathf.Min(populationLevel, str.populationLevel);
                         need.produceForPeople[produce] = new int[NumberOfPopulationLevels];
                         for (int i = 0; i < NumberOfPopulationLevels; i++) {
-                            need.produceForPeople[produce][i] = Mathf.FloorToInt(produce.producePerMinute / need.UsageAmounts[i]);
+                            need.produceForPeople[produce][i] = Mathf.FloorToInt(produce.ProducePerMinute / need.UsageAmounts[i]);
                         }
                     }
                     if (need.startLevel < populationLevel

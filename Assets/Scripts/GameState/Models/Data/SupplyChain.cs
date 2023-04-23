@@ -1,4 +1,5 @@
 ﻿using Andja.Model;
+using Andja.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +12,21 @@ namespace Andja.Model.Data {
     /// </summary>
     public class SupplyChain {
         public bool IsValid { private set; get; }
-        private Produce Produce;
-        public Dictionary<Produce, float> ProduceRatio = new Dictionary<Produce, float>();
-        public List<List<ProduceRatio>> tiers = new List<List<ProduceRatio>>();
+        private IProduce Produce;
+        public Dictionary<IProduce, float> ProduceRatio = new Dictionary<IProduce, float>();
+        public Dictionary<int, List<ProduceRatio>> tiers = new Dictionary<int, List<ProduceRatio>>();
         public SupplyChainCost cost;
 
         public SupplyChain() {
         }
 
-        public SupplyChain(Produce produce) {
+        public SupplyChain(IProduce produce) {
             this.Produce = produce;
         }
 
-        public void AddProduce(Produce p, float ratio, int tier) {
-            if (tiers.Count <= tier) {
-                tiers.Add(new List<ProduceRatio>());
+        public void AddProduce(IProduce p, float ratio, int tier) {
+            if (tiers.ContainsKey(tier) == false) {
+                tiers[tier] = new List<ProduceRatio>();
             }
             tiers[tier].Add(new ProduceRatio { Producer = p, Ratio = ratio });
             ProduceRatio.Add(p, ratio);
@@ -35,8 +36,11 @@ namespace Andja.Model.Data {
             return new SupplyChain {
                 Produce = Produce,
                 cost = cost?.Clone(),
-                ProduceRatio = new Dictionary<Produce, float>(ProduceRatio),
-                tiers = new List<List<ProduceRatio>>(tiers),
+                ProduceRatio = new Dictionary<IProduce, float>(ProduceRatio),
+                tiers = tiers.ToDictionary(
+                    pair => pair.Key,
+                    pair => new List<ProduceRatio>(pair.Value)
+                )
             };
         }
 
@@ -48,8 +52,8 @@ namespace Andja.Model.Data {
         }
 
         internal SupplyChain Combine(SupplyChain supplyChain, int tier = 0) {
-            var keys = new List<Produce>(supplyChain.ProduceRatio.Keys);
-            foreach (Produce p in keys) {
+            var keys = new List<IProduce>(supplyChain.ProduceRatio.Keys);
+            foreach (IProduce p in keys) {
                 if (ProduceRatio.ContainsKey(p)) {
                     ProduceRatio[p] += supplyChain.ProduceRatio[p];
                 }
@@ -58,36 +62,34 @@ namespace Andja.Model.Data {
                 }
             }
             for (int i = 0; i < supplyChain.tiers.Count; i++) {
-                if (i < tier)
-                    continue;
-                if (tiers.Count <= i) {
-                    tiers.Add(new List<ProduceRatio>());
+                if(tiers.ContainsKey(i)) {
+                    tiers[i].AddRange(supplyChain.tiers[i]);
+                } else {
+                    tiers[i] = supplyChain.tiers[i];
                 }
-                tiers[i].AddRange(supplyChain.tiers[i]);
             }
             return this;
         }
 
         internal bool CheckValid(Item item) {
             foreach (Produce p in ProduceRatio.Keys) {
-                if (p.needed == null)
+                if (p.Needed == null)
                     continue;
-                if (p.needed.Contains(item)) {
+                if (p.Needed.Contains(item)) {
                     IsValid = false;
                     return false;
                 }
                 if (ProduceRatio[p] > 10f) {
-                    Debug.LogWarning(item.ID + " excessive produce ratio -- " + Produce.ProducerStructure.ID + " with needed buildings " + ProduceRatio[p] + "!" +
+                    Log.PROTOTYPE_WARNING(item.ID + " excessive produce ratio -- " + Produce.ProducerStructure.ID + " with needed buildings " + ProduceRatio[p] + "!" +
                         "\n Wanted behaviour? ");
                 }
             }
-            IsValid = true;
-            return true;
+            return IsValid = true;
         }
 
         internal bool IsUnlocked(Player player) {
-            foreach (var tier in tiers) {
-                foreach (var item in tier) {
+            foreach (var tier in tiers.Keys) {
+                foreach (var item in tiers[tier]) {
                     if (player.HasStructureUnlocked(item.Producer.ProducerStructure.ID) == false) {
                         return false;
                     }
@@ -97,10 +99,11 @@ namespace Andja.Model.Data {
         }
 
         public Dictionary<string, int> StructureToBuildForOneRatio() {
-            Dictionary<string, int> toBuild = new Dictionary<string, int>();
-            toBuild.Add(Produce.ProducerStructure.ID, 1);
-            foreach (var tier in tiers) {
-                foreach (var item in tier) {
+            Dictionary<string, int> toBuild = new Dictionary<string, int> {
+                { Produce.ProducerStructure.ID, 1 }
+            };
+            foreach (var tier in tiers.Keys) {
+                foreach (var item in tiers[tier]) {
                     if (toBuild.ContainsKey(item.Producer.ProducerStructure.ID) == false)
                         toBuild[item.Producer.ProducerStructure.ID] = 0;
                     toBuild[item.Producer.ProducerStructure.ID] += Mathf.CeilToInt(item.Ratio);

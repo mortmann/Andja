@@ -569,5 +569,9 @@ namespace Andja.Controller {
         public void OnDestroy() {
             Instance = null;
         }
+
+        public void AddOnFertilityDependingItem(Item item, Fertility fertility) {
+            FertilityPrototypeDatas[fertility.ID].ItemsDependentOnThis.Add(item.ID);
+        }
     }
 }

@@ -108,7 +108,7 @@ namespace Andja.Controller {
                 RecommandedBuildSupplyChains[item] = new int[NumberOfPopulationLevels];
                 for (int i = 0; i < NumberOfPopulationLevels; i++) {
                     RecommandedBuildSupplyChains[item][i] = Mathf.CeilToInt(BuildItemsNeeded[item][i]
-                        / (PrototypController.Instance.ItemIDToProduce[item][0].producePerMinute * 60));
+                        / (PrototypController.Instance.ItemIDToProduce[item][0].ProducePerMinute * 60));
                 }
             }
             OrderUnlockFertilities = new List<Fertility>(PrototypController.Instance.IdToFertilities.Values);

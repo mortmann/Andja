@@ -1,9 +1,6 @@
 using Andja.Model;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using static AssertNet.Assertions;
 using static AssertNet.Moq.Assertions;
 

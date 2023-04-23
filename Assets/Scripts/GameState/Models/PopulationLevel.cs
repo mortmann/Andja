@@ -134,10 +134,11 @@ namespace Andja.Model {
         private void UpdateNeeds() {
             _needGroupList ??= new List<INeedGroup>();
             for (int i = 0; i < _needGroupList.Count; i++) {
-                if (_needGroupList[i].ID == null || Data.needGroupList.Find(x => x.ID == _needGroupList[i].ID) == null) {
-                    AllNeedGroupList.Remove(_needGroupList[i]);
-                    _needGroupList.Remove(_needGroupList[i]);
+                if (_needGroupList[i].ID != null && Data.needGroupList.Find(x => x.ID == _needGroupList[i].ID) != null) {
+                    continue;
                 }
+                AllNeedGroupList.Remove(_needGroupList[i]);
+                _needGroupList.Remove(_needGroupList[i]);
             }
             if (Data.needGroupList == null)
                 return;
@@ -150,7 +151,7 @@ namespace Andja.Model {
                     _needGroupList.Add(inList);
                     AllNeedGroupList.Add(inList);
                 }
-                inList.UpdateNeeds(_city.GetOwner());
+                inList.UpdateNeeds(player);
             }
             foreach (string needID in player.UnlockedItemNeeds[Level]) {
                 OnUnlockedNeed(new Need(needID));

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Andja.Utility {
     public static class Log {
         enum LogLevel { NONE, INFO, WARNING, ERROR }
-        enum LogType { AI, GAME, GENERATION }
+        enum LogType { AI, GAME, GENERATION, PROTOTYPE }
 
         static Dictionary<LogType, Logger> _loggers = new Dictionary<LogType, Logger> {
             { LogType.AI, new Logger(LogLevel.ERROR) },
@@ -41,6 +41,15 @@ namespace Andja.Utility {
         }
         internal static void GENERATION_ERROR(object message) {
             _loggers[LogType.GENERATION].ERROR(message);
+        }
+        internal static void PROTOTYPE_INFO(object message) {
+            _loggers[LogType.PROTOTYPE].INFO(message);
+        }
+        internal static void PROTOTYPE_WARNING(object message) {
+            _loggers[LogType.PROTOTYPE].WARNING(message);
+        }
+        internal static void PROTOTYPE_ERROR(object message) {
+            _loggers[LogType.PROTOTYPE].ERROR(message);
         }
         class Logger {
             public LogLevel LEVEL = LogLevel.ERROR;

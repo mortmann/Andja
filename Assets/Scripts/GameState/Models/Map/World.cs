@@ -207,7 +207,7 @@ namespace Andja.Model {
             if (x < 0 || y < 0) {
                 return;
             }
-            Tiles[y * Width + x] = t;
+            Tiles[x * Height + y] = t;
         }
 
         public Tile GetTileAt(int x, int y) {
@@ -217,7 +217,7 @@ namespace Andja.Model {
             if (x < 0 || y < 0) {
                 return null;
             }
-            return Tiles[y * Width + x];
+            return Tiles[x * Height + y];
         }
         private Tile GetTileClampedAt(Vector2 v) {
             return GetTileAt(Mathf.Clamp(v.x, 0, Width - 1), Mathf.Clamp(v.y, 0, Height - 1));

@@ -139,7 +139,7 @@ namespace Andja.Model {
             roadStructure.Route.AddMarketStructure(this);
             foreach (var markedStructures in OutputMarkedStructures
                          .Where(markedStructures => markedStructures.GetRoutes()
-                         .Any(item => Routes.Contains(item)))) {
+                         .Any(item => Routes.Contains(item))).ToArray()) {
                 OnOutputChangedStructure(markedStructures);
             }
         }

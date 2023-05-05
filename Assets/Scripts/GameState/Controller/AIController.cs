@@ -207,7 +207,7 @@ namespace Andja.Controller {
             lock(tileValue) {
                 for (int x = 0; x < structure.TileWidth; x++) {
                     for (int y = 0; y < structure.TileHeight; y++) {
-                        Tile t = structure.Tiles[y * structure.TileWidth + x];
+                        Tile t = structure.Tiles[x * structure.TileHeight + y];
                         tileValue[t].SetValuesToZero();
                         _cityToCurrentSpaceValueTiles[t.City][t].SetValuesToZero();
                         if (x == 0) {
@@ -265,8 +265,7 @@ namespace Andja.Controller {
                                                        entry => entry.Value);
                 //copy them
                 IslandsTileToValue[island] = TileValue.CalculateStartingValues(island, null, true).ToDictionary(entry => entry.Key,
-                                                       entry => entry.Value); ;
-
+                                                       entry => entry.Value);
             }
         }
         /// <summary>

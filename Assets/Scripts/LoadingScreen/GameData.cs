@@ -72,7 +72,7 @@ namespace Andja {
 
         public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Off;
         public static int bots; // this is far from being in anykind relevant so
-        public static int playerCount = 1;
+        public static int playerCount = 2;
         public static bool flyingTraders = true;
         public static bool pirates = true;
 

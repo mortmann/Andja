@@ -1,5 +1,6 @@
 using Andja.Model;
 using System;
+using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
@@ -136,7 +137,7 @@ namespace Andja.Pathfinding {
         public void ChangeCityNode(Tile t) {
             Node n = GetNode(t);
             if(n == null) {
-                Debug.LogError("Tile should always have a node here.");
+                Debug.LogError("Tile " + t + " should always have a node here.");
                 return;
             }
             if (t.City.PlayerNumber != GameData.WorldNumber) {

@@ -79,8 +79,8 @@ namespace Andja.Controller {
             Player p = new Player(currentPlayerNumber, true, GameData.Instance.Loadout.Money);
             Players.Add(p);
             p.RegisterHasLost(OnPlayerLost);
-            //Players.Add(new Player(1, false, GameData.Instance.Loadout.Money));
-            //Players.Add(new Player(2, false, GameData.Instance.Loadout.Money));
+            Players.Add(new Player(1, false, GameData.Instance.Loadout.Money));
+            Players.Add(new Player(2, false, GameData.Instance.Loadout.Money));
             _playerDiplomaticStandings = new List<DiplomaticStatus>();
             for (int i = 0; i < PlayerCount; i++) {
                 for (int s = i + 1; s < PlayerCount; s++) {

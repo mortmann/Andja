@@ -406,18 +406,18 @@ namespace Andja.Controller {
         /// Send the build command to the buildcontroller based on what the player has selected.
         /// </summary>
         /// <param name="t"></param>
-        /// <param name="single"></param>
+        /// <param name="buildPerTile"></param>
         /// <param name="inOrder"></param>
-        public void Build(List<Tile> t, bool single = false) {
+        public void Build(List<Tile> t, bool buildPerTile = false) {
             if (EditorController.IsEditor) {
-                EditorController.Instance.BuildOn(t, single);
+                EditorController.Instance.BuildOn(t, buildPerTile);
             }
             else {
                 if (MouseUnitState == MouseUnitState.Build) {
-                    BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false, SelectedUnit);
+                    BuildController.Instance.CurrentPlayerBuildOnTile(t, buildPerTile, PlayerController.currentPlayerNumber, false, SelectedUnit);
                 }
                 else {
-                    BuildController.Instance.CurrentPlayerBuildOnTile(t, single, PlayerController.currentPlayerNumber, false);
+                    BuildController.Instance.CurrentPlayerBuildOnTile(t, buildPerTile, PlayerController.currentPlayerNumber, false);
                 }
             }
         }

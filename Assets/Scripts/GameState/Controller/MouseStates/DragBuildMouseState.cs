@@ -40,9 +40,7 @@ namespace Andja.Controller {
             }
             // End Drag
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary) == false) return;
-            foreach (StructurePreview sp in _tileToStructurePreview.Values.OrderBy(x => x.number)) {
-                MouseController.Instance.Build(sp.tiles, true);
-            }
+            MouseController.Instance.Build(_tileToStructurePreview.Values.OrderBy(x => x.number).Select(x => x.tile).ToList(), true);
             Reset();
         }
     }

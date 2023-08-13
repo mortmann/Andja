@@ -278,10 +278,11 @@ namespace Andja.Controller {
             List<MapGenerator.IslandData> structs = MapGenerator.Instance.GetIslandStructs();
             foreach (Island island in World.Islands) {
                 MapGenerator.IslandData thisStruct = structs.Find(s =>
-                        island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
-                        island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
+                        island.StartTile.X >= s.X && (s.X + s.Width) >= island.StartTile.X &&
+                        island.StartTile.Y >= s.Y && (s.Y + s.Height) >= island.StartTile.Y
                 );
                 island.Fertilities = thisStruct.GetFertilities();
+                island.Features = thisStruct.Features;
                 structs.Remove(thisStruct);
                 if (thisStruct.Tiles == null)
                     Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);

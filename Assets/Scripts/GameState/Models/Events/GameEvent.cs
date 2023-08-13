@@ -131,6 +131,14 @@ namespace Andja.Model {
             Range = (PrototypeData.minRange + (PrototypeData.maxRange - PrototypeData.minRange) * UnityEngine.Random.Range(0, 1f));
             StartEvent();
         }
+        public void StartEvent(IGEventable target) {
+            if (target == null) {
+                Debug.LogError("Events needs to be none null.");
+                return;
+            }
+            this.target = target;
+            StartEvent();
+        }
 
         public void Update(float delta) {
             if (currentDuration <= 0) {
@@ -262,7 +270,7 @@ namespace Andja.Model {
 
         public void UpdateVolcanicEruption() {
             //create the image of lava
-            EventSpriteController.Instance.UpdateEventTileSprites(this, currentDuration / Duration);
+            //EventSpriteController.Instance.UpdateEventTileSprites(this, currentDuration / Duration);
             if (currentDuration > Duration) {
                 StopVolcanicEruption();
                 return;
@@ -274,7 +282,7 @@ namespace Andja.Model {
                     Vector2 goal = DefinedPosition + new Vector2(UnityEngine.Random.Range(-30, 31), UnityEngine.Random.Range(-30, 31));
                     Vector3 move = DefinedPosition - goal;
                     World.Current.OnCreateProjectile(
-                        new Projectile(new World.WorldDamage(200), DefinedPosition, null, goal, move.normalized, move.magnitude, false, 4, true)
+                        new Projectile(new World.WorldDamage(15), DefinedPosition, null, goal, move.normalized, move.magnitude, false, 4, true)
                         );
                 }
             }

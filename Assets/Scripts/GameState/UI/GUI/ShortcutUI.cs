@@ -2,51 +2,49 @@
 using Andja.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.UI {
 
     public class ShortcutUI : MonoBehaviour {
-        static readonly int ShortcutCount = 8;
         public static ShortcutUI Instance { get; protected set; }
         public bool IsDragging;
         private Vector3 mouseOffset;
         private GameObject dragADropGO;
         private GameObject shortCutDraggedParent;
-
-        private List<GameObject> shortcutsGO;
-        private Dictionary<GameObject, GameObject> shortcutParentToButton;
+        private List<GameObject> shortcutsParentsGO;
+        private Dictionary<GameObject, StructureBuildUI> shortcutParentToButton;
         public Button buildButtonPrefab;
-
         public string[] ShortcutIds;
-
         private void Awake() { //has to be before uicontroller so it can be loaded
             if (Instance != null) {
                 Debug.LogError("There should never be two StructureBuildUI.");
             }
             Instance = this;
-            shortcutParentToButton = new Dictionary<GameObject, GameObject>();
-            ShortcutIds = new string[ShortcutCount];
-            for (int i = 0; i < ShortcutCount; i++) {
-                ShortcutIds[i] = "";
-            }
-            shortcutsGO = new List<GameObject>();
+            shortcutParentToButton = new Dictionary<GameObject, StructureBuildUI>();
+            shortcutsParentsGO = new List<GameObject>();
             foreach (Transform item in transform) {
-                shortcutsGO.Add(item.gameObject);
+                shortcutsParentsGO.Add(item.gameObject);
             }
+            ShortcutIds = new string[shortcutsParentsGO.Count];
         }
 
-        public void SetDragAndDropBuild(GameObject go, Vector3 offset) {
+        public void SetDragAndDropBuild(StructureBuildUI go, Vector3 offset) {
             mouseOffset = offset;
             IsDragging = true;
-            dragADropGO = Instantiate(go);
+            dragADropGO = Instantiate(buildButtonPrefab).gameObject;
             dragADropGO.transform.SetParent(transform.parent, false);
-            dragADropGO.GetComponent<StructureBuildUI>().Show(go.GetComponent<StructureBuildUI>().structure, false);
+            dragADropGO.GetComponent<StructureBuildUI>().Show(go.structure, false);
             Color c = dragADropGO.GetComponent<Image>().color;
             c.a = 0.3f;
             dragADropGO.GetComponent<Image>().color = c;
-            dragADropGO.GetComponent<RectTransform>().sizeDelta = go.GetComponent<RectTransform>().sizeDelta;
+            RectTransform rectTransform = dragADropGO.GetComponent<RectTransform>();
+            rectTransform.anchoredPosition = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMin = new Vector2(0f, 1f);
+            rectTransform.anchorMax = new Vector2(0f, 1f);
+            rectTransform.sizeDelta = shortcutsParentsGO[0].GetComponent<RectTransform>().sizeDelta;
             ShortCutMenuEmpties(true);
             if (shortcutParentToButton.ContainsValue(go)) {
                 shortCutDraggedParent = go.transform.parent.gameObject;
@@ -56,7 +54,7 @@ namespace Andja.UI {
         public void EndDragAndDropBuild() {
             IsDragging = false;
             GameObject parent = null;
-            foreach (GameObject shortcut in shortcutsGO) {
+            foreach (GameObject shortcut in shortcutsParentsGO) {
                 Rect shortRect = shortcut.GetComponent<RectTransform>().rect;
                 shortRect.position = shortcut.transform.position;
                 Rect dragRect = dragADropGO.GetComponent<RectTransform>().rect;
@@ -75,7 +73,7 @@ namespace Andja.UI {
             //delete existing if exists
             if (shortCutDraggedParent != null) {
                 shortCutDraggedParent.transform.GetChild(0).gameObject.SetActive(true);
-                Destroy(shortcutParentToButton[shortCutDraggedParent]);
+                Destroy(shortcutParentToButton[shortCutDraggedParent].gameObject);
                 shortcutParentToButton.Remove(shortCutDraggedParent);
                 shortCutDraggedParent.transform.GetChild(0).gameObject.SetActive(false);
                 shortCutDraggedParent = null;
@@ -87,8 +85,6 @@ namespace Andja.UI {
                     shortcutParentToButton.Remove(parent);
                 }
                 CreateButton(dragADropGO.GetComponentInChildren<StructureBuildUI>().structure, parent);
-                GameObject sc = shortcutParentToButton[parent];
-                ShortcutIds[shortcutsGO.IndexOf(sc)] = sc.GetComponentInChildren<StructureBuildUI>().structure.ID;
             }
             // stopping drag everytime so delete dragged & unshow spots
             StopDragAndDropBuild();
@@ -122,22 +118,26 @@ namespace Andja.UI {
         public void LoadShortCuts(string[] shortcuts) {
             if (shortcuts == null)
                 return;
-            ShortcutIds = shortcuts;
             for (int pos = 0; pos < shortcuts.Length; pos++) {
-                Structure structure = PrototypController.Instance.GetStructure(shortcuts[pos]);
-                if (structure == null)
-                    continue;
-                if (pos > shortcutsGO.Count)
+                if (pos > shortcutsParentsGO.Count)
                     break;
-                CreateButton(structure, shortcutsGO[pos]);
+                if (shortcuts[pos] == null)
+                    continue;
+                Structure structure = PrototypController.Instance.GetStructure(shortcuts[pos]);
+                if (structure != null)
+                    CreateButton(structure, shortcutsParentsGO[pos]);
             }
-            Array.Resize(ref ShortcutIds, ShortcutCount);
         }
 
         private void CreateButton(Structure structure, GameObject parent) {
             Button go = Instantiate(buildButtonPrefab);
             go.name = "ShortCut " + structure.ID;
-            go.GetComponent<StructureBuildUI>().Show(structure, true);
+            StructureBuildUI structureBuildUI = go.GetComponent<StructureBuildUI>();
+            structureBuildUI.Show(structure, true);
+            go.GetComponent<Button>().onClick.RemoveAllListeners();
+            go.GetComponent<Button>().onClick.AddListener(() => { 
+                BuildMenuUIController.Instance.OnClick(structure.ID);
+            });
             go.transform.SetParent(parent.transform, false);
             go.transform.localPosition = Vector3.zero;
             go.GetComponent<RectTransform>().sizeDelta = Vector2.zero;
@@ -145,7 +145,8 @@ namespace Andja.UI {
             c.a = 0.8f;
             go.GetComponent<Image>().color = c;
             parent.transform.GetChild(0).gameObject.SetActive(false);
-            shortcutParentToButton[parent] = go.gameObject;
+            shortcutParentToButton[parent] = structureBuildUI;
+            ShortcutIds[shortcutsParentsGO.IndexOf(parent)] = structure.ID;
         }
         private void OnDestroy() {
             Instance = null;

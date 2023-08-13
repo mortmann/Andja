@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Andja.Model.Components;
 using Andja.UI;
+using Andja.Utility;
 
 namespace Andja.Controller {
     //TODO:
@@ -143,10 +144,12 @@ namespace Andja.Controller {
                 case EventType.Weather:
                     ge.StartEvent(GetRandomVector2());
                     break;
+                case EventType.Disaster:
+                    ge.StartEvent(GetRandomValidIsland(ge));
+                    break;
                 case EventType.City:
                 case EventType.Structure:
                 case EventType.Quest:
-                case EventType.Disaster:
                 case EventType.Other:
                     ge.StartEvent();
                     break;
@@ -157,6 +160,16 @@ namespace Andja.Controller {
             _cbEventCreated(ge);
             _lastId++;
             return true;
+        }
+
+        private IGEventable GetRandomValidIsland(GameEvent ge) {
+            if (ge.ID != "volcanic_eruption")
+                Log.GAME_WARNING("GetRandomValidIsland is not fully implemented yet");
+            List<Island> islands = World.Current.Islands.FindAll(i => i.Features?.Exists(f => f.type == FeatureType.Volcano) == true);
+            if(islands.Count == 0) {
+                return null;
+            }
+            return islands.RandomElement();
         }
 
         private void CreateEventHoldingGameObject(GameEvent ge) {
@@ -170,7 +183,7 @@ namespace Andja.Controller {
         /// <param name="id"></param>
         internal bool TriggerEvent(string id) {
             GameEvent gameEvent = new GameEvent(id);
-            if(gameEvent.Type == EventType.Weather) {
+            if(gameEvent.Type == EventType.Weather || gameEvent.Type == EventType.Disaster) {
                 return CreateGameEvent(gameEvent); 
             }
             return TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());

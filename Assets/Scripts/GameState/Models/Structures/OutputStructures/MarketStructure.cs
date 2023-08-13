@@ -156,8 +156,8 @@ namespace Andja.Model {
 
         public override void OnDestroy() {
             base.OnDestroy();
-            City.RemoveTiles(Tiles);
-            City.RemoveTiles(RangeTiles);
+            Tiles.ForEach(t => t.City = null);
+            RangeTiles.ToList().ForEach(t => t.City = null);
         }
 
         public void OnStructureAdded(Structure structure) {

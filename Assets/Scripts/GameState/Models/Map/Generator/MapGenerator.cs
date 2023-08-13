@@ -408,7 +408,7 @@ namespace Andja.Model.Generator {
                 if (data.Resources != null) {
                     foreach (string id in data.Resources.Keys) {
                         if (data.Resources[id] > 0) {
-                            toBeAllocatedResources[data.climate].RemoveAll(x => x.ID == id);
+                            toBeAllocatedResources[data.Climate].RemoveAll(x => x.ID == id);
                         }
                     }
                 }
@@ -426,21 +426,21 @@ namespace Andja.Model.Generator {
             foreach (IslandData data in datas) {
                 if (data.NeedsFertility) {
                     for (int i = 0; i < data.FertilityCount; i++) {
-                        data.AddFertility(fertilityRandomListPerClimate[data.climate].GetRandom(mapThreadRandom, data.fertilities, toPlaceIslands.Count));
+                        data.AddFertility(fertilityRandomListPerClimate[data.Climate].GetRandom(mapThreadRandom, data.fertilities, toPlaceIslands.Count));
                     }
                 }
                 if (data.NeedsResources) {
                     for (int i = 0; i < data.ResourcesCount; i++) {
                         List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(data.resources);
-                        exclude.AddRange(data.excludedResources);
-                        data.AddResources(resourcesRandomListPerClimate[data.climate].GetRandom(mapThreadRandom, data.resources, toPlaceIslands.Count), mapThreadRandom);
+                        exclude.AddRange(data.ExcludedResources);
+                        data.AddResources(resourcesRandomListPerClimate[data.Climate].GetRandom(mapThreadRandom, data.resources, toPlaceIslands.Count), mapThreadRandom);
                     }
                 }
             }
 
             foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
                 if (fertilityRandomListPerClimate[climate].HasNoMustLeft == false) {
-                    List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
+                    List<IslandData> sorted = toPlaceIslands.Where(x => x.Climate == climate).OrderBy(x => x.Tiles.Length).ToList();
                     int i = 0;
                     while (fertilityRandomListPerClimate[climate].HasNoMustLeft == false && i < sorted.Count * 2) {
                         sorted[i % sorted.Count].AddFertility
@@ -449,13 +449,13 @@ namespace Andja.Model.Generator {
                     }
                 }
                 if (resourcesRandomListPerClimate[climate].HasNoMustLeft == false) {
-                    List<IslandData> sorted = toPlaceIslands.Where(x => x.climate == climate).OrderBy(x => x.Tiles.Length).ToList();
+                    List<IslandData> sorted = toPlaceIslands.Where(x => x.Climate == climate).OrderBy(x => x.Tiles.Length).ToList();
                     int maxRes = sorted.Max(x => x.ResourcesCount);
                     int i = 0;
                     while (resourcesRandomListPerClimate[climate].HasNoMustLeft == false 
                                 && i < sorted.Count * (maxRes * 2)) {
                         List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(sorted[i % sorted.Count].resources);
-                        exclude.AddRange(sorted[i % sorted.Count].excludedResources);
+                        exclude.AddRange(sorted[i % sorted.Count].ExcludedResources);
                         sorted[i % sorted.Count].AddResources(resourcesRandomListPerClimate[climate]
                                 .GetRandom(mapThreadRandom, exclude, toPlaceIslands.Count), mapThreadRandom);
                         i++;
@@ -507,7 +507,7 @@ namespace Andja.Model.Generator {
                 foreach (IslandData island in toPlaceIslands) {
                     Color color = colors[i % 6];
                     int islandTries = 0;
-                    Rect hasToBeIn = climateRectangles[island.climate];
+                    Rect hasToBeIn = climateRectangles[island.Climate];
                     List<DirectionalRect> possible = recantgleEmptySpaces.FindAll(r => r.Overlaps(hasToBeIn));
                     possible = possible.OrderByDescending(r => (r.rect.width + r.rect.height) / 2).ToList();
                     if (possible.Count == 0) {
@@ -779,13 +779,13 @@ namespace Andja.Model.Generator {
         }
 
         public class IslandData {
-            public string name;
+            public string Name;
             public int Width;
             public int Height;
-            public int x;
-            public int y;
+            public int X;
+            public int Y;
             public Tile[] Tiles;
-            public Climate climate;
+            public Climate Climate;
             public List<FertilityPrototypeData> fertilities = new List<FertilityPrototypeData>();
             public List<ResourceGenerationInfo> resources = new List<ResourceGenerationInfo>();
             public Dictionary<Tile, Structure> tileToStructure;
@@ -793,8 +793,8 @@ namespace Andja.Model.Generator {
             public Size Size;
             public int ResourcesCount;
             public int FertilityCount;
-            internal List<ResourceGenerationInfo> excludedResources = new List<ResourceGenerationInfo>();
-            public List<IslandFeature> features;
+            internal List<ResourceGenerationInfo> ExcludedResources = new List<ResourceGenerationInfo>();
+            public List<IslandFeature> Features;
             public bool NeedsFertility => FertilityCount > fertilities.Count;
             public bool NeedsResources => ResourcesCount > resources.Count;
 
@@ -802,11 +802,11 @@ namespace Andja.Model.Generator {
                 Width = save.Width;
                 Height = save.Height;
                 Tiles = save.tiles;
-                this.climate = save.climate;
-                name = save.Name;
+                this.Climate = save.climate;
+                Name = save.Name;
                 Resources = MapGenerator.Instance.GetResourcesFromRange(save.Resources);
                 tileToStructure = new Dictionary<Tile, Structure>();
-                features = save.features;
+                Features = save.features;
                 foreach (Structure str in save.structures) {
                     tileToStructure.Add(str.BuildTile, str);
                 }
@@ -814,12 +814,12 @@ namespace Andja.Model.Generator {
 
             public IslandData(IslandData copy) : this(copy.Width, copy.Height) {
                 Tiles = copy.Tiles;
-                this.climate = copy.climate;
+                this.Climate = copy.Climate;
                 tileToStructure = copy.tileToStructure;
-                this.name = copy.name;
+                this.Name = copy.Name;
                 this.fertilities = copy.fertilities;
                 Resources = copy.Resources;
-                features = copy.features;
+                Features = copy.Features;
             }
 
             public IslandData(IslandData copy, Tile[] islandTiles) : this(copy) {
@@ -827,10 +827,10 @@ namespace Andja.Model.Generator {
             }
 
             public IslandData(IslandData copy, Tile[] islandTiles, Rect place) : this(copy, islandTiles) {
-                this.x = (int)place.x;
-                this.y = (int)place.y;
-                foreach (IslandFeature f in features) {
-                    f.position += new Vector2(x, y); //adjust for worldposition
+                this.X = (int)place.x;
+                this.Y = (int)place.y;
+                foreach (IslandFeature f in Features) {
+                    f.position += new Vector2(X, Y); //adjust for worldposition
                 }
             }
 
@@ -850,16 +850,16 @@ namespace Andja.Model.Generator {
                 Width = width;
                 Height = height;
                 this.Tiles = tile;
-                this.climate = climate;
+                this.Climate = climate;
                 this.tileToStructure = tileToStructure;
-                excludedResources.AddRange(PrototypController.Instance.ClimateToResourceGeneration[climate].FindAll(x =>
+                ExcludedResources.AddRange(PrototypController.Instance.ClimateToResourceGeneration[climate].FindAll(x =>
                         x.requiredTile != null && Array.Exists(x.requiredTile, y => Array.Exists(Tiles, z => z.Type == y) == false
                 )));
-                this.features = features;
+                this.Features = features;
             }
 
             public Vector2 GetPosition() {
-                return new Vector2(x, y);
+                return new Vector2(X, Y);
             }
 
             internal void AddResources(ResourceGenerationInfo resourceGenerationInfo, ThreadRandom random) {

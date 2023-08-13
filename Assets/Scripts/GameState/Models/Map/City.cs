@@ -269,19 +269,17 @@ namespace Andja.Model {
             _cbStructureAdded?.Invoke(str);
         }
 
-        //current wrapper to make sure its valid
         public virtual void RemoveTile(Tile t) {
-            //if it doesnt contain it there is an error
             if (Tiles.Contains(t) == false) {
                 Debug.LogError("This city does not know that it had this tile! " + t.ToString() + " -> " + Tiles.Count);
                 return;
             }
             Tiles.Remove(t);
             Island.AlreadyHighlighted = false;
+            _cbTileRemoved?.Invoke(this, t);
             if (Tiles.Count == 0) {
                 Destroy();
             }
-            _cbTileRemoved?.Invoke(this, t);
         }
 
         public void AddTiles(IEnumerable<Tile> t) {
@@ -291,11 +289,10 @@ namespace Andja.Model {
         public void AddTiles(HashSet<Tile> tiles) {
             tiles.RemoveWhere(x => x == null || x.Type == TileType.Ocean);
             foreach (Tile t in tiles) {
-                t.City = this;
-                AIController.UpdateCityCurrentSpaceValue(this, t);
+                AddTile(t);
             }
             foreach (Tile t in tiles) {
-                AddTile(t);
+                AIController.UpdateCityCurrentSpaceValue(this, t);
             }
             Island.AlreadyHighlighted = false;
         }

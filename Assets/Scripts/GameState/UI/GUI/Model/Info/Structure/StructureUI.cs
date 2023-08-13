@@ -12,7 +12,7 @@ namespace Andja.UI.Model {
             if (currentStructure == Info) {
                 return;
             }
-            currentStructure = Info as Structure;
+            currentStructure = Info;
             if (currentStructure == null)
                 return;
             TileDeciderFuncs.Structure = currentStructure;

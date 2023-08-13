@@ -26,12 +26,10 @@ namespace Andja.Model.Data {
             TotalMaintenance += structure.upkeepCost * ratio;
             AddBuildItems(structure.buildingItems, ratio);
             PopulationLevel = Mathf.Max(structure.populationLevel, PopulationLevel);
-            if (structure is FarmPrototypeData) {
-                Fertility f = ((FarmPrototypeData)structure).growable?.Fertility;
-                if (f != null) {
-                    if (requiredFertilites == null)
-                        requiredFertilites = new List<Fertility>();
-                    requiredFertilites.Add(f);
+            if (structure is FarmPrototypeData fpd) {
+                if (fpd.growable?.Fertility != null) {
+                    requiredFertilites ??= new List<Fertility>();
+                    requiredFertilites.Add(fpd.growable?.Fertility);
                 }
             }
         }

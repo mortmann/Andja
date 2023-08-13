@@ -93,14 +93,21 @@ namespace Andja.Model {
                         //its gonna go add them to a queue and giving it
                         //in that order the right to own it
                         ICity c = _cities.Dequeue();
+                        if(c == _city) {
+                            return;
+                        }
+                        _city.RemoveTile(this);
                         c.AddTile(this);
                         _city = c;
                         Island.ChangeGridTile(this, true);
+                        World.Current.OnTileChanged(this);
                         return;
                     }
+                    _city.RemoveTile(this);
                     Island.Wilderness.AddTile(this);
                     _city = Island.Wilderness;
                     Island.ChangeGridTile(this, true);
+                    World.Current.OnTileChanged(this);
                     return;
                 }
                 //warns about double wilderness
@@ -124,6 +131,7 @@ namespace Andja.Model {
                 _city?.RemoveTile(this);
                 _city = value;
                 Island.ChangeGridTile(this, true);
+                World.Current.OnTileChanged(this);
             }
         }
 

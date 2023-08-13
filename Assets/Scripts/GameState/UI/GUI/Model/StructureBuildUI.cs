@@ -29,7 +29,7 @@ namespace Andja.UI {
         }
 
         public void OnBeginDrag(PointerEventData eventData) {
-            UIController.Instance.SetDragAndDropBuild(this.gameObject, transform.InverseTransformPoint(eventData.pressPosition));
+            UIController.Instance.SetDragAndDropBuild(this, transform.InverseTransformPoint(eventData.pressPosition));
         }
 
         public void OnEndDrag(PointerEventData eventData) {

@@ -50,6 +50,7 @@ namespace Andja.Controller {
         public ChoiceDialog ChoiceDialog;
 
         public void Start() {
+            ShowBuildMenu(); //Allow it to setup itself
             Escape(true);
             endScoreScreen.SetActive(false);
             if (Instance != null) {
@@ -291,7 +292,7 @@ namespace Andja.Controller {
                 consoleCanvas.activeSelf;
         }
 
-        public void SetDragAndDropBuild(GameObject go, Vector2 offset) {
+        public void SetDragAndDropBuild(StructureBuildUI go, Vector2 offset) {
             shortCutCanvas.GetComponent<ShortcutUI>().SetDragAndDropBuild(go, offset);
         }
 

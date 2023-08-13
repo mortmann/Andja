@@ -146,7 +146,8 @@
       </effects>
    </GameEvent>
    <GameEvent ID="volcanic_eruption">
-      <Name>
+     <type>Disaster</type>
+     <Name>
          <entry lang="Deutsch">Vulkanausbruch</entry>
          <entry lang="English">Volcanic Eruption</entry>
       </Name>

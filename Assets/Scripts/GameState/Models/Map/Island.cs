@@ -1,4 +1,5 @@
 ﻿using Andja.Controller;
+using Andja.Model.Generator;
 using Andja.Pathfinding;
 using Andja.Utility;
 using Newtonsoft.Json;
@@ -91,6 +92,18 @@ namespace Andja.Model {
             if (Resources.ContainsKey(resourceID) == false)
                 return false;
             return Resources[resourceID] > 0;
+        }
+
+        public Island(MapGenerator.IslandData islandStruct) {
+            Resources = new Dictionary<string, int>();
+            Cities = new List<ICity>();
+            this.Climate = islandStruct.Climate;
+            SetTiles(islandStruct.Tiles);
+            Features = islandStruct.Features;
+            Fertilities = islandStruct.GetFertilities();
+            Placement = new Vector2(islandStruct.X, islandStruct.Y);
+            Resources = islandStruct.Resources;
+            Setup();
         }
 
         public Island(Tile[] tiles, Climate climate = Climate.Middle) {

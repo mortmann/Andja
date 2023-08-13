@@ -226,5 +226,12 @@ namespace Andja.Utility {
         public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) {
             return !source.Any(predicate);
         }
+
+        public static T RandomElement<T>(this List<T> source) {
+            if(source.Count == 0) {
+                return default;
+            }
+            return source[UnityEngine.Random.Range(0, source.Count)];
+        }
     }
 }

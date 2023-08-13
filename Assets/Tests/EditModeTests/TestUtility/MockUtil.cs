@@ -44,12 +44,7 @@ public class MockUtil {
 
     public MockUtil() {
         Callbacks = new Mock<ITestCallback>();
-        PrototypControllerMock = new Mock<IPrototypController>();
-        PrototypControllerMock.Setup(p => p.GetCopieOfAllItems())
-            .Returns(() => AllItems.ToDictionary(d=>d.Key, d=>d.Value.Clone()));
-        PrototypControllerMock.Setup(p => p.GetItemPrototypDataForID(It.IsAny<string>()))
-            .Returns(new ItemPrototypeData() { type = ItemType.Build });
-        PrototypController.Instance = PrototypControllerMock.Object;
+        SetupPrototypControllerMock();
         PlayerControllerMock = new Mock<IPlayerController>();
         PlayerControllerMock.Setup(pc => pc.HasEnoughMoney(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
         PlayerControllerMock.SetupGet(pc => pc.Players).Returns(new List<Player>() { new Player() });
@@ -91,6 +86,15 @@ public class MockUtil {
         EventSpriteController.Instance = EventSpriteControllerMock.Object;
 
         IPlayerMock = new Mock<IPlayer>();
+    }
+
+    private void SetupPrototypControllerMock() {
+        PrototypControllerMock = new Mock<IPrototypController>();
+        PrototypControllerMock.Setup(p => p.GetCopieOfAllItems())
+            .Returns(() => AllItems.ToDictionary(d => d.Key, d => d.Value.Clone()));
+        PrototypControllerMock.Setup(p => p.GetItemPrototypDataForID(It.IsAny<string>()))
+            .Returns(new ItemPrototypeData() { type = ItemType.Build });
+        PrototypController.Instance = PrototypControllerMock.Object;
     }
 
     public MockUtil WithOnePopulationLevels() {

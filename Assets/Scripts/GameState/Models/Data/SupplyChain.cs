@@ -87,15 +87,8 @@ namespace Andja.Model.Data {
             return IsValid = true;
         }
 
-        internal bool IsUnlocked(Player player) {
-            foreach (var tier in tiers.Keys) {
-                foreach (var item in tiers[tier]) {
-                    if (player.HasStructureUnlocked(item.Producer.ProducerStructure.ID) == false) {
-                        return false;
-                    }
-                }
-            }
-            return true; // tiers.All(tier => tier.All(item => player.HasStructureUnlocked(item.Producer.ProducerStructure.ID)))
+        public bool IsUnlocked(IPlayer player) {
+            return tiers.All(tier => tier.Value.All(item => player.HasStructureUnlocked(item.Producer.ProducerStructure.ID)));
         }
 
         public Dictionary<string, int> StructureToBuildForOneRatio() {

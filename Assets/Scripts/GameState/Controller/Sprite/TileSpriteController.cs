@@ -288,8 +288,8 @@ namespace Andja.Controller {
             foreach (MapGenerator.IslandData i in islands) {
                 int islandWidth = (i.Width + 1);
                 int islandHeight = (i.Height + 1);
-                int xTileOffset = i.x;
-                int yTileOffset = i.y;
+                int xTileOffset = i.X;
+                int yTileOffset = i.Y;
 
                 GameObject island_tilemap = new GameObject();
                 Tilemap tilemap = island_tilemap.AddComponent<Tilemap>();
@@ -438,18 +438,17 @@ namespace Andja.Controller {
                 return;
             if (TileDeciderFunc != null && TileDeciderFunc.GetInvocationList().Contains(addDeciderFunc))
                 return;
-            this.TileDeciderFunc += addDeciderFunc;
-            if (TileDeciderFunc != null && TileDeciderFunc.GetInvocationList().Length > 0)
-                _darkLayer.SetActive(true);
             if (isCityDecider) {
                 _islandToCityMask.ToList().ForEach(x => x.Value.gameObject.SetActive(true));
             }
             else {
+                this.TileDeciderFunc += addDeciderFunc;
                 foreach (Island i in World.Current.Islands) {
                     //TODO: call this again or just ontilechanged when the corresponding decider needs updating
                     i.Tiles.ForEach(x => OnTileChanged(x));
                 }
             }
+            _darkLayer.SetActive(true);
         }
 
         public void ResetDecider() {

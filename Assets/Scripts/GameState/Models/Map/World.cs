@@ -189,12 +189,7 @@ namespace Andja.Model {
         }
 
         public void CreateIsland(MapGenerator.IslandData islandStruct) {
-            Island island = new Island(islandStruct.Tiles, islandStruct.climate) {
-                Fertilities = islandStruct.GetFertilities(),
-                Placement = new Vector2(islandStruct.x, islandStruct.y),
-                Resources = islandStruct.Resources,
-                Features = islandStruct.features
-            };
+            Island island = new Island(islandStruct);
             Islands.Add(island);
         }
 

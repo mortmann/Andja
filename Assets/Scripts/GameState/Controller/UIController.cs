@@ -87,11 +87,12 @@ namespace Andja.Controller {
                 case WarehouseStructure _:
                 case MarketStructure _: {
                     CloseInfoUI();
+                    TileSpriteController.Instance.AddDecider(BuildController.Instance.TileCityDecider);
                     if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
                         OpenOtherCity(str.City);
                     }
                     else {
-                        OpenCityInventory(str.City, str.City.TradeWithAnyShip);
+                        OpenOwnedCityInventory(str.City, str.City.TradeWithAnyShip);
                     }
                     return;
                 }
@@ -163,7 +164,7 @@ namespace Andja.Controller {
             otherCityUI.GetComponent<OtherCityUI>().Show(city);
         }
 
-        public void OpenCityInventory(ICity city, System.Action<Item> onItemPressed = null) {
+        public void OpenOwnedCityInventory(ICity city, Action<Item> onItemPressed = null) {
             if (city == null) {
                 return;
             }
@@ -176,6 +177,7 @@ namespace Andja.Controller {
         public void HideCityUI(ICity city) {
             otherCityUI.SetActive(false);
             CityInventoryCanvas.SetActive(false);
+            TileSpriteController.Instance.RemoveDecider(BuildController.Instance.TileCityDecider);
         }
 
         public void ToggleRightUI() {
@@ -280,6 +282,7 @@ namespace Andja.Controller {
         }
 
         internal void CloseMouseUnselect() {
+            HideCityUI(null);
             CloseInfoUI();
             CloseRightUI();
             CloseChooseBuild();

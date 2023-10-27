@@ -185,7 +185,7 @@ namespace Andja.Model {
                 return false;
             }
             for (int i = 0; i < Intake.Length; i++) {
-                Intake[i].count = toAdd.GetItemWithMaxAmount(Intake[i], GetRemainingIntakeSpaceForIndex(i)).count;
+                Intake[i].count += toAdd.GetItemWithMaxAmount(Intake[i], GetRemainingIntakeSpaceForIndex(i)).count;
                 CallbackChangeIfNotNull();
             }
             return true;
@@ -197,8 +197,8 @@ namespace Andja.Model {
                 Item item = Array.Find(items, x => x.ID == Intake[i].ID)?.Clone();
                 if (item == null) continue;
                 item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
-                item.count -= workers.Where(z => z.ToGetItems != null)
-                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                item.count -= workers?.Where(z => z.ToGetItems != null)
+                    .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0) ?? 0;
                 all.Add(item);
             }
             return all.Where(x=>x.count > 0).ToArray();
@@ -208,7 +208,7 @@ namespace Andja.Model {
             base.OnUpgrade();
             _productionData = null;
         }
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
             RegisteredStructures = new Dictionary<OutputStructure, Item[]>();
 
@@ -218,7 +218,6 @@ namespace Andja.Model {
                     continue;
                 }
                 OnStructureBuild(rangeTile.Structure);
-
             }
             City.RegisterStructureAdded(OnStructureBuild);
         }
@@ -237,6 +236,7 @@ namespace Andja.Model {
                     break;
                 }
             }
+            ProduceTimer = 0;
         }
 
         public int GetRemainingIntakeSpaceForIndex(int itemIndex) {

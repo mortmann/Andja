@@ -74,7 +74,7 @@ namespace Andja.Model {
             return new ServiceStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             if (remainingUsageItems == null && UsageItems != null) {
                 remainingUsageItems = new float[UsageItems.Length];
             }

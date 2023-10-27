@@ -21,7 +21,7 @@ namespace Andja.Model {
         float GetTaxPercentage();
         bool IsMaxLevel();
         bool IsStructureNeedFulfilled(INeed need);
-        void OnBuild();
+        void OnBuild(bool loading = false);
         void OnCityChange(Structure str, ICity old, ICity newOne);
         void OnDestroy();
         void OnUpdate(float deltaTime);

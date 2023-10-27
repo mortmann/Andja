@@ -43,7 +43,7 @@ namespace Andja.Model {
         }
 
         public override bool SpecialCheckForBuild(List<Tile> tiles) {
-            if (BuildTile.Island.HasResource(Resource) == false) {
+            if (tiles[0].Island.HasResource(Resource) == false) {
                 return false;
             }
             return true;
@@ -69,8 +69,8 @@ namespace Andja.Model {
             return new MineStructure(this);
         }
 
-        public override void OnBuild() {
-            if (CurrentResourceMode == ResourceMode.PerMine) {
+        public override void OnBuild(bool loading = false) {
+            if (loading == false && CurrentResourceMode == ResourceMode.PerMine) {
                 City.Island.RemoveResources(Resource, 1);
             }
         }

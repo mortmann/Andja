@@ -94,7 +94,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnShipCreate(Unit unit) {
-            if (unit is Ship == false)
+            if (unit is Ship == false || unit.IsOwnedByCurrentPlayer() == false)
                 return;
             Ship ship = (Ship)unit;
             unit.RegisterOnDestroyCallback(OnShipDestroy);
@@ -151,9 +151,9 @@ namespace Andja.UI.Model {
                 Destroy(t.gameObject);
             tradeRouteLine.SetTradeRoute(tr);
             UpdateCitySelects();
-            foreach (Ship ship in tradeRoute.Ships) {
-                AddShipToList(ship);
-            }
+            //foreach (Ship ship in tradeRoute.Ships) {
+            //    AddShipToList(ship);
+            //}
             SetCity(tr.GetTrade(0)?.city);
         }
 
@@ -209,11 +209,11 @@ namespace Andja.UI.Model {
         }
 
         public void OnLoadItemAdd() {
-            UIController.Instance.OpenCityInventory(city, AddLoadItem);
+            UIController.Instance.OpenOwnedCityInventory(city, AddLoadItem);
         }
 
         public void OnUnloadItemAdd() {
-            UIController.Instance.OpenCityInventory(city, AddUnloadItem);
+            UIController.Instance.OpenOwnedCityInventory(city, AddUnloadItem);
         }
 
         public void AddLoadItem(Item item) {
@@ -266,12 +266,10 @@ namespace Andja.UI.Model {
                 SetCity(city);
                 //not that good
                 tradeRoute.AddCity(city);
-                tradeRouteLine.AddCity(city);
                 return tradeRoute.GetLastNumber();
             }
             else {
                 tradeRoute.RemoveCity(city);
-                tradeRouteLine.RemoveCity(city);
                 UpdateCitySelects();
                 return -1;
             }

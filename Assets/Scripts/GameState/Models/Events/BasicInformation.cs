@@ -47,10 +47,10 @@ namespace Andja.UI {
                 return "MISSING Description";
             string text = translation.toolTipTranslation;
             for (int i = 0; i < DescriptionValues.Length; i++) {
-                if (TitleValues[i] is string)
-                    text = text.Replace("$" + i, TitleValues[i].ToString());
+                if (DescriptionValues[i] is string)
+                    text = text.Replace("$" + i, DescriptionValues[i].ToString());
                 else
-                    text = text.Replace("$" + i, UILanguageController.Instance.GetTranslation(TitleValues[i]));
+                    text = text.Replace("$" + i, UILanguageController.Instance.GetTranslation(DescriptionValues[i]));
             }
             return text;
         }
@@ -100,11 +100,17 @@ namespace Andja.UI {
             base(InformationType.UnitUnderAttack,
                 () => Unit.PositionVector,
                 new string[] { Unit.Name },
-                warfare != null ? new string[] { Unit.Name, PlayerController.Instance.GetPlayer(warfare.PlayerNumber).Name } : new string[] { Unit.Name },
-                "Attacked", 
+                warfare != null ? new string[] { Unit.Name, GetAttackerName(warfare) } : new string[] { Unit.Name },
+                "Attacked",
                 Unit.BuildID,
                 warfare
                 ) {
+        }
+
+        private static string GetAttackerName(IWarfare warfare) {
+            return warfare.PlayerNumber == GameData.PirateNumber? 
+                UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Pirate) :
+                PlayerController.Instance.GetPlayer(warfare.PlayerNumber).Name;
         }
 
         public override BasicInformation Load() {

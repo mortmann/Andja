@@ -440,8 +440,8 @@ namespace Andja.Model {
         public bool RemoveTradeItem(string itemID) {
             return ItemIDtoTradeItem.Remove(itemID);
         }
-        public void ChangeTradeItemAmount(Item item) {
-            ItemIDtoTradeItem[item.ID].count = item.count;
+        public void ChangeTradeItemAmount(TradeItem item) {
+            ItemIDtoTradeItem[item.ItemId].count = item.count;
         }
 
         public void ChangeTradeItemPrice(string id, int price) {

@@ -8,16 +8,14 @@ namespace Andja.Controller {
             if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
                 MouseController.Instance.SetMouseState(MouseState.Idle);
             }
-            Tile t = MouseController.Instance.GetTileUnderneathMouse();
-            MouseController.Instance.NeededItemsToBuild = null;
-            MouseController.Instance.NeededBuildCost = 0;
-            if (t.Structure == null)
+            Structure structure = MouseController.Instance.GetTileUnderneathMouse()?.Structure;
+            if (structure == null || structure.CanBeUpgraded == false) {
+                MouseController.Instance.ResetBuildCost();
                 return;
-            if (t.Structure.CanBeUpgraded == false)
-                return;
+            }
             Structure upgradeTo = null;
-            foreach (string item in t.Structure.CanBeUpgradedTo) {
-                if (t.Structure is HomeStructure == false && PlayerController.CurrentPlayer.HasStructureUnlocked(item) == false)
+            foreach (string item in structure.CanBeUpgradedTo) {
+                if (structure is HomeStructure == false && PlayerController.CurrentPlayer.HasStructureUnlocked(item) == false)
                     continue;
                 upgradeTo = PrototypController.Instance.GetStructure(item);
                 MouseController.Instance.NeededItemsToBuild = upgradeTo.BuildingItems?.CloneArrayWithCounts();
@@ -25,8 +23,15 @@ namespace Andja.Controller {
                 break;
             }
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary) && upgradeTo != null) {
-                BuildController.Instance.BuildOnTile(upgradeTo, t.Structure.Tiles, PlayerController.currentPlayerNumber, false);
+                if(structure is HomeStructure home) {
+                    home.UpgradeHouse();
+                    return;
+                }
+                BuildController.Instance.BuildOnTile(upgradeTo, structure.Tiles, PlayerController.currentPlayerNumber, false);
             }
+        }
+        public override void Deactivate() {
+            MouseController.Instance.ResetBuildCost();
         }
     }
 }

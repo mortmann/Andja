@@ -94,9 +94,7 @@ namespace Andja.UI {
         }
         public void OnDisable() {
             tradePanel.SetActive(false);
-            if (city != null) {
-                city.UnregisterCityDestroy(OnCityDestroy);
-            }
+            city?.UnregisterCityDestroy(OnCityDestroy);
         }
     }
 }

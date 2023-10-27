@@ -8,7 +8,7 @@ using Andja.Model;
 
 namespace Andja.Controller {
     public class BoxSelectMouseState : BaseMouseState {
-        public override CursorType CursorType => CursorType.Upgrade;
+        public override CursorType CursorType => CursorType.Pointer;
         private bool _displayDragRectangle;
         private Rect _drawRect;
         private Vector3 _dragStartPosition;

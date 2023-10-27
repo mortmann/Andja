@@ -1,14 +1,9 @@
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using Andja.Controller;
 using Andja.Model;
-using Andja.Utility;
 using Moq;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 using Andja;
 using static AssertNet.Assertions;
 using static AssertNet.Moq.Assertions;
@@ -128,6 +123,9 @@ public class MarketStructureTest {
     }
     [Test]
     public void DoneCapturing_WithCity() {
+        Market.Tiles.ForEach(t => t.City = mockutil.City);
+        Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
+
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
         mockutil.WorldIsland.Cities.Add(new City(1, mockutil.WorldIsland));
@@ -142,6 +140,9 @@ public class MarketStructureTest {
 
     [Test]
     public void DoneCapturing_WithoutCity() {
+        Market.Tiles.ForEach(t => t.City = mockutil.City);
+        Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
+
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
 
@@ -241,6 +242,9 @@ public class MarketStructureTest {
     }
     [Test]
     public void OnDestroy() {
+        Market.Tiles.ForEach(t => t.City = mockutil.City);
+        Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
+
         Market.OnDestroy();
         List<Tile> h = new List<Tile>(Market.Tiles);
         h.AddRange(Market.RangeTiles);

@@ -73,7 +73,7 @@ namespace Andja.Model {
         int TradeFromShip(Unit u, Item getTrade, int amount = 50);
         bool RemoveTradeItem(Item item);
         bool RemoveTradeItem(string itemID);
-        void ChangeTradeItemAmount(Item item);
+        void ChangeTradeItemAmount(TradeItem item);
         void ChangeTradeItemPrice(string id, int price);
         int GetAmountForThis(Item item);
         void AddRoute(Route route);

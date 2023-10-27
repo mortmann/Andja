@@ -343,10 +343,11 @@ namespace Andja.Model {
         public virtual void OnUpdate(float deltaTime) {
         }
 
-        public abstract void OnBuild();
+        public abstract void OnBuild(bool loading = false);
 
         public virtual void OnDestroy() {
         }
+
 
         /// <summary>
         /// Extra Build UI for showing stuff when building
@@ -482,7 +483,7 @@ namespace Andja.Model {
             //it searches all the tiles it has in its reach!
             RangeTiles = GetInRangeTiles(Tiles[0]);
             // do on place structure stuff here!
-            OnBuild();
+            OnBuild(loading);
             City.RegisterOnEvent(OnEventCreate, OnEventEnded);
         }
 

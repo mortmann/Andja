@@ -57,7 +57,7 @@ namespace Andja.Model {
             InRangeUnits.Remove(u);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             base.OnBuild();
             Tile[,] sortedTiles = new Tile[TileWidth, TileHeight];
             List<Tile> ts = new List<Tile>(Tiles);

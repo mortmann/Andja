@@ -84,7 +84,7 @@ namespace Andja.Model {
             capturedProgress = Mathf.Clamp01(capturedProgress);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             RegisteredSturctures = new List<Structure>();
             OutputMarkedStructures = new List<OutputStructure>();
             WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
@@ -148,6 +148,7 @@ namespace Andja.Model {
             base.OnRouteChange(o, n);
             o.RemoveMarketStructure(this);
             n.AddMarketStructure(this);
+            OutputMarkedStructures.ToList().ForEach(OnOutputChangedStructure);
         }
         public override void RemoveRoute(Route route) {
             base.RemoveRoute(route);

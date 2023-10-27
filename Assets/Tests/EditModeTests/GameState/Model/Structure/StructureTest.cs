@@ -612,7 +612,7 @@ public class StructureTest {
             OnDestroyCalled = true;
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             OnBuildCalled = true;
         }
 

@@ -8,7 +8,7 @@ namespace Andja.UI {
         public Image Image;
         public Text Title;
         public GameObject TitleGO;
-        public Transform Content;
+        public RectTransform Content;
         private EventTrigger triggers;
         private bool isActive;
 
@@ -45,6 +45,8 @@ namespace Andja.UI {
 
         public void Add(GameObject go) {
             go.transform.SetParent(Content, false);
+            //Some how the Mine-Structure Content always is bugged out - this is an fix to that
+            LayoutRebuilder.ForceRebuildLayoutImmediate(Content);
         }
 
         internal void Check() {

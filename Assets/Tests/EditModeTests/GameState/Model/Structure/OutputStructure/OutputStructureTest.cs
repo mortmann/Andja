@@ -336,7 +336,7 @@ public class OutputStructureTest {
         public override Structure Clone() {
             return new TestOutputStructure(ID, _outputData);
         }
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
         }
         internal bool? IsOutputChangedCallbackRegistered() {
             return cbOutputChange != null;

@@ -216,6 +216,9 @@ namespace Andja.Pathfinding {
             foreach (Vector2 st in startTiles) {
                 if (job.IsCanceled)
                     return null;
+                if (currentQueue?.Contains(st) == true) {
+                    continue;
+                }
                 Queue<Vector2> temp = Pathfinder.Find(job,
                                             GetGrid(idToGrid, job.Grid[gridIndex]),
                                             st,
@@ -228,9 +231,6 @@ namespace Andja.Pathfinding {
                     if (currentQueue == null || currentQueue.Count == 0) {
                         continue;
                     }
-                    //if (currentQueue.Count == Mathf.CeilToInt(minDist)) {
-                    //    break;
-                    //}
                 }
             }
             return currentQueue;

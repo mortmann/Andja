@@ -59,33 +59,19 @@
             <lower>1</lower>
             <upper>1</upper>
          </resourceRange>
-      </islandSize>         
+      </islandSize>
    </islandSizes>
    <resources>
       <resource ID="ironore">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
          <distributionMap>
-            <entry islandSize="VeryLarge">
-               <range>
-                  <lower>3</lower>
-                  <upper>4</upper>
-               </range>
-            </entry>
             <entry islandSize="Large">
                <range>
                   <lower>2</lower>
                   <upper>3</upper>
-               </range>
-            </entry>
-            <entry islandSize="Small">
-               <range>
-                  <lower>1</lower>
-                  <upper>2</upper>
-               </range>
-            </entry>
-            <entry islandSize="Other">
-               <range>
-                  <lower>1</lower>
-                  <upper>1</upper>
                </range>
             </entry>
             <entry islandSize="VerySmall">
@@ -100,26 +86,96 @@
                   <upper>3</upper>
                </range>
             </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>1</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>3</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>1</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
          </distributionMap>
       </resource>
       <resource ID="stone">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
          <distributionMap>
+            <entry islandSize="Large">
+               <range>
+                  <lower>3</lower>
+                  <upper>6</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>1</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>2</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>1</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
             <entry islandSize="VeryLarge">
                <range>
                   <lower>4</lower>
                   <upper>6</upper>
                </range>
             </entry>
-            <entry islandSize="Large">
-               <range>
-                  <lower>3</lower>
-                  <upper>6</upper>
-               </range>
-            </entry>
             <entry islandSize="Small">
                <range>
                   <lower>1</lower>
                   <upper>3</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="grainsalt">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <climate>
+            <Climate>Middle</Climate>
+            <Climate>Cold</Climate>
+         </climate>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
+         <distributionMap>
+            <entry islandSize="Large">
+               <range>
+                  <lower>1</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>1</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>1</lower>
+                  <upper>2</upper>
                </range>
             </entry>
             <entry islandSize="Other">
@@ -128,33 +184,221 @@
                   <upper>1</upper>
                </range>
             </entry>
-            <entry islandSize="VerySmall">
-               <range>
-                  <lower>1</lower>
-                  <upper>2</upper>
-               </range>
-            </entry>
-            <entry islandSize="Medium">
-               <range>
-                  <lower>2</lower>
-                  <upper>4</upper>
-               </range>
-            </entry>
-         </distributionMap>
-      </resource>
-      <resource ID="grainsalt">
-         <climate>
-            <Climate>Middle</Climate>
-            <Climate>Cold</Climate>
-         </climate>
-         <distributionMap>
             <entry islandSize="VeryLarge">
                <range>
                   <lower>2</lower>
                   <upper>3</upper>
                </range>
             </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>1</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="roughdiamonds">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
+         <distributionMap>
             <entry islandSize="Large">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="clay">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <distributionMap>
+            <entry islandSize="Large">
+               <range>
+                  <lower>1</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>0</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>2</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="marble">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
+         <distributionMap>
+            <entry islandSize="Large">
+               <range>
+                  <lower>1</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>0</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>1</lower>
+                  <upper>5</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="copperore">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
+         <distributionMap>
+            <entry islandSize="Large">
+               <range>
+                  <lower>1</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>0</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>1</lower>
+                  <upper>6</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="quartzsand">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <distributionMap>
+            <entry islandSize="Large">
+               <range>
+                  <lower>1</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>0</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
                <range>
                   <lower>1</lower>
                   <upper>3</upper>
@@ -162,19 +406,71 @@
             </entry>
             <entry islandSize="Small">
                <range>
-                  <lower>1</lower>
+                  <lower>0</lower>
                   <upper>1</upper>
                </range>
             </entry>
-            <entry islandSize="Other">
+         </distributionMap>
+      </resource>
+      <resource ID="goldore">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
+         <distributionMap>
+            <entry islandSize="Large">
                <range>
                   <lower>1</lower>
-                  <upper>1</upper>
+                  <upper>2</upper>
                </range>
             </entry>
             <entry islandSize="VerySmall">
                <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+            <entry islandSize="Medium">
+               <range>
+                  <lower>0</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>0</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>2</lower>
+                  <upper>3</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>0</lower>
+                  <upper>1</upper>
+               </range>
+            </entry>
+         </distributionMap>
+      </resource>
+      <resource ID="coal">
+         <percentageOfIslands>0.2</percentageOfIslands>
+         <requiredTile>
+            <Type>Mountain</Type>
+         </requiredTile>
+         <distributionMap>
+            <entry islandSize="Large">
+               <range>
                   <lower>1</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="VerySmall">
+               <range>
+                  <lower>0</lower>
                   <upper>1</upper>
                </range>
             </entry>
@@ -184,7 +480,41 @@
                   <upper>2</upper>
                </range>
             </entry>
+            <entry islandSize="Other">
+               <range>
+                  <lower>0</lower>
+                  <upper>4</upper>
+               </range>
+            </entry>
+            <entry islandSize="VeryLarge">
+               <range>
+                  <lower>2</lower>
+                  <upper>5</upper>
+               </range>
+            </entry>
+            <entry islandSize="Small">
+               <range>
+                  <lower>0</lower>
+                  <upper>2</upper>
+               </range>
+            </entry>
          </distributionMap>
       </resource>
    </resources>
+   <structures>
+      <structure ID="tree">
+         <requiredTile>
+            <Type>Dirt</Type>
+            <Type>Grass</Type>
+            <Type>Jungle</Type>
+         </requiredTile>
+         <perTileChance>0.01</perTileChance>
+         <cubic2Fractal>1.0045</cubic2Fractal>
+         <valueFractal>0.53</valueFractal>
+         <genType>GroupedNoise</genType>
+         <structureType>Natural</structureType>
+         <islandUnique>false</islandUnique>
+         <worldUnique>false</worldUnique>
+      </structure>
+   </structures>
 </generationInfos>

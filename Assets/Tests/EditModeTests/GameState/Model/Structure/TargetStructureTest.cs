@@ -93,7 +93,7 @@ public class TargetStructureTest {
             throw new NotImplementedException();
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             throw new NotImplementedException();
         }
     }

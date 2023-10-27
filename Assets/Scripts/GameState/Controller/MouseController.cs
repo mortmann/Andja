@@ -3,6 +3,7 @@ using Andja.Model;
 using Andja.Model.Components;
 using Andja.Pathfinding;
 using Andja.UI;
+using Andja.UI.Model;
 using Andja.Utility;
 using System;
 using System.Collections;
@@ -307,46 +308,6 @@ namespace Andja.Controller {
         public void OnGUI() {
             ActiveState.OnGui();
         }
-        /// <summary>
-        /// OnClick on Map. If it hits unit or structure. UIControllers decides then which UI.
-        /// If nothing close UI(s).
-        /// </summary>
-        /// <param name="hit"></param>
-        public void MakeRaycastToCheckWhatTodo() {
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                return;
-            }
-            Transform hit = MouseRayCast();
-            ITargetableHoldingScript targetableHoldingScript = hit?.GetComponent<ITargetableHoldingScript>();
-            if (targetableHoldingScript != null) {
-                if (targetableHoldingScript.IsUnit == false) return;
-                if (GameData.FogOfWarStyle == FogOfWarStyle.Always && targetableHoldingScript.IsCurrentlyVisible == false) {
-                    return;
-                }
-                SelectUnit((Unit)targetableHoldingScript.Holding);
-            }  else
-            if (SelectedUnit == null) {
-                if (GameData.FogOfWarStyle == FogOfWarStyle.Always) {
-                    if (FogOfWar.FogOfWarStructure.IsStructureVisible(hit.gameObject) == false) {
-                        return;
-                    }
-                }
-                Tile t = GetTileUnderneathMouse();
-                if (t.Structure != null && 
-                    (t.Structure.HasHitbox || t.Structure is RoadStructure == false && t.Structure is GrowableStructure == false)) {
-                    UIDebug(t.Structure);
-                    UIController.Instance.OpenStructureUI(t.Structure);
-                    SelectedStructure = t.Structure;
-                } 
-                else {
-                    UIDebug(GetTileUnderneathMouse());
-                    if (MouseState != (MouseState.Unit | MouseState.UnitGroup)) {
-                        UnselectStuff();
-                    }
-                }
-            }
-            
-        }
 
         public void SelectUnit(Unit unit) {
             if (SelectedUnit == unit)
@@ -531,6 +492,7 @@ namespace Andja.Controller {
         internal void ResetBuildCost() {
             NeededItemsToBuild = null;
             NeededBuildCost = 0;
+            IslandInfoUI.Instance.ResetAddons();
         }
 
         [Serializable]

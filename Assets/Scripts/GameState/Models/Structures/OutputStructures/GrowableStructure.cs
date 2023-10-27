@@ -68,7 +68,7 @@ namespace Andja.Model {
             return new GrowableStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             if (Fertility != null && City.HasFertility(Fertility) == false) {
                 LandGrowModifier = 0;
             }

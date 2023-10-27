@@ -82,5 +82,6 @@ namespace Andja.Controller {
         DamageType GetWorldDamageType();
         void LoadFromXML();
         void ReloadLanguage();
+        bool ExistsNeedId(string obj);
     }
 }

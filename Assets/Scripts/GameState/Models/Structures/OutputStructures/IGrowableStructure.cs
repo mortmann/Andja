@@ -9,7 +9,7 @@ namespace Andja.Model {
 
         string GetSpriteName();
         void Harvest();
-        void OnBuild();
+        void OnBuild(bool loading = false);
         void OnUpdate(float deltaTime);
         bool SpecialCheckForBuild(List<Tile> tiles);
     }

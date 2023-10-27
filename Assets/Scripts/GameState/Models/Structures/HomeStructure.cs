@@ -81,7 +81,7 @@ namespace Andja.Model {
             return new HomeStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             NeedStructures = new List<NeedStructure>();
             if (City.IsWilderness() == false) {
                 OnCityChange(this, null, City);

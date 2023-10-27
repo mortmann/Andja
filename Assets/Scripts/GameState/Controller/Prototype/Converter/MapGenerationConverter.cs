@@ -57,7 +57,7 @@ namespace Andja.Controller {
                 "generationInfos/resources/resource",
                 (id, data) => {
                     resourceGenerations.Add(data);
-                    foreach (Climate c in data.climate) {
+                    foreach (Climate c in data.climate ?? Enum.GetValues(typeof(Climate))) {
                         climateToResourceGeneration[c].Add(data);
                     }
                 }, AdditionalResourceRead);
@@ -69,7 +69,7 @@ namespace Andja.Controller {
             IslandSizeConverter.ReadFile(xmlDoc);
             IslandFeatureConverter.ReadFile(xmlDoc);
             spawnStructureConverter.ReadFile(xmlDoc);
-            
+            resourceConverter.ReadFile(xmlDoc);
         }
         private void AdditionalResourceRead(ResourceGenerationInfo generationInfo, XmlNode node) {
             generationInfo.resourceRange = new Dictionary<Size, Range>();

@@ -124,10 +124,6 @@ namespace Andja.Pathfinding {
                             }
                         }
                         Node neighbour = grid.GetNode(current.Pos + new Vector2(x,y));
-                        if (endNodes != null && endNodes.Contains(neighbour)) {
-                            neighbour.parent = current;
-                            return ReconstructPath(grid, neighbour); //we are at any destination node make the path
-                        }
                         if (neighbour == null || neighbour.isClosed) {
                             continue;
                         }

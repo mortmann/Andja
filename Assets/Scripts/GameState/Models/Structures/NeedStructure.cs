@@ -44,7 +44,7 @@ namespace Andja.Model {
             return new NeedStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             foreach (Tile t in RangeTiles) {
                 t.AddNeedStructure(this);
             }

@@ -1,8 +1,10 @@
 ﻿using Andja.Controller;
+using Andja.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Andja.Model {
     public class RoadStructurePrototypeData : StructurePrototypeData {
@@ -52,7 +54,7 @@ namespace Andja.Model {
             return new RoadStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             List<Route> routes = new List<Route>();
             int routeCount = 0;
             foreach (var t in NeighbourTiles.Where(t => t.Structure != null)) {
@@ -78,12 +80,11 @@ namespace Andja.Model {
                     Route = routes[0];
                     break;
                 default: {
-                    routes[0].AddRoadTile(Tiles[0]);
-                    //add all Roads from the others to road 1!
-                    for (int i = 1; i < routes.Count; i++) {
-                        routes[0].AddRoute(routes[i]);
-                        Route = routes[0];
-                    }
+                    Route biggestRoute = routes.MaxBy(m => m.Tiles.Count);
+                    routes.Remove(biggestRoute);
+                    routes.ForEach(biggestRoute.AddRoute);
+                    biggestRoute.AddRoadTile(Tiles[0]);
+                    Route = biggestRoute;
                     break;
                 }
             }

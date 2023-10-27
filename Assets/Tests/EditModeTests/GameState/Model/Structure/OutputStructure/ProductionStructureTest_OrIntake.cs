@@ -70,10 +70,13 @@ public class ProductionStructureTest_OrIntake {
         Assert.IsFalse(Production.HasRequiredInput());
         Production.Intake = new Item[] { ItemProvider.Wood_1 };
         Assert.IsTrue(Production.HasRequiredInput());
+        Production.SetProgress(0.42f);
         Production.ChangeInput(PrototypeData.intake[1]);
         Assert.IsFalse(Production.HasRequiredInput());
         Assert.AreEqual(PrototypeData.intake[1].ID, Production.Intake[0].ID);
+        Assert.AreEqual(Production.Progress, 0);
     }
+
     [Test]
     public void OnUpdate_CanProduce_HasEnoughForOne_First() {
         CreateTwoByThree();
@@ -177,5 +180,8 @@ public class ProductionStructureTest_OrIntake {
             set => workers = value;
         }
 
+        public void SetProgress(float progress) {
+            ProduceTimer = progress;
+        }
     }
 }

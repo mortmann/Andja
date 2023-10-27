@@ -4,6 +4,7 @@ using Andja.Controller;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Andja.Model {
     public class WorkerPrototypeData {
@@ -189,9 +190,12 @@ namespace Andja.Model {
                 if (workTimer <= 0 == false) return;
                 DropOffItems(0);
                 //we have an issue -- done before it is home
-                if(World.Current.GetTileAt(X,Y).Structure != Home)
+                if (World.Current.GetTileAt(X, Y).Structure != Home) {
+                    Vector2 dist = new Vector2(X, Y) - _path.Destination;
                     Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
-                                     " longer Worktime or remove Worker. " + Home + ". Destination " + _path.Destination);
+                                     " longer Worktime or remove Worker. " + Home + ". Destination " + _path.Destination
+                                     + " Distance: " + dist.magnitude);
+                }
                 return;
             }
             if (_goingToWork) {

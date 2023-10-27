@@ -1,4 +1,5 @@
 using Andja.Model;
+using Andja.UI.Model;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -77,7 +78,7 @@ namespace Andja.Controller {
 
         private bool KillUnit(string[] arg) {
             Unit.Destroy(null);
-            return Unit.IsDestroyed;
+            return Unit == null || Unit.IsDestroyed;
         }
         
     }

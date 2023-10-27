@@ -32,6 +32,7 @@ namespace Andja.UI.Model {
             TileSpriteController.Instance.RemoveDecider(TileDeciderFuncs.StructureTileDecider);
             if (currentStructure.StructureRange > 0) {
                 TileSpriteController.Instance.AddDecider(TileDeciderFuncs.StructureTileDecider);
+                TileSpriteController.Instance.AddDecider(BuildController.Instance.TileCityDecider);
             }
             efficiency = progressContent.GetComponentInChildren<Text>();
             progress = progressContent.GetComponentInChildren<Slider>();

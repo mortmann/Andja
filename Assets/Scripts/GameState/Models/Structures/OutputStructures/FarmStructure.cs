@@ -69,7 +69,7 @@ namespace Andja.Model {
             return new FarmStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             workingGrowables = new List<GrowableStructure>();
             foreach (var rangeTile in RangeTiles.Where(rangeTile => Growable != null || rangeTile.Structure == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(rangeTile.Structure.ID))) {
                 OnTileStructureChange(rangeTile.Structure, null);
@@ -180,8 +180,12 @@ namespace Andja.Model {
             if (workers.Count >= MaxNumberOfWorker) {
                 return;
             }
+            Item[] items = GetRequiredItems(workingGrowables[0], Output);
+            if (items == null || items.Length <= 0) {
+                return;
+            }
             Worker ws = new Worker(this, workingGrowables[0], ProduceTime, 
-                                    OutputData.workerID ?? "placeholder", Output, 
+                                    OutputData.workerID ?? "placeholder", items, 
                                     true, ProduceTime * 0.05f);
             workingGrowables.RemoveAt(0);
             World.Current.CreateWorkerGameObject(ws);

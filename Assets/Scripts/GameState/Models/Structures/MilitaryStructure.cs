@@ -58,7 +58,7 @@ namespace Andja.Model {
             return new MilitaryStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             toBuildUnits = new Queue<Unit>();
             toPlaceUnitTiles = new List<Tile>();
             foreach (Tile t in NeighbourTiles) {

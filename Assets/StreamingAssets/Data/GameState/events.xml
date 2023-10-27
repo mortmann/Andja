@@ -21,28 +21,6 @@
       <spreadProbability>0.0</spreadProbability>
       <spreadTileRange>1</spreadTileRange>
    </Effect>
-   <Effect ID="strongunitslow">
-      <Name>
-         <entry lang="Deutsch">Verlangsamung</entry>
-         <entry lang="English">Slowdown</entry>
-      </Name>
-      <Description>
-         <entry lang="Deutsch">Reduziert die Geschwindigkeit von Einheiten.</entry>
-         <entry lang="English">Slows movementspeed of units.</entry>
-      </Description>
-      <unique>false</unique>
-      <nameOfVariable>speed</nameOfVariable>
-      <change>-0.1</change>
-      <targets>
-         <Target>AllUnit</Target>
-      </targets>
-      <addType>Float</addType>
-      <modifierType>Multiplicative</modifierType>
-      <classification>Negative</classification>
-      <canSpread>false</canSpread>
-      <spreadProbability>0.0</spreadProbability>
-      <spreadTileRange>1</spreadTileRange>
-   </Effect>
    <Effect ID="fire">
       <Name>
          <entry lang="Deutsch">Feuer</entry>
@@ -105,28 +83,6 @@
       <spreadProbability>0.0</spreadProbability>
       <spreadTileRange>1</spreadTileRange>
    </Effect>
-   <GameEvent ID="storm">
-      <type>Weather</type>
-      <Name>
-         <entry lang="Deutsch">Sturm</entry>
-         <entry lang="English">Storm</entry>
-      </Name>
-      <Description>
-         <entry lang="Deutsch">Es stürmt :)</entry>
-         <entry lang="English">It storms :)</entry>
-      </Description>
-      <probability>10.0</probability>
-      <minDuration>90.0</minDuration>
-      <maxDuration>400.0</maxDuration>
-      <minRange>150.0</minRange>
-      <maxRange>300.0</maxRange>
-      <effects length="1">
-         <Effect>strongunitslow</Effect>
-      </effects>
-      <cloudCoverage>Full</cloudCoverage>
-      <cloudSpeed>Fast</cloudSpeed>
-      <oceanSpeed>LudicrousSpeed</oceanSpeed>
-   </GameEvent>
    <GameEvent ID="fireoutbreak">
       <Name>
          <entry lang="Deutsch">Feuerausbruch</entry>
@@ -146,8 +102,7 @@
       </effects>
    </GameEvent>
    <GameEvent ID="volcanic_eruption">
-     <type>Disaster</type>
-     <Name>
+      <Name>
          <entry lang="Deutsch">Vulkanausbruch</entry>
          <entry lang="English">Volcanic Eruption</entry>
       </Name>

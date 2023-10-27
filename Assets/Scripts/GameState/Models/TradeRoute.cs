@@ -14,6 +14,8 @@ namespace Andja.Model {
         public const float TRADE_TIME = 1.5f; //TODO: make it a setable value
 
         private int NumberOfStops { get { return Goals.Count; } }
+        private Action<Stop> _cbGoalAdded;
+        private Action<Stop> _cbGoalRemoved;
         [JsonPropertyAttribute] public List<Stop> Goals { get; set; }
         [JsonPropertyAttribute] public string Name = "Temporary";
         /// <summary>
@@ -37,7 +39,7 @@ namespace Andja.Model {
 
         public bool Valid {
             get {
-                return _Trades.Count > 1;
+                return Trades.Count > 1;
             }
         }
         public int TradeCount => _Trades.Count;
@@ -54,6 +56,7 @@ namespace Andja.Model {
             Trade t = new Trade(c);
             Trades.Add(t);
             Goals.Add(t);
+            _cbGoalAdded?.Invoke(t);
         }
 
         public void SetCityTrade(ICity city, List<Item> getting, List<Item> giving) {
@@ -65,6 +68,7 @@ namespace Andja.Model {
 
         internal void RemoveStop(Stop stop) {
             Goals.Remove(stop);
+            _cbGoalRemoved?.Invoke(stop);
         }
 
         public void SetName(string name) {
@@ -93,6 +97,7 @@ namespace Andja.Model {
             }
             Goals.Remove(t);
             Trades.Remove(t);
+            _cbGoalRemoved?.Invoke(t);
         }
 
         public int GetLastNumber() {
@@ -125,7 +130,7 @@ namespace Andja.Model {
             //Go through the Route until it finds a valid target.
             for (int i = 0; i < NumberOfStops; i++) {
                 IncreaseDestination(ship);
-                if (Goals[ship.nextTradeRouteStop].IsValid == false) {
+                if (Goals[ship.nextTradeRouteStop].IsValid) {
                     return Goals[ship.nextTradeRouteStop].Destination;
                 }
             }
@@ -199,6 +204,21 @@ namespace Andja.Model {
             }
         }
 
+        public void RegisterGoalAdded(Action<Stop> onGoalAdded) {
+            _cbGoalAdded += onGoalAdded;
+        }
+
+        public void UnregisterGoalAdded(Action<Stop> onGoalAdded) {
+            _cbGoalAdded -= onGoalAdded;
+        }
+        public void RegisterGoalRemoved(Action<Stop> onGoalAdded) {
+            _cbGoalRemoved += onGoalAdded;
+        }
+
+        public void UnregisterGoalRemoved(Action<Stop> onGoalRemoved) {
+            _cbGoalRemoved -= onGoalRemoved;
+        }
+
         [JsonObject(MemberSerialization.OptIn)]
         public class Stop {
             [JsonPropertyAttribute] private SeriaziableVector2 _position;
@@ -257,23 +277,18 @@ namespace Andja.Model {
             }
 
             public bool RemoveLoadItem(Item item) {
-                if (load.Contains(item))
-                    return false;
-                load.Remove(item);
-                return true;
+                return load.Remove(item);
             }
 
             public bool RemoveUnloadItem(Item item) {
-                if (unload.Contains(item))
-                    return false;
-                unload.Remove(item);
-                return true;
+                return unload.Remove(item);
             }
         }
 
         internal Stop AddStop(Stop addAfter, Vector2 stopPos) {
             Stop stop = new Stop(stopPos);
             Goals.Insert(Goals.IndexOf(addAfter)+1, stop);
+            _cbGoalAdded?.Invoke(stop);
             return stop;
         }
 

@@ -17,15 +17,13 @@ namespace Andja.UI.Model {
         public EventTrigger trigger;
         public Image Highlight;
         public TradeItem tradeItem;
-        public Item Item => itemUI.item;
 
         public void Show(TradeItem tradeItem, int maxStacksize, Action<string, bool> cbButton) {
             itemUI = GetComponentInChildren<ItemUI>();
             onButtonClick += cbButton;
             if (tradeItem != null) {
-                itemUI.SetItem(new Item(tradeItem.ItemId), maxStacksize);
+                itemUI.SetItem(new Item(tradeItem.ItemId, tradeItem.count), maxStacksize);
                 this.tradeItem = tradeItem;
-                ChangeItemCount(maxStacksize / 2);
                 UpdateSellBuy(tradeItem.IsSelling);
             } 
         }
@@ -36,7 +34,7 @@ namespace Andja.UI.Model {
 
         public void Show(int maxStacksize, TradeItem tradeItem) {
             itemUI = GetComponentInChildren<ItemUI>();
-            itemUI.SetItem(new Item(tradeItem.ItemId), maxStacksize);
+            itemUI.SetItem(new Item(tradeItem.ItemId, tradeItem.count), maxStacksize);
             sellButton.interactable = false;
             this.tradeItem = tradeItem;
             UpdateSellBuy(tradeItem.trade == Trade.Sell);
@@ -45,6 +43,7 @@ namespace Andja.UI.Model {
 
         public void ChangeItemCount(int amount) {
             itemUI.ChangeItemCount(amount);
+            tradeItem.count = amount;
         }
 
         public void RefreshItem(Item i) {

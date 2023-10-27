@@ -338,7 +338,7 @@ public class ServiceStructureTest {
         public override Structure Clone() {
             return null;
         }
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
         }
     }
 

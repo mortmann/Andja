@@ -18,9 +18,8 @@ namespace Andja.Controller {
             Reset();
             _singleStructurePreview = null;
             MouseController.Instance.ResetBuildCost();
-            UI.Model.IslandInfoUI.Instance.ResetAddons();
         }
-
+         
         public override void Reset() {
             base.Reset();
             foreach (Tile t in _tileToPreviewGO.Keys) {

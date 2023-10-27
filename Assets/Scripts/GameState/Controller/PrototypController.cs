@@ -573,5 +573,9 @@ namespace Andja.Controller {
         public void AddOnFertilityDependingItem(Item item, Fertility fertility) {
             FertilityPrototypeDatas[fertility.ID].ItemsDependentOnThis.Add(item.ID);
         }
+
+        public bool ExistsNeedId(string id) {
+            return NeedPrototypeDatas.ContainsKey(id);
+        }
     }
 }

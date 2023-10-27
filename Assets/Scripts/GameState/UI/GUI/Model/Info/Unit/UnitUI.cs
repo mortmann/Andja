@@ -95,9 +95,9 @@ namespace Andja.UI.Model {
                         if (unit.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
                             unit.rangeUStructure.City.TradeUnit = unit;
                             ICity city = unit.rangeUStructure.City;
-                            UIController.Instance.OpenCityInventory(
+                            UIController.Instance.OpenOwnedCityInventory(
                                 city, 
-                                item => city.TradeWithShip(city.Inventory.GetAllAndRemoveItem(item), 
+                                item => city.TradeWithShip(item, 
                                                         () => city.PlayerTradeAmount, 
                                                         ship)
                             );

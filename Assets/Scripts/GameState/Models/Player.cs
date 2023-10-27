@@ -205,8 +205,10 @@ namespace Andja.Model {
         }
 
         public void Load() {
-            UnlockedStructureNeeds = IncreaseUnlockedArrayIfNeeded(UnlockedItemNeeds);
+            UnlockedItemNeeds = IncreaseUnlockedArrayIfNeeded(UnlockedItemNeeds);
+            RemoveInvalidNeeds(UnlockedItemNeeds);
             UnlockedStructureNeeds = IncreaseUnlockedArrayIfNeeded(UnlockedStructureNeeds);
+            RemoveInvalidNeeds(UnlockedStructureNeeds);
             for (int i = 0; i <= MaxPopulationLevel; i++) {
                 int maxCount = MaxPopulationCounts[i];
                 foreach (int count in PrototypController.Instance.LevelCountToUnlocks[i].Keys) {
@@ -220,6 +222,10 @@ namespace Andja.Model {
             }
             CalculateBalance();
             AI?.Load(this);
+        }
+
+        private void RemoveInvalidNeeds(HashSet<string>[] unlockedNeeds) {
+            Array.ForEach(unlockedNeeds, needList => needList.RemoveWhere(needId => !PrototypController.Instance.ExistsNeedId(needId)));
         }
 
         private static HashSet<string>[] IncreaseUnlockedArrayIfNeeded(HashSet<string>[] temp) {
@@ -317,7 +323,7 @@ namespace Andja.Model {
         }
 
         public bool HasUnlockedAllNeeds(int level) {
-            return UnlockedItemNeeds[level].Count + UnlockedStructureNeeds[level].Count == PrototypController.Instance.GetNeedCountLevel(level);
+            return UnlockedItemNeeds[level].Count + UnlockedStructureNeeds[level].Count >= PrototypController.Instance.GetNeedCountLevel(level);
         }
 
         public bool HasNeedUnlocked(INeed need) {

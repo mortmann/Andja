@@ -422,6 +422,7 @@ namespace Andja.Model.Generator {
                 climateNeededFertilities[climate] = 0;
                 climateNeededResources[climate] = 0;
             }
+            List<ResourceGenerationInfo> unlimitedResources = PrototypController.Instance.ResourceGenerations.Where(r => r.unlimited).ToList();
             List<IslandData> datas = toPlaceIslands.ToList();
             foreach (IslandData data in datas) {
                 if (data.NeedsFertility) {
@@ -433,9 +434,11 @@ namespace Andja.Model.Generator {
                     for (int i = 0; i < data.ResourcesCount; i++) {
                         List<ResourceGenerationInfo> exclude = new List<ResourceGenerationInfo>(data.resources);
                         exclude.AddRange(data.ExcludedResources);
+                        exclude.AddRange(unlimitedResources);
                         data.AddResources(resourcesRandomListPerClimate[data.Climate].GetRandom(mapThreadRandom, data.resources, toPlaceIslands.Count), mapThreadRandom);
                     }
                 }
+                unlimitedResources.ForEach(unlimited => data.AddUnlimitedResources(unlimited));
             }
 
             foreach (Climate climate in Enum.GetValues(typeof(Climate))) {
@@ -886,6 +889,11 @@ namespace Andja.Model.Generator {
                     return;
                 fertilities.Add(fertilityPrototypeData);
             }
+
+            internal void AddUnlimitedResources(ResourceGenerationInfo unlimited) {
+                resources.Add(unlimited);
+                Resources[unlimited.ID] = 9999;
+            }
         }
     }
     public enum GenerationType { Random, Noise, GroupedNoise };
@@ -927,6 +935,7 @@ namespace Andja.Model.Generator {
         public Dictionary<Size, Range> resourceRange;
         public float percentageOfIslands;
         private int generated;
+        public bool unlimited;
 
         public float GetStartWeight() {
             return percentageOfIslands;

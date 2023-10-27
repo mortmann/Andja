@@ -11,7 +11,6 @@ namespace Andja.UI.Model {
         public Text Number;
         public Toggle toggle;
         public ICity City;
-        private bool ignoreChange;
 
         public void Setup(ICity city) {
             toggle.onValueChanged.AddListener(ToggleCity);
@@ -35,15 +34,11 @@ namespace Andja.UI.Model {
         }
 
         public void ToggleCity(bool isOn) {
-            if (ignoreChange) {
-                ignoreChange = false; // so the setting up doesnt change anything
-                return;
-            }
             int i = TradeRoutePanel.Instance.OnCityToggle(City, toggle.isOn);
             if (i > 0)
-                SelectAs(i, false);
+                SelectAs(i);
             else
-                Unselect(false);
+                Unselect();
         }
 
         public void OnWarehouseDestroy(Structure str, IWarfare destroyer) {
@@ -70,15 +65,13 @@ namespace Andja.UI.Model {
             pos.Scale(scale);
             transform.localPosition = pos;
         }
-        public void SelectAs(int number, bool ignore = true) {
+        public void SelectAs(int number) {
             Number.text = "" + number;
-            ignoreChange = ignore;
             toggle.isOn = true;
         }
 
-        internal void Unselect(bool ignore = true) {
+        internal void Unselect() {
             Number.text = "";
-            ignoreChange = ignore;
             toggle.isOn = false;
         }
 

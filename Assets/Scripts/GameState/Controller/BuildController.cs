@@ -390,7 +390,7 @@ namespace Andja.Controller {
 
             if(loading) {
                 if(BuildIdToStructure.ContainsKey(structure.BuildID)) {
-                    Debug.Log("Build ID duplicate found: " + BuildIdToStructure[structure.BuildID] + " " + structure);
+                    Debug.LogError("Build ID duplicate found: " + BuildIdToStructure[structure.BuildID] + " " + structure);
                     structure.Destroy();
                     return false;
                 }
@@ -400,7 +400,7 @@ namespace Andja.Controller {
                 structure.BuildID = _buildId;
                 _buildId++;
             } else {
-                _buildId = Math.Max(_buildId, structure.BuildID);
+                _buildId = Math.Max(_buildId, structure.BuildID) + 1;
             }
             BuildIdToStructure[structure.BuildID] = structure;
 

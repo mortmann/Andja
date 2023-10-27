@@ -22,7 +22,7 @@
             <entry lang="English">&quot;middle class&quot;</entry>
          </Description>
          <iconSpriteName>citizen</iconSpriteName>
-         <taxPerPerson>1</taxPerPerson>
+         <taxPerPerson>3</taxPerPerson>
       </PopulationLevel>
       <PopulationLevel LEVEL="2">
          <Name>
@@ -34,7 +34,7 @@
             <entry lang="English">Business class.</entry>
          </Description>
          <iconSpriteName>patrician</iconSpriteName>
-         <taxPerPerson>1</taxPerPerson>
+         <taxPerPerson>8</taxPerPerson>
       </PopulationLevel>
       <PopulationLevel LEVEL="3">
          <Name>
@@ -46,7 +46,7 @@
             <entry lang="English">Highest ranking class.</entry>
          </Description>
          <iconSpriteName>nobleman</iconSpriteName>
-         <taxPerPerson>1</taxPerPerson>
+         <taxPerPerson>18</taxPerPerson>
       </PopulationLevel>
    </PopulationLevels>
 </Other>

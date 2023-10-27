@@ -68,39 +68,12 @@
          <structureTyp>Pathfinding</structureTyp>
          <extraUITyp>None</extraUITyp>
          <extraBuildUITyp>None</extraBuildUITyp>
-         <buildingItems length="0"/>
+         <buildingItems length="1">
+            <Item ID="stone">
+               <count>1</count>
+            </Item>
+         </buildingItems>
          <spriteBaseName>stoneroad</spriteBaseName>
-         <movementCost>0.75</movementCost>
-      </road>
-      <road ID="marbelroad">
-         <Name>
-            <entry lang="Deutsch">Marmorstraße</entry>
-            <entry lang="English">Marbelroad</entry>
-         </Name>
-         <Description>
-            <entry lang="Deutsch">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
-            <entry lang="English">Nice to look at and even better to walk on.</entry>
-         </Description>
-         <canBeBuild>true</canBeBuild>
-         <isWalkable>false</isWalkable>
-         <hasHitbox>false</hasHitbox>
-         <maxHealth>50.0</maxHealth>
-         <structureRange>0</structureRange>
-         <populationLevel>1</populationLevel>
-         <populationCount>0</populationCount>
-         <tileWidth>1</tileWidth>
-         <tileHeight>1</tileHeight>
-         <canRotate>true</canRotate>
-         <canBeBuildOver>false</canBeBuildOver>
-         <canTakeDamage>false</canTakeDamage>
-         <canStartBurning>false</canStartBurning>
-         <upkeepCost>0</upkeepCost>
-         <buildCost>0</buildCost>
-         <buildTyp>Path</buildTyp>
-         <structureTyp>Pathfinding</structureTyp>
-         <extraUITyp>None</extraUITyp>
-         <extraBuildUITyp>None</extraBuildUITyp>
-         <spriteBaseName>marbelroad</spriteBaseName>
          <movementCost>0.75</movementCost>
       </road>
       <road ID="brickroad">
@@ -136,10 +109,46 @@
          <extraBuildUITyp>None</extraBuildUITyp>
          <buildingItems length="1">
             <Item ID="brick">
-               <count>2</count>
+               <count>1</count>
             </Item>
          </buildingItems>
          <spriteBaseName>brickroad</spriteBaseName>
+         <movementCost>0.75</movementCost>
+      </road>
+      <road ID="marbelroad">
+         <Name>
+            <entry lang="Deutsch">Marmorstraße</entry>
+            <entry lang="English">Marbelroad</entry>
+         </Name>
+         <Description>
+            <entry lang="Deutsch">Gut zum ansehen und noch besser um darauf zulaufen.</entry>
+            <entry lang="English">Nice to look at and even better to walk on.</entry>
+         </Description>
+         <canBeBuild>true</canBeBuild>
+         <isWalkable>false</isWalkable>
+         <hasHitbox>false</hasHitbox>
+         <maxHealth>50.0</maxHealth>
+         <structureRange>0</structureRange>
+         <populationLevel>3</populationLevel>
+         <populationCount>0</populationCount>
+         <tileWidth>1</tileWidth>
+         <tileHeight>1</tileHeight>
+         <canRotate>true</canRotate>
+         <canBeBuildOver>false</canBeBuildOver>
+         <canTakeDamage>false</canTakeDamage>
+         <canStartBurning>false</canStartBurning>
+         <upkeepCost>0</upkeepCost>
+         <buildCost>0</buildCost>
+         <buildTyp>Path</buildTyp>
+         <structureTyp>Pathfinding</structureTyp>
+         <extraUITyp>None</extraUITyp>
+         <extraBuildUITyp>None</extraBuildUITyp>
+         <buildingItems length="1">
+            <Item ID="marble">
+               <count>1</count>
+            </Item>
+         </buildingItems>
+         <spriteBaseName>marbelroad</spriteBaseName>
          <movementCost>0.75</movementCost>
       </road>
    </roads>
@@ -1524,9 +1533,9 @@
          <buildingItems length="0"/>
          <spriteBaseName>tree</spriteBaseName>
          <climateSpriteModifier>
-            <entry climate="Middle">oak;conifer</entry>
             <entry climate="Warm">palm</entry>
             <entry climate="Cold">conifer</entry>
+            <entry climate="Middle">oak;conifer</entry>
          </climateSpriteModifier>
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
@@ -3798,7 +3807,7 @@
          <isWalkable>false</isWalkable>
          <hasHitbox>true</hasHitbox>
          <maxHealth>75.0</maxHealth>
-         <structureRange>0</structureRange>
+         <structureRange>7</structureRange>
          <populationLevel>1</populationLevel>
          <populationCount>0</populationCount>
          <tileWidth>3</tileWidth>

@@ -28,22 +28,26 @@ namespace Andja.UI {
             if (city == null && this.city == city) {
                 return;
             }
-            city.RegisterCityDestroy(OnCityDestroy);
+            UnregisterOldCity(city);
+            RergisterOnCity(city);
             this.city = city;
             this.onItemPressed = onItemPressed;
             cityname.Set(city.Name, city.SetName);
 
             tradeAmount.Set(city.PlayerTradeAmount, city.SetPlayerTradeAmount, true,
-                ()=>{ return 0; }, () => { return city.Inventory.MaxStackSize; }
+                () => { return 0; }, () => { return city.Inventory.MaxStackSize; }
                 );
-            city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
 
             foreach (Transform child in contentCanvas.transform) {
                 Destroy(child.gameObject);
             }
             itemToGO = new Dictionary<string, ItemUI>();
             List<Item> items = new List<Item>(city.Inventory.BaseItems);
-            items = items.OrderBy(x => x.Data.UnlockLevel).ThenBy(y => y.Data.UnlockPopulationCount).ToList();
+            items = items.OrderBy(x => x.Type)
+                            .ThenBy(x => x.Data.UnlockLevel)
+                            .ThenBy(y => y.Data.UnlockPopulationCount)
+                            .ThenBy(z => z.Name).ToList();
+
             foreach (Item item in items) {
                 GameObject go_i = GameObject.Instantiate(itemPrefab);
                 go_i.name = item.Name + " Item";
@@ -56,6 +60,16 @@ namespace Andja.UI {
                 });
                 go_i.transform.SetParent(contentCanvas.transform, false);
             }
+        }
+
+        private void RergisterOnCity(ICity city) {
+            city.RegisterCityDestroy(OnCityDestroy);
+            city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
+        }
+
+        private void UnregisterOldCity(ICity city) {
+            city?.UnregisterCityDestroy(OnCityDestroy);
+            city?.Inventory.UnregisterOnChangedCallback(OnInventoryChange);
         }
 
         public void OnCityUIToggle() {

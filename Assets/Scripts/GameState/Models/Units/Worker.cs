@@ -311,22 +311,20 @@ namespace Andja.Model {
                 return;
             }
             PlaySound(WorkSound, false);
-            if (ToGetItems == null) {
-                foreach (Item item in WorkOutputStructure.GetOutput()) {
-                    Inventory.AddItem(item);
-                }
-            }
-            if (ToGetItems != null) {
-                foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(ToGetItems)) {
-                    Inventory.AddItem(item);
-                }
-            }
             if (WorkOutputStructure is MarketStructure) {
                 foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(ToGetItems)) {
-                    if (item == null) {
-                        Debug.LogError("item is null for to get item! Worker is from " + Home + " trying to get from " + WorkOutputStructure);
-                    }
                     Inventory.AddItem(item);
+                }
+            } else {
+                if (ToGetItems == null) {
+                    foreach (Item item in WorkOutputStructure.GetOutput()) {
+                        Inventory.AddItem(item);
+                    }
+                }
+                if (ToGetItems != null) {
+                    foreach (Item item in WorkOutputStructure.GetOutputWithItemCountAsMax(ToGetItems)) {
+                        Inventory.AddItem(item);
+                    }
                 }
             }
             WorkOutputStructure.outputClaimed = false;

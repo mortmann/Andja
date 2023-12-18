@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEditor.Graphs.Styles;
+using Color = UnityEngine.Color;
 using Tile = Andja.Model.Tile;
 
 namespace Andja.Controller {
@@ -130,7 +132,7 @@ namespace Andja.Controller {
 
                     GameObject MaskGameobject = new GameObject("IslandCustomMask ");
                     MaskGameobject.transform.parent = _islandToGameObject[i].transform;
-                    MaskGameobject.transform.localPosition = -new Vector3(0, 0);
+                    MaskGameobject.transform.localPosition = new Vector3(0, 0);
                     SpriteMask csm = MaskGameobject.AddComponent<SpriteMask>();
                     csm.isCustomRangeActive = true;
                     csm.sortingLayerName = "DarkLayer";
@@ -141,6 +143,9 @@ namespace Andja.Controller {
                     _islandToCustomMask.Add(i, csm);
                 }
                 World.Current.RegisterTileChanged(OnTileChanged);
+                BuildController.Instance.RegisterCityCreated(OnCityCreated);
+                PlayerController.Instance.cbPlayerChange += OnPlayerChange;
+                OnPlayerChange(null, PlayerController.CurrentPlayer);
 
                 foreach (Island i in World.Current.Islands) {
                     foreach (var c in i.Cities) {
@@ -154,10 +159,6 @@ namespace Andja.Controller {
                 LoadSprites();
                 CreateBaseTiles();
             }
-            BuildController.Instance.RegisterCityCreated(OnCityCreated);
-            //BuildController.Instance.RegisterBuildStateChange (OnBuildStateChance);
-            PlayerController.Instance.cbPlayerChange += OnPlayerChange;
-            OnPlayerChange(null, PlayerController.CurrentPlayer);
         }
 
         private void OnCityCreated(ICity city) {
@@ -175,9 +176,6 @@ namespace Andja.Controller {
                     Texture2D tex = _cityToMaskTexture[city].texture;
                     tex.Apply();
                     _islandToCityMask[island].sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero, 1);
-                    //foreach (var item in city.Tiles) {
-                    //    OnTileChanged(item);
-                    //}
                 } else {
                     _islandToCityMask[island].sprite = null;
                 }
@@ -302,9 +300,7 @@ namespace Andja.Controller {
                 tilemap.size = new Vector3Int(i.Width, i.Height, 0);
 
                 DontDestroyOnLoad(tilemap.gameObject);
-
-                Texture2D masktexture = null;
-                masktexture = new Texture2D(islandWidth, islandHeight, TextureFormat.Alpha8, false, true);
+                Texture2D masktexture = new Texture2D(islandWidth, islandHeight, TextureFormat.Alpha8, false, true);
                 masktexture.SetPixels32(new Color32[(islandWidth) * (islandHeight)]);
                 masktexture.filterMode = FilterMode.Point;
                 foreach (Tile tile_data in i.Tiles) {
@@ -559,10 +555,9 @@ namespace Andja.Controller {
             private bool _apply;
             public void CheckApply() {
                 if (_apply == false) return;
-                texture.Apply();
                 _apply = false;
+                texture.Apply();
             }
-
             internal void SetPixel(int x, int y, Color32 color32) {
                 texture.SetPixel(x, y, color32);
                 _apply = true;

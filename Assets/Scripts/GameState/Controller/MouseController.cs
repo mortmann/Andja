@@ -329,8 +329,7 @@ namespace Andja.Controller {
         }
 
         public void UIDebug(object obj) {
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)
-                        && SaveController.DebugModeSave) {
+            if (Input.GetKey(KeyCode.F3) && SaveController.DebugModeSave) {
                 UIController.Instance.ShowDebugForObject(obj);
             }
         }

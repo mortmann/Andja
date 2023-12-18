@@ -197,7 +197,7 @@ namespace Andja.Model {
 
         public override bool InCityCheck(IEnumerable<Tile> tiles, int playerNumber) {
             return base.InCityCheck(tiles, playerNumber) 
-                   || GetInRangeTiles(tiles.First()).Count(x => x.City?.PlayerNumber == playerNumber) >= Data.structureRange / 5;
+                   || GetInRangeTiles(tiles.First()).Count(x => x?.City?.PlayerNumber == playerNumber) >= Data.structureRange / 5;
         }
 
         public override Item[] GetOutput(Item[] getItems, int[] maxAmounts) {

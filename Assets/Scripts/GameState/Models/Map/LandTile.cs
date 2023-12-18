@@ -103,7 +103,7 @@ namespace Andja.Model {
                         World.Current.OnTileChanged(this);
                         return;
                     }
-                    _city.RemoveTile(this);
+                    _city?.RemoveTile(this);
                     Island.Wilderness.AddTile(this);
                     _city = Island.Wilderness;
                     Island.ChangeGridTile(this, true);

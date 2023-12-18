@@ -310,9 +310,9 @@ namespace Andja.Model {
             }
             Island.AlreadyHighlighted = false;
             Tiles.Add(t);
-            if (IsCurrentPlayerCity()) {
-                World.Current.OnTileChanged(t);
-            }
+            //if (IsCurrentPlayerCity()) {
+            //    World.Current.OnTileChanged(t);
+            //}
             _cbTileAdded?.Invoke(this, t);
         }
 

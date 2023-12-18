@@ -41,6 +41,8 @@ namespace Andja.UI.Model {
             if (unit == showUnit) {
                 return;
             }
+            unit?.UnregisterOnDestroyCallback(OnUnitDestroy);
+            unit?.Inventory?.UnregisterOnChangedCallback(OnInvChange);
             unit = showUnit;
             if (unit == null)
                 return;

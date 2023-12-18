@@ -1870,7 +1870,7 @@ PrefabInstance:
     - target: {fileID: 8624619892147010575, guid: dfbb72e7b75263b4da3c1b05eaa385c6,
         type: 3}
       propertyPath: editorloadsavegame
-      value: Test 10
+      value: Test 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11473390, guid: dfbb72e7b75263b4da3c1b05eaa385c6, type: 3}

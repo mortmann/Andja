@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Andja.Pathfinding;
 using UnityEngine;
+using Andja.UI.Model;
 
 namespace Andja.Model {
 
@@ -173,11 +174,10 @@ namespace Andja.Model {
             if (WorkerJobsToDo.ContainsKey(os)) {
                 WorkerJobsToDo.Remove(os);
             }
-
             if (os.outputClaimed) return;
-            var items = os.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID)).ToArray();
-            if(items.Length > 0)
-                WorkerJobsToDo.Add(os, items);
+            Item[] items = os.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID && x.count > 0)).ToArray();
+            if (items.Length == 0) return;
+            WorkerJobsToDo.Add(os, items);
         }
 
         public bool AddToIntake(Inventory toAdd) {
@@ -194,11 +194,13 @@ namespace Andja.Model {
         public override Item[] GetRequiredItems(OutputStructure str, Item[] items) {
             List<Item> all = new List<Item>();
             for (int i = 0; i < Intake.Length; i++) {
-                Item item = Array.Find(items, x => x.ID == Intake[i].ID)?.Clone();
-                if (item == null) continue;
+                Item output = Array.Find(items, x => x.ID == Intake[i].ID);
+                if (output == null) continue;
+                Item item = output.Clone();
                 item.count = GetMaxIntakeForIndex(i) - Intake[i].count;
                 item.count -= workers?.Where(z => z.ToGetItems != null)
                     .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0) ?? 0;
+                item.count = Mathf.Min(item.count, output.count);
                 all.Add(item);
             }
             return all.Where(x=>x.count > 0).ToArray();
@@ -267,9 +269,10 @@ namespace Andja.Model {
                 FindNearestMarketStructure(str.BuildTile);
                 return;
             }
-            Item[] items = GetRequiredItems(outputStructure, outputStructure.Output);
+            Item[] items = outputStructure.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID)).ToArray();
             if (items.Length == 0) return;
             outputStructure.RegisterOutputChanged(OnOutputChangedStructure);
+            OnOutputChangedStructure(outputStructure);
             RegisteredStructures.Add(outputStructure, items);
         }
 

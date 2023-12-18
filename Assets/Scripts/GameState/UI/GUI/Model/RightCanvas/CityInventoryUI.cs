@@ -28,7 +28,7 @@ namespace Andja.UI {
             if (city == null && this.city == city) {
                 return;
             }
-            UnregisterOldCity(city);
+            UnregisterOldCity(this.city);
             RergisterOnCity(city);
             this.city = city;
             this.onItemPressed = onItemPressed;

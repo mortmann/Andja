@@ -32,8 +32,8 @@ namespace Andja.Controller {
     }
     [Serializable]
     public class LinkedSaves : BaseSaveData {
-        public PlayerControllerSave player;
         public WorldSaveState world;
+        public PlayerControllerSave player;
         public GameEventSave events;
         public UIControllerSave ui;
 

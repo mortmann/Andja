@@ -97,14 +97,14 @@ namespace Andja.Model {
 
         public bool IsAlive => isAtHome == false;
 
-        public Worker(Structure home, OutputStructure structure, float workTime, string workerID, Item[] toGetItems = null,
+        public Worker(Structure home, OutputStructure workStructure, float workTime, string workerID, Item[] toGetItems = null,
                         bool walkTimeIsWorkTime = false, float workAtHomeTime = 0f) {
             Home = home;
-            WorkOutputStructure = structure;
+            WorkOutputStructure = workStructure;
             _walkTimeIsWorkTime = walkTimeIsWorkTime;
             _workAtHomeTime = workAtHomeTime;
-            if (structure is MarketStructure == false) {
-                structure.outputClaimed = true;
+            if (workStructure is MarketStructure == false) {
+                workStructure.ClaimOutput();
             }
             isAtHome = false;
             _goingToWork = true;
@@ -112,7 +112,7 @@ namespace Andja.Model {
             workTimer = workTime;
             ID = workerID ?? "placeholder";
             ToGetItems = toGetItems;
-            SetGoalStructure(structure);
+            SetGoalStructure(workStructure);
             Setup();
         }
 
@@ -248,6 +248,9 @@ namespace Andja.Model {
                 return;
             }
             _isDone = false;
+            if(_goingToWork) {
+                WorkOutputStructure?.ResetOutputClaimed();
+            }
             _goingToWork = false;
             WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
             //WorkStructure = null;
@@ -327,13 +330,14 @@ namespace Andja.Model {
                     }
                 }
             }
-            WorkOutputStructure.outputClaimed = false;
             _isDone = true;
         }
 
         internal void Load(Structure parent) {
             Home = parent;
-            if (_goingToWork == false) {
+            if (_goingToWork) {
+                WorkOutputStructure?.ClaimOutput();
+            } else {
                 WorkStructure = Home;
             }
             if (WorkStructure == null || WorkStructure.IsDestroyed) {

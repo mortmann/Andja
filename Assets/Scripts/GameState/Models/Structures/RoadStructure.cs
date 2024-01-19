@@ -165,7 +165,7 @@ namespace Andja.Model {
         public override string ToString() {
             if (BuildTile == null)
                 return base.ToString();
-            return Name + " " + Route;
+            return base.ToString() + " " + Route;
         }
     }
 }

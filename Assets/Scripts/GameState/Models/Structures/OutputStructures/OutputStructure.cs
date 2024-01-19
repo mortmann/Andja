@@ -52,7 +52,7 @@ namespace Andja.Model {
             _workerPrototypeData ??= _workerPrototypeData ?? PrototypController.Instance.GetWorkerPrototypDataForID(OutputData.workerID ?? "placeholder");
 
         public Dictionary<OutputStructure, Item[]> WorkerJobsToDo;
-        public bool outputClaimed;
+        public bool OutputClaimed { get; protected set; }
         protected Action<Structure> cbOutputChange;
         public float ContactRange => OutputData.contactRange; 
         public bool ForMarketplace => OutputData.forMarketplace; 
@@ -113,7 +113,7 @@ namespace Andja.Model {
                 if (workers.Count >= MaxNumberOfWorker) {
                     break;
                 }
-                if (jobStr.outputClaimed) {
+                if (jobStr.OutputClaimed) {
                     continue;
                 }
                 Item[] items = GetRequiredItems(jobStr, WorkerJobsToDo[jobStr]);
@@ -147,6 +147,7 @@ namespace Andja.Model {
                 item.count = MaxOutputStorage - Output[i].count;
                 item.count -= workers.Where(z => z.ToGetItems != null)
                                      .Sum(x => Array.Find(x.ToGetItems, y => items[i].ID == y.ID)?.count ?? 0);
+                item.count = Mathf.Min(item.count, str.MaxOutputStorage);
                 all.Add(item);
             }
             return all.Where(x => x.count > 0).ToArray();
@@ -170,6 +171,7 @@ namespace Andja.Model {
                 Item item = inv.GetAllAndRemoveItem(outputItem);
                 outputItem.count = Mathf.Clamp(outputItem.count + item.count, 0, MaxOutputStorage);
             }
+            CallOutputChangedCb();
         }
 
         public Item[] GetOutput() {
@@ -224,12 +226,17 @@ namespace Andja.Model {
             cbOutputChange -= callbackfunc;
         }
 
-        public void ResetOutputClaimed() {
-            this.outputClaimed = false;
+        public virtual void ClaimOutput() {
+            OutputClaimed = true;
+        }
+
+        public virtual void ResetOutputClaimed() {
+            this.OutputClaimed = false;
             if (Output.Any(item => item.count > 0)) {
                 cbOutputChange?.Invoke(this);
             }
         }
+
         public override void ToggleActive() {
             base.ToggleActive();
             if (isActive) {
@@ -258,5 +265,7 @@ namespace Andja.Model {
             }
             _output = _output?.ReplaceKeepCounts(OutputData.output);
         }
+
+        
     }
 }

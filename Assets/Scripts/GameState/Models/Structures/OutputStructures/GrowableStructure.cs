@@ -41,7 +41,7 @@ namespace Andja.Model {
         public GrowablePrototypeData GrowableData =>
                 _growableData ??= (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
-        protected float TimePerStage => (ProduceTime / (float)AgeStages + 1);
+        protected float TimePerStage => (ProduceTime / (float)AgeStages);
         protected const float GrowTickTime = 1f;
         /// <summary>
         /// Is true when it is in range of a farm that requires it to function
@@ -86,7 +86,7 @@ namespace Andja.Model {
                 return;
             }
             _age += Efficiency * LandGrowModifier * (deltaTime);
-            if ((_age > currentStage * TimePerStage) == false) return;
+            if ((_age > (currentStage + 1) * TimePerStage) == false) return;
             currentStage = Mathf.Clamp(currentStage + 1, 0, AgeStages);
             if (currentStage >= AgeStages) {
                 Produce();
@@ -111,9 +111,9 @@ namespace Andja.Model {
             Output[0].count = 0;
             currentStage = 0;
             _age = 0f;
-            CallbackChangeIfNotNull();
             hasProduced = false;
             cbStructureSound?.Invoke(this, GrowableData.harvestSound, true);
+            CallbackChangeIfNotNull();
         }
 
         #region override

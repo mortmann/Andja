@@ -174,7 +174,6 @@ namespace Andja.Model {
             if (WorkerJobsToDo.ContainsKey(os)) {
                 WorkerJobsToDo.Remove(os);
             }
-            if (os.outputClaimed) return;
             Item[] items = os.Output.Where(x => Array.Exists(Intake, y => x.ID == y.ID && x.count > 0)).ToArray();
             if (items.Length == 0) return;
             WorkerJobsToDo.Add(os, items);

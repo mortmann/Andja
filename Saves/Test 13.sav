@@ -52500,7 +52500,7 @@
                         {
                           "$id": "6292",
                           "ID": "potatoes",
-                          "count": 5
+                          "count": 1
                         }
                       ],
                       "_goingToWork": true,
@@ -52586,7 +52586,7 @@
                         {
                           "$id": "6302",
                           "ID": "potatoes",
-                          "count": 5
+                          "count": 1
                         }
                       ],
                       "_goingToWork": true,
@@ -56443,7 +56443,7 @@
                         {
                           "$id": "6833",
                           "ID": "wheat",
-                          "count": 4
+                          "count": 1
                         }
                       ],
                       "_goingToWork": true,

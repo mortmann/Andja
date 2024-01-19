@@ -118,7 +118,7 @@ namespace Andja.Model {
 
             //get the roads around the structure
             if (outputStructure.GetRoutes().Any(item => Routes.Contains(item))) {
-                if (outputStructure.outputClaimed == false) {
+                if (outputStructure.OutputClaimed == false) {
                     WorkerJobsToDo.Add(outputStructure, null);
                 }
                 if (OutputMarkedStructures.Contains(outputStructure)) {
@@ -143,7 +143,10 @@ namespace Andja.Model {
                 OnOutputChangedStructure(markedStructures);
             }
         }
-
+        public override void ClaimOutput() {
+        }
+        public override void ResetOutputClaimed() {
+        }
         protected override void OnRouteChange(Route o, Route n) {
             base.OnRouteChange(o, n);
             o.RemoveMarketStructure(this);

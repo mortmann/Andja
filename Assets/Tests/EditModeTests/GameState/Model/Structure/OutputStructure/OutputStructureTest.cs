@@ -153,9 +153,10 @@ public class OutputStructureTest {
     [Test]
     public void ResetOutputClaimed() {
         OutputTestStructure.Output = PrototypeData.output.CloneArrayWithCounts();
-        OutputTestStructure.outputClaimed = true;
+        OutputTestStructure.ClaimOutput();
+        Assert.IsTrue(OutputTestStructure.OutputClaimed);
         OutputTestStructure.ResetOutputClaimed();
-        Assert.IsFalse(OutputTestStructure.outputClaimed);
+        Assert.IsFalse(OutputTestStructure.OutputClaimed);
     }
     [Test]
     public void ToggleActive_Off() {

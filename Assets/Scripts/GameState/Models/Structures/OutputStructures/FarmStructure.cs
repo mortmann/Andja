@@ -35,7 +35,7 @@ namespace Andja.Model {
 
         //TODO: this has to be checked against other working this? (especially for no growables)
         public int WorkingTilesCount;
-        protected List<GrowableStructure> workingGrowables;
+        protected List<GrowableStructure> readyToHarvestGrowable;
         public override float Progress => CalculateProgress();
         public float FulfillmentPercentage => FarmData.fulfillmentPercentage;
         public override float TotalProgress => ProduceTime * NeededHarvestForProduce;
@@ -62,7 +62,7 @@ namespace Andja.Model {
         /// DO NOT USE
         /// </summary>
         public FarmStructure() {
-            workingGrowables = new List<GrowableStructure>();
+            readyToHarvestGrowable = new List<GrowableStructure>();
         }
 
         public override Structure Clone() {
@@ -70,8 +70,9 @@ namespace Andja.Model {
         }
 
         public override void OnBuild(bool loading = false) {
-            workingGrowables = new List<GrowableStructure>();
-            foreach (var rangeTile in RangeTiles.Where(rangeTile => Growable != null || rangeTile.Structure == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(rangeTile.Structure.ID))) {
+            readyToHarvestGrowable = new List<GrowableStructure>();
+            foreach (var rangeTile in RangeTiles.Where(rangeTile => Growable != null || rangeTile.Structure == null 
+                                            || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(rangeTile.Structure.ID))) {
                 OnTileStructureChange(rangeTile.Structure, null);
             }
             foreach (Tile rangeTile in RangeTiles) {
@@ -109,14 +110,14 @@ namespace Andja.Model {
 
         public void DoWorkWithGrowableNoWorker(float deltaTime) {
             if (MaxNumberOfWorker != 0) return;
-            if (workingGrowables.Count == 0)
+            if (readyToHarvestGrowable.Count == 0)
                 return;
             ProduceTimer += deltaTime * Efficiency;
             if ((ProduceTimer >= ProduceTime) == false) return;
             ProduceTimer = 0;
             AddHarvastable();
-            workingGrowables[0].Harvest();
-            workingGrowables.RemoveAt(0);
+            readyToHarvestGrowable[0].Harvest();
+            readyToHarvestGrowable.RemoveAt(0);
         }
 
         public void AddHarvastable() {
@@ -130,12 +131,12 @@ namespace Andja.Model {
                     return;
                 }
                 if (grow.hasProduced == false) {
-                    if (workingGrowables.Contains(grow)) {
-                        workingGrowables.Remove(grow);
+                    if (readyToHarvestGrowable.Contains(grow)) {
+                        readyToHarvestGrowable.Remove(grow);
                     }
                     return;
                 }
-                workingGrowables.Add(grow);
+                readyToHarvestGrowable.Add(grow);
             }
             else {
                 str.UnregisterOnChangedCallback(OnGrowableChanged);
@@ -174,20 +175,24 @@ namespace Andja.Model {
         }
         
         protected override void SendOutWorkerIfCan(float workTime = 1) {
-            if (workingGrowables.Count == 0) {
-                return;
-            }
             if (workers.Count >= MaxNumberOfWorker) {
                 return;
             }
-            Item[] items = GetRequiredItems(workingGrowables[0], Output);
+            if (readyToHarvestGrowable.Count == 0) {
+                return;
+            }
+            GrowableStructure workStructure = readyToHarvestGrowable.FirstOrDefault(g => g.OutputClaimed == false);
+            if (workStructure == null) {
+                return;
+            }
+            Item[] items = GetRequiredItems(workStructure, Output);
             if (items == null || items.Length <= 0) {
                 return;
             }
-            Worker ws = new Worker(this, workingGrowables[0], ProduceTime, 
-                                    OutputData.workerID ?? "placeholder", items, 
+            readyToHarvestGrowable.Remove(workStructure);
+            Worker ws = new Worker(this, workStructure, ProduceTime,
+                                    OutputData.workerID ?? "placeholder", items,
                                     true, ProduceTime * 0.05f);
-            workingGrowables.RemoveAt(0);
             World.Current.CreateWorkerGameObject(ws);
             workers.Add(ws);
         }

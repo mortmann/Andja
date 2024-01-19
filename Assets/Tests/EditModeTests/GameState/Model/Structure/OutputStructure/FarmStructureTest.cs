@@ -351,8 +351,8 @@ public class FarmStructureTest {
         }
 
         public List<GrowableStructure> WorkingGrowables {
-            get => workingGrowables;
-            set => workingGrowables = value;
+            get => readyToHarvestGrowable;
+            set => readyToHarvestGrowable = value;
         }
         public void TestTrySendOutWorker() {
             Workers ??= new List<Worker>();

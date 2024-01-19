@@ -863,7 +863,7 @@ namespace Andja.Model {
             if (BuildTile == null) {
                 return Name + "@error";
             }
-            return Name + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y;
+            return Name + "@ X=" + BuildTile.X + " Y=" + BuildTile.Y + ": " + BuildID;
         }
 
         public virtual void AddRoadStructure(RoadStructure roadStructure) {

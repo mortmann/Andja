@@ -560,8 +560,8 @@
          <spriteBaseName>charcoalburnershut</spriteBaseName>
          <contactRange>0.0</contactRange>
          <forMarketplace>true</forMarketplace>
-         <maxNumberOfWorker>1</maxNumberOfWorker>
-         <produceTime>40.0</produceTime>
+         <maxNumberOfWorker>3</maxNumberOfWorker>
+         <produceTime>36.0</produceTime>
          <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
@@ -1533,9 +1533,9 @@
          <buildingItems length="0"/>
          <spriteBaseName>tree</spriteBaseName>
          <climateSpriteModifier>
-            <entry climate="Middle">oak;conifer</entry>
-            <entry climate="Warm">palm</entry>
             <entry climate="Cold">conifer</entry>
+            <entry climate="Warm">palm</entry>
+            <entry climate="Middle">oak;conifer</entry>
          </climateSpriteModifier>
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
@@ -1759,7 +1759,7 @@
          <contactRange>0.0</contactRange>
          <forMarketplace>false</forMarketplace>
          <maxNumberOfWorker>0</maxNumberOfWorker>
-         <produceTime>45.0</produceTime>
+         <produceTime>300.0</produceTime>
          <maxOutputStorage>1</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">

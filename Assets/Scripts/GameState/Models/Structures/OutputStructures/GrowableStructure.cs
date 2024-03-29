@@ -46,8 +46,8 @@ namespace Andja.Model {
         /// <summary>
         /// Is true when it is in range of a farm that requires it to function
         /// </summary>
-        public bool IsBeingWorked => _beingWorkedBy > 0;
-        private byte _beingWorkedBy;
+        public bool IsBeingWorked => BeingWorkedBy > 0;
+        public byte BeingWorkedBy { get; protected set; }
         #endregion RuntimeOrOther
 
         public GrowableStructure(string id, GrowablePrototypeData _growableData) {
@@ -139,15 +139,15 @@ namespace Andja.Model {
         /// </summary>
         /// <param name="worked"></param>
         public void SetBeingWorked(bool worked) {
-            if (_beingWorkedBy == byte.MaxValue) {
+            if (BeingWorkedBy == byte.MaxValue) {
                 Debug.LogError("Too many farms are working the same growable! This should never happen ...");
                 return;
             }
             if (worked) {
-                _beingWorkedBy++;
+                BeingWorkedBy++;
             }
             else {
-                _beingWorkedBy--;
+                BeingWorkedBy--;
             }
         }
 

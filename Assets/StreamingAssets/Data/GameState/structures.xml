@@ -2478,6 +2478,10 @@
                <count>1</count>
             </Item>
          </output>
+      <buildTileTypes length="2">
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+         </buildTileTypes>
       </mine>
       <mine ID="saltmine">
          <Name>
@@ -2523,13 +2527,17 @@
          <forMarketplace>true</forMarketplace>
          <maxNumberOfWorker>1</maxNumberOfWorker>
          <produceTime>70.0</produceTime>
-         <maxOutputStorage>0</maxOutputStorage>
+         <maxOutputStorage>5</maxOutputStorage>
          <efficiency>1.0</efficiency>
          <output length="1">
             <Item ID="grainsalt">
                <count>1</count>
             </Item>
          </output>
+      <buildTileTypes length="2">
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+            <tileType length="3">BuildLand, Mountain, Mountain</tileType>
+         </buildTileTypes>
       </mine>
       <mine ID="coppermine">
          <Name>

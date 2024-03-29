@@ -47,7 +47,14 @@ namespace Andja.Model {
 
         #endregion RuntimeOrOther
 
-        public override float EfficiencyPercent => Mathf.Round(((float)WorkingTilesCount / (float)RangeTiles.Count) * 1000) / 10f;
+        public override float EfficiencyPercent => Mathf.Round((GetFullWorkedTiles() / (float)RangeTiles.Count) * 1000) / 10f;
+
+        private float GetFullWorkedTiles() {
+            if (Growable == null) return WorkingTilesCount;
+            return RangeTiles.Where(t => Growable.ID.Equals(t.Structure?.ID))
+                .Select(t => t.Structure as GrowableStructure)
+                .Select(g => 1f / g.BeingWorkedBy).Sum();
+        }
 
         public FarmStructure(string id, FarmPrototypeData fpd) {
             _farmData = fpd;
@@ -71,7 +78,7 @@ namespace Andja.Model {
 
         public override void OnBuild(bool loading = false) {
             readyToHarvestGrowable = new List<GrowableStructure>();
-            foreach (var rangeTile in RangeTiles.Where(rangeTile => Growable != null || rangeTile.Structure == null 
+            foreach (var rangeTile in RangeTiles.Where(rangeTile => Growable != null || rangeTile.Structure == null
                                             || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(rangeTile.Structure.ID))) {
                 OnTileStructureChange(rangeTile.Structure, null);
             }
@@ -147,10 +154,11 @@ namespace Andja.Model {
         /// </summary>
         /// <param name="obj"></param>
         public void OnTileStructureChange(Structure now, Structure old) {
-            if(Growable == null) {
+            if (Growable == null) {
                 if (now == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID)) {
                     WorkingTilesCount++;
-                } else
+                }
+                else
                 if (old == null && PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID) == false) {
                     WorkingTilesCount--;
                 }
@@ -173,7 +181,7 @@ namespace Andja.Model {
                 OnGrowableChanged(g);
             }
         }
-        
+
         protected override void SendOutWorkerIfCan(float workTime = 1) {
             if (workers.Count >= MaxNumberOfWorker) {
                 return;
@@ -210,7 +218,7 @@ namespace Andja.Model {
                               .Take(NeededHarvestForProduce)
                               .Sum(x => ProduceTime - x.WorkTimer);
             }
-            return (workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer) 
+            return (workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer)
                         + currentlyHarvested * ProduceTime;
         }
 
@@ -222,7 +230,7 @@ namespace Andja.Model {
                 item.Destroy();
             }
             foreach (Tile tile in RangeTiles) {
-                if(tile.Structure is GrowableStructure g && g.ID == Growable.ID) {
+                if (tile.Structure is GrowableStructure g && g.ID == Growable.ID) {
                     g.SetBeingWorked(false);
                 }
             }

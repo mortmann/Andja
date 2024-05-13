@@ -193,13 +193,15 @@ namespace Andja.Model {
             if (workStructure == null) {
                 return;
             }
-            Item[] items = GetRequiredItems(workStructure, Output);
-            if (items == null || items.Length <= 0) {
+            if (Output[0].count == MaxOutputStorage) {
+                return;
+            }
+            if(NeededHarvestForProduce == currentlyHarvested + workers.Count) {
                 return;
             }
             readyToHarvestGrowable.Remove(workStructure);
             Worker ws = new Worker(this, workStructure, ProduceTime,
-                                    OutputData.workerID ?? "placeholder", items,
+                                    OutputData.workerID ?? "placeholder", workStructure.Output,
                                     true, ProduceTime * 0.05f);
             World.Current.CreateWorkerGameObject(ws);
             workers.Add(ws);
@@ -211,15 +213,15 @@ namespace Andja.Model {
             if (MaxNumberOfWorker == 0 || Growable == null) {
                 return ProduceTimer + currentlyHarvested * ProduceTime;
             }
-            if (MaxNumberOfWorker > NeededHarvestForProduce) {
+            if (MaxNumberOfWorker > NeededHarvestForProduce - currentlyHarvested) {
                 return currentlyHarvested * ProduceTime
                      + workers.Where(x => x.IsWorking())
                               .OrderBy(x => x.WorkTimer)
-                              .Take(NeededHarvestForProduce)
+                              .Take(NeededHarvestForProduce - currentlyHarvested)
                               .Sum(x => ProduceTime - x.WorkTimer);
             }
-            return (workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer)
-                        + currentlyHarvested * ProduceTime;
+            return currentlyHarvested * ProduceTime
+                     + (workers.FindAll(x => x.IsWorking())).Sum(x => ProduceTime - x.WorkTimer);
         }
 
         public override void OnDestroy() {

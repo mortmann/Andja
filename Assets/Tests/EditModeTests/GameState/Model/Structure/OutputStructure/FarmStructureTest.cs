@@ -260,11 +260,9 @@ public class FarmStructureTest {
         farmPrototypeData.maxNumberOfWorker = 2;
         farm.Workers = new List<Worker>();
         farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 1.5f, null));
-        farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.First()), 0.5f, null));
-        Assert.AreEqual(1.5f + 2.5f, farm.Progress);
+        Assert.AreEqual(1.5f, farm.Progress);
         farm.AddHarvastable();
-        Assert.AreEqual(1.5f + 2.5f + farm.ProduceTime, farm.Progress);
-
+        Assert.AreEqual(1.5f + farm.ProduceTime, farm.Progress);
     }
     [Test]
     public void CalculateProgress_MoreWorkerThanNeededHarvestForProduce() {
@@ -280,7 +278,7 @@ public class FarmStructureTest {
         farm.Workers.Add(new Worker(farm, GetGrowable(farm.RangeTiles.ToList()[2]), 0.5f, null));
         Assert.AreEqual(2.5f + 2.5f, farm.Progress);
         farm.AddHarvastable();
-        Assert.AreEqual(2.5f + 2.5f + farm.ProduceTime, farm.Progress);
+        Assert.AreEqual(2.5f + farm.ProduceTime, farm.Progress);
 
     }
 

@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Andja.Pathfinding {
 
     public class OceanPathfinding : BasePathfinding {
-        private Tile start;
 
         public OceanPathfinding() : base() {
             if (_x < 0)
@@ -36,7 +35,6 @@ namespace Andja.Pathfinding {
         public override void SetDestination(float x, float y) {
             dest_X = x;
             dest_Y = y;
-            this.start = World.Current.GetTileAt(X, Y);
             this.DestTile = World.Current.GetTileAt(x, y);
             AddPathJob();
         }

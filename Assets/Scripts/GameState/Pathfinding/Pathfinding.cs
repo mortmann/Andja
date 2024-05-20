@@ -56,6 +56,7 @@ namespace Andja.Pathfinding {
             }
         }
         public Action<bool> cbIsAtDestination;
+        public Action cbPathCalcDone;
         public Vector2 Destination => new Vector2(dest_X, dest_Y);
         public Vector2 Start => new Vector2(start_X, start_Y);
         public Vector3 Position => new Vector3(X, Y);
@@ -143,6 +144,7 @@ namespace Andja.Pathfinding {
         public TurningType TurnType => agent.TurnType;
         public PathDestination PathDestinationType => agent.PathDestination;
         public PathingMode PathingMode => agent.PathingMode;
+        public float WalkTime { private set; get; }
 
         #endregion RuntimeOrPrototyp
 
@@ -152,10 +154,6 @@ namespace Andja.Pathfinding {
         public virtual void Update_DoMovement(float deltaTime) {
             //for loading purpose or any other strange reason
             //we have a destination & are not there atm && we have no path then calculate it!
-            //if (DestTile != null && DestTile != CurrTile && IsAtDestination == false
-            //    && NextDestination != Destination && worldPath == null && IsDoneCalculating != false) {
-            //    SetDestination(dest_X, dest_Y);
-            //}
             if(IsAtDestination == false && IsSearching == false && IsDoneCalculating == false) {
                 SetDestination(dest_X, dest_Y);
             }
@@ -164,9 +162,11 @@ namespace Andja.Pathfinding {
             }
             if (IsDoneCalculating == false)
                 return;
-            if(worldPath == null) {
+            if (worldPath == null) {
                 Job.OnFinished?.Invoke();
                 worldPath = Job.Path;
+                WalkTime = Job.Time;
+                cbPathCalcDone?.Invoke();
             }
 
             if (IsAtDestination) {
@@ -271,7 +271,6 @@ namespace Andja.Pathfinding {
             }
 
             rotationDirection = new Vector3(NextDestination.Value.x, NextDestination.Value.y);
-
             Vector3 dest = NextDestination.Value;
             Vector3 newPos = Vector3.MoveTowards(Position, dest, Speed * deltaTime);
             Vector3 move = newPos - Position;

@@ -89,7 +89,10 @@ namespace Andja.Pathfinding {
         internal void SetTemporaryWalkableNode(Vector2 pos) {
             Node n = GetNodeFromWorldCoord(pos);
             if (n == null) {
-                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 0, 0, -1);
+                int x = Mathf.FloorToInt(pos.x - startX);
+                int y = Mathf.FloorToInt(pos.y - startY);
+                Tile tile = World.Current.GetTileAt(x, y);
+                n = new Node(x, y, tile.BaseMovementCost, tile.BaseMovementCost, -1);
                 Values[n.x, n.y] = n;
                 temporaryNodes.Add(n);
             }

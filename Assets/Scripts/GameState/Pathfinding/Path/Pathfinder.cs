@@ -11,7 +11,7 @@ namespace Andja.Pathfinding {
         public const float NORMAL_COST = 1;
         private static bool[][] worldTilemap;
 
-        public static Queue<Vector2> Find(PathJob job, PathGrid grid, 
+        public static Result Find(PathJob job, PathGrid grid, 
                                             Vector2? startPos, Vector2? endPos, 
                                             List<Vector2> startsPos = null, List<Vector2> endsPos = null) {
             if(grid == null) {
@@ -180,19 +180,19 @@ namespace Andja.Pathfinding {
             return null;
         }
 
-        public static Queue<Vector2> FindOceanPath(PathJob job, IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
+        public static Result FindOceanPath(PathJob job, IPathfindAgent agent, WorldGraph graph, Vector2 startPos, Vector2 endPos) {
             if (World.Current != null) {
                 worldTilemap = World.Current.TilesMap;
             }
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
             if (Utility.Util.CheckLine(worldTilemap, startPos, endPos)) {
-                return new Queue<Vector2>(new []{ endPos });
+                return new Result(new Queue<Vector2>(new []{ endPos }), Vector2.Distance(startPos, endPos));
             }
             Queue<Vector2> worldPoints = FindWorldPath(job, agent, graph, startPos, endPos);
             
             if (worldPoints == null)
-                return new Queue<Vector2>();
+                return new Result(new Queue<Vector2>(), 0);
             worldPoints = new Queue<Vector2>(worldPoints.Reverse());
 
 
@@ -211,7 +211,7 @@ namespace Andja.Pathfinding {
             }
             stopwatch.Stop();
             //Debug.Log("Total Ocean Pathfinder took " + stopwatch.ElapsedMilliseconds + "(" + stopwatch.Elapsed.TotalSeconds + "s)");
-            return finalQueue;
+            return new Result(finalQueue, finalQueue.Count);
         }
 
         private static Queue<Vector2> CalculatePathWithDirectLineOfSight(PathJob job, Vector2[] worldPathArray, Vector2 startPos, Vector2 endPos) {
@@ -308,7 +308,7 @@ namespace Andja.Pathfinding {
             return vectors;
         }
 
-        private static Queue<Vector2> ReconstructPath(PathGrid grid, Node current) {
+        private static Result ReconstructPath(PathGrid grid, Node current) {
             Stack<Node> totalPath = new Stack<Node>();
             totalPath.Push(current);
             while (current.parent != null) {
@@ -316,11 +316,15 @@ namespace Andja.Pathfinding {
                 totalPath.Push(current);
             }
             Queue<Vector2> vectors = new Queue<Vector2>();
+            float time = 0;
             while(totalPath.Count > 0) {
                 Node n = totalPath.Pop();
+                if(totalPath.Count > 1) {
+                    time += n.MovementCost * DistanceNodes(true, n.Pos, totalPath.Peek().Pos);
+                }
                 vectors.Enqueue(new Vector2(grid.startX + n.x + 0.5f, grid.startY + n.y + 0.5f));
             }
-            return vectors;
+            return new Result(vectors, time);
         }
 
         private static HashSet<Node> FindClosestWalkableNeighbours(IPathfindAgent agent, Node start, PathGrid grid) {
@@ -385,7 +389,15 @@ namespace Andja.Pathfinding {
             );
         }
 
+        public class Result {
+            public Queue<Vector2> Path { get; }
+            public float Time { get; }
 
+            public Result(Queue<Vector2> path, float time) {
+                Path = path;
+                Time = time;
+            }
+        }
     }
 
 }

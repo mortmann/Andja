@@ -21,6 +21,7 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class Worker : IPathfindAgent {
         public const float WorldSize = 0.25f;
+        public enum WorkStates { GoingToWork, Working, GoingHome, AtHome }
 
         #region Serialize
         [JsonPropertyAttribute] public string ID;
@@ -28,7 +29,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] protected float workTimer;
         [JsonPropertyAttribute] public Item[] ToGetItems;
         [JsonPropertyAttribute] public UnitInventory Inventory { get; protected set; }
-        [JsonPropertyAttribute] private bool _goingToWork;
+        [JsonPropertyAttribute] public WorkStates WorkState;
         [JsonPropertyAttribute] public bool isAtHome;
         [JsonPropertyAttribute] private Structure _workStructure;
         [JsonPropertyAttribute] private bool _isDone;
@@ -59,7 +60,7 @@ namespace Andja.Model {
         private bool HasToEnterWorkStructure => Data.hasToEnterWork;
 
 
-        public bool IsFull => Inventory?.HasAnything() == true || _goingToWork == false && Home is ServiceStructure;
+        public bool IsFull => Inventory?.HasAnything() == true || WorkStates.GoingHome == WorkState && Home is ServiceStructure;
         private Func<Structure, float, bool> WorkOnStructure {
             get {
                 if (Home is ServiceStructure h)
@@ -71,7 +72,6 @@ namespace Andja.Model {
         protected Action<Worker> cbWorkerChanged;
         protected Action<Worker> cbWorkerDestroy;
         protected Action<Worker, string, bool> cbSoundCallback;
-        protected bool hasRegistered;
         protected float walkTime;
         protected WorkerPrototypeData prototypeData;
         #endregion runtimeVariables
@@ -87,7 +87,7 @@ namespace Andja.Model {
         public TurningType TurnType => HasToFollowRoads ? TurningType.OnPoint : TurningType.TurnRadius;
         public PathDestination PathDestination => PathDestination.Tile;
         public PathingMode PathingMode => HasToFollowRoads ? PathingMode.Route : PathingMode.IslandMultiplePoints;
-        public bool CanEndInUnwalkable => HasToEnterWorkStructure || _goingToWork == false;
+        public bool CanEndInUnwalkable => HasToEnterWorkStructure || WorkStates.Working == WorkState;
 
         public PathHeuristics Heuristic => HasToFollowRoads ? PathHeuristics.Manhattan : PathHeuristics.Euclidean;
 
@@ -107,12 +107,12 @@ namespace Andja.Model {
                 workStructure.ClaimOutput();
             }
             isAtHome = false;
-            _goingToWork = true;
+            WorkState = WorkStates.GoingToWork;
             Inventory = new UnitInventory(4);
             workTimer = workTime;
             ID = workerID ?? "placeholder";
             ToGetItems = toGetItems;
-            SetGoalStructure(workStructure);
+            StartPathfinding();
             Setup();
         }
 
@@ -121,9 +121,9 @@ namespace Andja.Model {
             ID = workerID ?? "placeholder";
             WorkStructure = structure;
             isAtHome = false;
-            _goingToWork = true;
+            WorkState = WorkStates.GoingToWork;
             workTimer = workTime;
-            SetGoalStructure(structure);
+            StartPathfinding();
             Setup();
         }
         /// <summary>
@@ -154,16 +154,8 @@ namespace Andja.Model {
                 Debug.LogError("worker has no Home -> for now set it manually");
                 return;
             }
-            if (Home.IsActiveAndWorking == false && _goingToWork) {
+            if (Home.IsActiveAndWorking == false && WorkState != WorkStates.GoingHome) {
                 GoHome();
-            }
-            if (hasRegistered == false) {
-                if (WorkStructure == null) {
-                    return;
-                }
-                WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
-                walkTime = Vector3.Distance(Home.Center, WorkStructure.Center);
-                hasRegistered = true;
             }
             //worker can only work if
             // -homeStructure is active
@@ -173,51 +165,56 @@ namespace Andja.Model {
             // -home is not full (?) maybe second worker?
             //If any of these are false the worker should return to home
             //except there is no way to home then remove
-
             if (_path.Status == JobStatus.NoPath) {
                 Destroy();
                 return;
             }
-            
-            //do the movement
-            _path.Update_DoMovement(deltaTime);
-
             cbWorkerChanged?.Invoke(this);
-
-            if (_path.IsAtDestination == false) {
-                if (_walkTimeIsWorkTime == false) return;
-                workTimer -= deltaTime;
-                if (workTimer <= 0 == false) return;
-                DropOffItems(0);
-                //we have an issue -- done before it is home
-                if (World.Current.GetTileAt(X, Y).Structure != Home) {
-                    Vector2 dist = new Vector2(X, Y) - _path.Destination;
-                    Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
-                                     " longer Worktime or remove Worker. " + Home + ". Destination " + _path.Destination
-                                     + " Distance: " + dist.magnitude);
-                }
-                return;
-            }
-            if (_goingToWork) {
-                //if we are here this means we're
-                //AT the destination and can start working
-                DoWork(deltaTime);
-            }
-            else {
-                // coming home from doing the work
-                // drop off the items its carrying
-                if (ToGetItems != null && Inventory.HasAnything()) {
-                    DropOffItems(deltaTime);
-                }
-                else {
-                    isAtHome = true;
-                }
+            switch (WorkState) {
+                case WorkStates.GoingToWork:
+                    _path.Update_DoMovement(deltaTime);
+                    if (_path.IsAtDestination) {
+                        WorkState = WorkStates.Working;
+                        //Precalculate so it has walkTime
+                        StartPathfinding(); //todo: think about some optimisation for just "reverse path"
+                    }
+                    if (_walkTimeIsWorkTime == false) return;
+                    workTimer -= deltaTime;
+                    break;
+                case WorkStates.Working:
+                    DoWork(deltaTime);
+                    break;
+                case WorkStates.GoingHome:
+                    _path.Update_DoMovement(deltaTime);
+                    if (_path.IsAtDestination) {
+                        WorkState = WorkStates.AtHome;
+                    }
+                    if (_walkTimeIsWorkTime == false) return;
+                    workTimer -= deltaTime;
+                    if (workTimer <= 0 == false) return;
+                    DropOffItems(0);
+                    //we have an issue -- done before it is home
+                    if (World.Current.GetTileAt(X, Y).Structure != Home) {
+                        Vector2 dist = new Vector2(X, Y) - _path.Destination;
+                        Debug.LogWarning("Worker done before it is at Home. Fix this with either smaller Range," +
+                                         " longer Worktime or remove Worker. " + Home + ". Destination " + _path.Destination
+                                         + " Distance: " + dist.magnitude + " | " + walkTime);
+                    }
+                    break;
+                case WorkStates.AtHome:
+                    if (ToGetItems != null && Inventory.HasAnything()) {
+                        DropOffItems(deltaTime);
+                    }
+                    else {
+                        isAtHome = true;
+                    }
+                    break;
             }
         }
 
         internal bool IsWorking() {
             //has it anything? && is not going to get anything it is not Working -> so opposite should be working 
-            return (Inventory.HasAnything() == false && _goingToWork == false) == false;
+            return (Inventory.HasAnything() == false && WorkState == WorkStates.GoingHome) == false;
         }
 
         public void DropOffItems(float deltaTime) {
@@ -242,20 +239,13 @@ namespace Andja.Model {
             isAtHome = true;
         }
 
-        public void GoHome(bool noPath = false) {
-            if (_goingToWork && noPath) {
-                Destroy();
-                return;
-            }
-            _isDone = false;
-            if(_goingToWork) {
+        public void GoHome() {
+            if (WorkState == WorkStates.GoingToWork || WorkState == WorkStates.Working) {
                 WorkOutputStructure?.ResetOutputClaimed();
             }
-            _goingToWork = false;
+            _isDone = false;
+            WorkState = WorkStates.GoingHome;
             WorkStructure?.UnregisterOnDestroyCallback(OnWorkStructureDestroy);
-            //WorkStructure = null;
-            SetGoalStructure(Home, true); //todo: think about some optimisation for just "reverse path"
-                                          //doTimer = workTime / 2;
         }
 
         public void DoWork(float deltaTime) {
@@ -335,36 +325,35 @@ namespace Andja.Model {
 
         internal void Load(Structure parent) {
             Home = parent;
-            if (_goingToWork) {
+            if (WorkState == WorkStates.GoingToWork) {
                 WorkOutputStructure?.ClaimOutput();
             } else {
                 WorkStructure = Home;
             }
             if (WorkStructure == null || WorkStructure.IsDestroyed) {
                 Destroy();
+            } else {
+                WorkStructure.RegisterOnDestroyCallback(OnWorkStructureDestroy);
             }
             if (_path == null) return;
             _path.Load(this);
             if (!(_path is RoutePathfinding { StartStructure: null } rp)) return;
-            rp.GoalStructure = _goingToWork ? WorkStructure : Home;
+            rp.GoalStructure = WorkState == WorkStates.GoingToWork ? WorkStructure : Home;
         }
 
         public void Destroy() {
             isAtHome = true; //for Pathfinding purpose -> if it is at home stop the Pathfinding
-            if (_goingToWork)
+            if (WorkState == WorkStates.GoingToWork || WorkState == WorkStates.Working)
                 WorkOutputStructure?.ResetOutputClaimed();
             cbWorkerDestroy?.Invoke(this);
             _path?.CancelJob();
         }
 
-        public void SetGoalStructure(Structure structure, bool goHome = false) {
-            if (structure == null) {
-                return;
-            }
+        public void StartPathfinding() {
             if (HasToFollowRoads == false) {
                 _path ??= new TilesPathfinding(this);
-                if (goHome == false) {
-                    ((TilesPathfinding)_path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(structure.Tiles));
+                if (WorkState == WorkStates.GoingToWork) {
+                    ((TilesPathfinding)_path).SetDestination(new List<Tile>(Home.Tiles), new List<Tile>(WorkStructure.Tiles));
                 }
                 else {
                     if(_path.CurrTile == null) {
@@ -376,14 +365,19 @@ namespace Andja.Model {
             }
             else {
                 _path ??= new RoutePathfinding(this);
-                if (goHome == false) {
-                    ((RoutePathfinding)_path).SetDestination(Home, structure);
+                if (WorkState == WorkStates.GoingToWork) {
+                    ((RoutePathfinding)_path).SetDestination(Home, WorkStructure);
                 }
                 else {
                     ((RoutePathfinding)_path).SetDestination(HasToEnterWorkStructure ? WorkStructure : null, Home);
                 }
             }
-            WorkStructure = structure;
+            walkTime = Vector2.Distance(WorkStructure.Center, Home.Center) * Speed;
+            _path.cbPathCalcDone += DonePathCalc;
+        }
+
+        private void DonePathCalc() {
+            walkTime = _path.WalkTime * Speed;
         }
 
         public void RegisterOnChangedCallback(Action<Worker> cb) {

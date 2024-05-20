@@ -204,7 +204,7 @@ namespace Andja.Pathfinding {
 
         public override void HandleNoPathFound() {
             if (agent is Worker w) {
-                w.GoHome(true);
+                w.Destroy();
             }
             else {
                 Debug.LogWarning("RoutePathfinding HandleNoPathFound for agent " + agent.GetType() + " is not implemented");

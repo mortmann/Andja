@@ -71,6 +71,7 @@ namespace Andja.Controller {
             if (w.IsFull) {
                 charGo.GetComponent<SpriteRenderer>().sprite = _workerSprites[w.FromWorkSprites];
             }
+            charGo.name = w.Home.Name + "-Worker-" + w.WorkState.ToString();
             charGo.transform.position = new Vector3(w.X, w.Y, 0);
             Quaternion q = charGo.transform.rotation;
             q.eulerAngles = new Vector3(0, 0, w.Rotation);

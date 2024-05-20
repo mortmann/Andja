@@ -36,7 +36,7 @@ namespace Andja.Controller {
         public static bool DebugModeSave = true;
         public static string SaveName = "unsaved";
 
-        public const string SaveFileVersion = "0.1.14";
+        public const string SaveFileVersion = "0.1.15";
         public const string IslandSaveFileVersion = "i_0.0.3";
         private float _timeToAutoSave = AutoSaveInterval;
         private const float AutoSaveInterval = 15 * 60; // every 15 min -- TODO: add game option to change this

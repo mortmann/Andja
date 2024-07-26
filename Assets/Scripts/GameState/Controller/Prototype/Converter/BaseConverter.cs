@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Xml;
 using UnityEngine;
 using System.Linq;
+using Range = Andja.Utility.Range;
 
 namespace Andja.Controller { 
 

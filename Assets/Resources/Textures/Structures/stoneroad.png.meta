@@ -3,7 +3,7 @@ guid: da07a1df884ce6a4cb2752c556e21690
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -20,10 +20,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -34,7 +36,7 @@ TextureImporter:
     serializedVersion: 2
     filterMode: 0
     aniso: 16
-    mipBias: -100
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -62,6 +64,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -73,6 +77,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -85,6 +90,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -106,7 +112,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 02305410000000000800000000000000
-      internalID: 21300000
+      internalID: -361546423981682644
       vertices: []
       indices: 
       edges: []
@@ -127,7 +133,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 42305410000000000800000000000000
-      internalID: 21300004
+      internalID: 8485695520821806675
       vertices: []
       indices: 
       edges: []
@@ -148,7 +154,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: a2305410000000000800000000000000
-      internalID: 21300010
+      internalID: -7182961756387981223
       vertices: []
       indices: 
       edges: []
@@ -169,7 +175,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: c2305410000000000800000000000000
-      internalID: 21300012
+      internalID: -7828074007622464236
       vertices: []
       indices: 
       edges: []
@@ -190,7 +196,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: e2305410000000000800000000000000
-      internalID: 21300014
+      internalID: 2177518144220132175
       vertices: []
       indices: 
       edges: []
@@ -211,7 +217,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 03305410000000000800000000000000
-      internalID: 21300016
+      internalID: -8596246139514338171
       vertices: []
       indices: 
       edges: []
@@ -232,7 +238,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 43305410000000000800000000000000
-      internalID: 21300020
+      internalID: -4654048086687869208
       vertices: []
       indices: 
       edges: []
@@ -253,7 +259,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 83305410000000000800000000000000
-      internalID: 21300024
+      internalID: -7588707881131092865
       vertices: []
       indices: 
       edges: []
@@ -274,7 +280,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: c3305410000000000800000000000000
-      internalID: 21300028
+      internalID: 8057869261506019245
       vertices: []
       indices: 
       edges: []
@@ -295,7 +301,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: e3305410000000000800000000000000
-      internalID: 21300030
+      internalID: -2677397220098371924
       vertices: []
       indices: 
       edges: []
@@ -316,7 +322,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 44305410000000000800000000000000
-      internalID: 21300036
+      internalID: 2824042740655129688
       vertices: []
       indices: 
       edges: []
@@ -337,7 +343,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: c4305410000000000800000000000000
-      internalID: 21300044
+      internalID: -1254268452886211838
       vertices: []
       indices: 
       edges: []
@@ -358,7 +364,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 05305410000000000800000000000000
-      internalID: 21300048
+      internalID: 4754360024054874866
       vertices: []
       indices: 
       edges: []
@@ -379,7 +385,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 45305410000000000800000000000000
-      internalID: 21300052
+      internalID: 2085653472298729491
       vertices: []
       indices: 
       edges: []
@@ -400,7 +406,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 06305410000000000800000000000000
-      internalID: 21300064
+      internalID: 2431823548342996920
       vertices: []
       indices: 
       edges: []
@@ -421,7 +427,7 @@ TextureImporter:
       tessellationDetail: -1
       bones: []
       spriteID: 66305410000000000800000000000000
-      internalID: 21300070
+      internalID: 7277301223615939102
       vertices: []
       indices: 
       edges: []
@@ -436,9 +442,25 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      stoneroad_: -361546423981682644
+      stoneroad_E: 2177518144220132175
+      stoneroad_ES: -7588707881131092865
+      stoneroad_ESW: 7277301223615939102
+      stoneroad_EW: 2431823548342996920
+      stoneroad_N: -2677397220098371924
+      stoneroad_NE: -1254268452886211838
+      stoneroad_NES: -7182961756387981223
+      stoneroad_NESW: -4654048086687869208
+      stoneroad_NEW: 2085653472298729491
+      stoneroad_NS: 2824042740655129688
+      stoneroad_NSW: -8596246139514338171
+      stoneroad_NW: 4754360024054874866
+      stoneroad_S: 8485695520821806675
+      stoneroad_SW: 8057869261506019245
+      stoneroad_W: -7828074007622464236
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

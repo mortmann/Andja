@@ -17,7 +17,7 @@ namespace Andja.UI.Menu {
         private Vector3 lastPointerPositon;
         private float t;
         private bool fadeDown = true;
-        protected override void OnEnable() {
+        protected override void Awake() {
             //this needs to be done because as a subclass of a unity class the inspector does not 
             //show public variables so instead of making a custom inspector class to make it work
             //here just use the existing ColorBlock to work with this

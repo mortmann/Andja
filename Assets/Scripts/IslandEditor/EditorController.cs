@@ -11,6 +11,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using Range = Andja.Utility.Range;
 
 namespace Andja.Editor {
 

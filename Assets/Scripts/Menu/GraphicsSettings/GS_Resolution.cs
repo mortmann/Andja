@@ -48,7 +48,7 @@ namespace Andja.UI.Menu {
                     return x.Equals(new GraphicsSettings.CustomResolution {
                         height = Screen.height,
                         width = Screen.width,
-                        refreshRate = Screen.currentResolution.refreshRate
+                        refreshRate = Screen.currentResolution.refreshRateRatio
                     }.ToString());
                 });
             }

@@ -6,6 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
+using Range = Andja.Utility.Range;
+
 namespace Andja.Controller {
 
     public class MapGenerationConverter {

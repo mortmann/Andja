@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using UnityEngine;
+using Range = Andja.Utility.Range;
 
 namespace Andja.Model.Generator {
 

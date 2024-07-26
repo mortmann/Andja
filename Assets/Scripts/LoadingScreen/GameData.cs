@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Andja.Model.Generator;
+using Range = Andja.Utility.Range;
 
 namespace Andja {
     public enum GameType { Endless, Campaign, Szenario, Island, Editor }

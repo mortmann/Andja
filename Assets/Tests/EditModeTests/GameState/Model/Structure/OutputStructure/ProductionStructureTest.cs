@@ -36,8 +36,8 @@ public class ProductionStructureTest {
         };
         Producer = new ProductionStructure(ProducerID, null);
         mockutil = new MockUtil();
-        var prototypeControllerMock = mockutil.PrototypControllerMock;
-        prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
+        mockutil.PrototypControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
+        
         CreateTwoByThree();
     }
     private void CreateTwoByThree() {
@@ -114,8 +114,12 @@ public class ProductionStructureTest {
         Production.Workers = new List<Worker>();
         Production.RangeTiles = new HashSet<Tile>();
         Production.RangeTiles.UnionWith(PrototypeData.PrototypeRangeTiles);
-        Production.Intake = new Item[] { ItemProvider.Wood, ItemProvider.Fish };
-        Assert.AreEqual(ItemProvider.Wood.ID, Production.GetRequiredItems(Producer, new Item[] { ItemProvider.Wood })[0].ID);
+        Production.Intake = new Item[] { ItemProvider.Wood, ItemProvider.Fish_1 };
+        mockutil.PrototypControllerMock.Setup(m => m.GetStructurePrototypDataForID(ProducerID)).Returns(() => new ProductionPrototypeData() {
+            maxOutputStorage = 2,
+        });
+
+        AssertThat(Production.GetRequiredItems(Producer, new Item[] { ItemProvider.Wood_1 })).AllItemsAreSame(ItemProvider.Wood_1);
     }
 
     [Test]
@@ -189,11 +193,9 @@ public class ProductionStructureTest {
         });
 
         Production.TestTrySendOutWorker();
-
         AssertThat(Production.Workers.Count).IsEqualTo(1);
         AssertThat(Production.Workers[0].ToGetItems.Length).IsEqualTo(1);
-        AssertThat(Production.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
-        AssertThat(Production.Workers[0].ToGetItems[0].count).IsEqualTo(4);
+        AssertThat(Production.Workers[0].ToGetItems[0]).SameItem(ItemProvider.Stone_N(4));
     }
 
     [Test]

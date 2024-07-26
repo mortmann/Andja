@@ -1,12 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using Andja.Controller;
 using Andja.Model;
-using Moq;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
-using System.Linq;
+using static AssertNet.Assertions;
 
 public class ProductionStructureTest_OrIntake {
     string ID = "Production";
@@ -31,6 +26,7 @@ public class ProductionStructureTest_OrIntake {
         Producer = new TestProductionStructure(ProducerID, null);
         ProducerPrototypeData = new ProductionPrototypeData() {
             output = new Item[] { ItemProvider.Wood_1 },
+            maxOutputStorage=2,
         };
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
@@ -113,13 +109,15 @@ public class ProductionStructureTest_OrIntake {
     [Test]
     public void GetRequiredItems_Item() {
         CreateTwoByThree();
+        PrototypeData.maxOutputStorage = 1;
         PrototypeData.structureRange = 10;
         Production.OnBuild();
         Production.Workers = new List<Worker>();
         Production.RangeTiles = new HashSet<Tile>();
         Production.RangeTiles.UnionWith(PrototypeData.PrototypeRangeTiles);
         Production.Intake = new Item[] { ItemProvider.Wood };
-        Assert.AreEqual(ItemProvider.Wood.ID, Production.GetRequiredItems(Producer, new Item[] { ItemProvider.Wood })[0].ID);
+
+        AssertThat(Production.GetRequiredItems(Producer, new Item[] { ItemProvider.Wood_1 })).AllItemsAreSame(ItemProvider.Wood_1);
     }
 
     [Test]

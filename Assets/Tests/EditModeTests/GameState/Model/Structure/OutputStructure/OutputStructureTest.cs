@@ -17,7 +17,7 @@ public class OutputStructureTest {
     TestOutputStructure OutputTestStructure;
     OutputPrototypData PrototypeData;
     private MockUtil mockutil;
-
+    OutputPrototypData ProducerPrototypeData;
     [SetUp]
     public void SetUp() {
         OutputTestStructure = new TestOutputStructure(ID, null);
@@ -25,6 +25,9 @@ public class OutputStructureTest {
             ID = ID,
             produceTime = 2f,
             maxOutputStorage = 2,
+        };
+        ProducerPrototypeData = new OutputPrototypData() {
+            maxOutputStorage = 2
         };
         mockutil = new MockUtil();
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
@@ -53,7 +56,7 @@ public class OutputStructureTest {
         OutputTestStructure.Workers = new List<Worker>();
         OutputTestStructure.RangeTiles = new HashSet<Tile>();
         OutputTestStructure.RangeTiles.UnionWith(PrototypeData.PrototypeRangeTiles);
-        TestOutputStructure Producer = new TestOutputStructure() {
+        TestOutputStructure Producer = new TestOutputStructure(ID, ProducerPrototypeData) {
             Output = new Item[] { ItemProvider.Stone_1 },
         };
         Assert.AreEqual(ItemProvider.Stone.ID, OutputTestStructure.GetRequiredItems(Producer, new Item[] { ItemProvider.Stone })[0].ID);
@@ -216,7 +219,8 @@ public class OutputStructureTest {
     [Test]
     public void SendOutWorkerIfCan() {
         CreateTwoByThree();
-        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+        PrototypeData.maxOutputStorage = 1;
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, ProducerPrototypeData) {
                 Output = new Item[] { ItemProvider.Stone_1 },
                 Tiles = new List<Tile>{mockutil.GetInCityTile(10,10)},
         },new Item[] { ItemProvider.Stone_1 });
@@ -234,7 +238,7 @@ public class OutputStructureTest {
     [Test]
     public void SendOutWorkerIfCan_ButAlreadyHasWorkerOut_ReduceGetItems() {
         CreateTwoByThree();
-        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, ProducerPrototypeData) {
             Output = new Item[] { ItemProvider.Stone_1 },
             Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) },
         }, new Item[] { ItemProvider.Stone_1 });
@@ -255,7 +259,7 @@ public class OutputStructureTest {
     [Test]
     public void SendOutWorkerIfCan_LimitedNeeded() {
         CreateTwoByThree();
-        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, ProducerPrototypeData) {
             Output = new Item[] { ItemProvider.Stone_1 },
             Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) }
         }, new Item[] { ItemProvider.Stone_N(3) });
@@ -274,7 +278,7 @@ public class OutputStructureTest {
     [Test]
     public void SendOutWorkerIfCan_HasToFollowRoads_NoConnection() {
         CreateTwoByThree();
-        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, ProducerPrototypeData) {
             Output = new Item[] { ItemProvider.Stone_1 },
             Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) }
         }, new Item[] { ItemProvider.Stone_N(3) });
@@ -291,9 +295,8 @@ public class OutputStructureTest {
     [Test]
     public void SendOutWorkerIfCan_HasToFollowRoads() {
         Route route = new Route();
-
         CreateTwoByThree();
-        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, new OutputPrototypData()) {
+        OutputTestStructure.TestAddJobStructure(new TestOutputStructure(ID, ProducerPrototypeData) {
             Output = new Item[] { ItemProvider.Stone_1 },
             Tiles = new List<Tile> { mockutil.GetInCityTile(10, 10) },
             TestRoutes = new HashSet<Route> { route }
@@ -308,8 +311,7 @@ public class OutputStructureTest {
 
         AssertThat(OutputTestStructure.Workers.Count).IsEqualTo(1);
         AssertThat(OutputTestStructure.Workers[0].ToGetItems.Length).IsEqualTo(1);
-        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].ID).IsEqualTo(ItemProvider.Stone.ID);
-        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0].count).IsEqualTo(1);
+        AssertThat(OutputTestStructure.Workers[0].ToGetItems[0]).SameItem(ItemProvider.Stone_1);
     }
 
     [Test]

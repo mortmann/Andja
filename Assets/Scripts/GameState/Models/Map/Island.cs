@@ -1,4 +1,5 @@
 ﻿using Andja.Controller;
+using Andja.Editor;
 using Andja.Model.Generator;
 using Andja.Pathfinding;
 using Andja.Utility;
@@ -132,7 +133,9 @@ namespace Andja.Model {
                 Cities.Add(new City(Tiles, this));
                 Wilderness = Cities[0];
             }
-            Grid = new PathGrid(this);
+            if(EditorController.IsEditor == false) {
+                Grid = new PathGrid(this);
+            }
         }
 
         public IEnumerable<Structure> Load() {

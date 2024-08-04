@@ -140,7 +140,11 @@ namespace Andja.Controller {
             foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
                 ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
             }
-            SetupMouseStates();
+            if(EditorController.IsEditor) {
+                SetupEditorMouseStates();
+            } else {
+                SetupMouseStates();
+            }
         }
 
         private void SetupMouseStates() {
@@ -155,6 +159,13 @@ namespace Andja.Controller {
                 [MouseState.Upgrade] = new UpgradeMouseState(),
                 [MouseState.DragSelect] = new BoxSelectMouseState(),
                 [MouseState.Destroy] = new DestroyBuildMouseState(),
+            };
+            ActiveState = typToMouseState[MouseState.Idle];
+        }
+        
+        private void SetupEditorMouseStates() {
+            typToMouseState = new Dictionary<MouseState, BaseMouseState> {
+                [MouseState.Idle] = new IdleMouseState(),
             };
             ActiveState = typToMouseState[MouseState.Idle];
         }

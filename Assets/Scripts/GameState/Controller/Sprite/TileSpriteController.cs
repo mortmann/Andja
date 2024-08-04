@@ -198,7 +198,6 @@ namespace Andja.Controller {
             g.cellSwizzle = GridLayout.CellSwizzle.XYZ;
             g.cellLayout = GridLayout.CellLayout.Rectangle;
             TilemapRenderer trr = _editorIslandTileMap.AddComponent<TilemapRenderer>();
-            //trr.material = tileMapRendererBlending;
             trr.sortingLayerName = "Tile";
             _editorTileMap.size = new Vector3Int(EditorController.Width, EditorController.Height, 0);
             oceanInstance.transform.position = new Vector3((World.Current.Width / 2) - offset, (World.Current.Height / 2) - offset, 0.1f);
@@ -240,6 +239,9 @@ namespace Andja.Controller {
         }
 
         public void Update() {
+            if (EditorController.IsEditor) {
+                return;
+            }
             foreach (var item in _cityToMaskTexture.Values) {
                 item.CheckApply();
             }

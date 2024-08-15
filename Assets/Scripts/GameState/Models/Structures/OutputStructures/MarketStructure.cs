@@ -67,7 +67,7 @@ namespace Andja.Model {
             return new MarketStructure(this);
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             base.UpdateWorker(deltaTime);
             UpdateCaptureProgress(deltaTime);
         }

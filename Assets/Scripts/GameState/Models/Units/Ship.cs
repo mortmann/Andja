@@ -65,7 +65,7 @@ namespace Andja.Model {
             ID = unit.ID;
             PatrolCommand = new PatrolCommand();
             prototypeData = unit.Data;
-            CurrentHealth = MaxHealth;
+            CurrentHealth = MaximumHealth;
             this.playerNumber = playerNumber;
             //TODO: replace everywhere with byte and test it
             Inventory = new UnitInventory((byte)InventoryPlaces.ClampZero(255), InventorySize);

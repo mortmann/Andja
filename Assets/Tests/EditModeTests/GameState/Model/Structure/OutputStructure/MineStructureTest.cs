@@ -66,7 +66,7 @@ public class MineStructureTest {
     public void OnUpdate_PerMine() {
         CreateTwoByThree();
         for (int i = 0; i < 2; i++) {
-            Mine.OnUpdate(1f);
+            Mine.Update(1f);
         }
         Assert.AreEqual(1, Mine.Output[0].count);
     }
@@ -74,7 +74,7 @@ public class MineStructureTest {
     public void OnUpdate_PerMine_CapAtMaxOutput() {
         CreateTwoByThree();
         for (int i = 0; i < 10; i++) {
-            Mine.OnUpdate(1f);
+            Mine.Update(1f);
         }
         Assert.AreEqual(2, Mine.Output[0].count);
     }
@@ -84,7 +84,7 @@ public class MineStructureTest {
         Island.Resources[ItemProvider.Stone.ID] = 1;
         MineStructure.CurrentResourceMode = ResourceMode.PerProduce;
         for (int i = 0; i < 2; i++) {
-            Mine.OnUpdate(1f);
+            Mine.Update(1f);
         }
         Assert.AreEqual(1, Mine.Output[0].count);
         Assert.AreEqual(0, Island.Resources[Mine.Resource]);
@@ -94,7 +94,7 @@ public class MineStructureTest {
         CreateTwoByThree();
         MineStructure.CurrentResourceMode = ResourceMode.PerProduce;
         for (int i = 0; i < 2; i++) {
-            Mine.OnUpdate(1f);
+            Mine.Update(1f);
         }
         Assert.AreEqual(0, Mine.Output[0].count);
     }
@@ -104,7 +104,7 @@ public class MineStructureTest {
         Island.Resources[ItemProvider.Stone.ID] = 5;
         MineStructure.CurrentResourceMode = ResourceMode.PerProduce;
         for (int i = 0; i < 12; i++) {
-            Mine.OnUpdate(1f);
+            Mine.Update(1f);
         }
         Assert.AreEqual(2, Mine.Output[0].count);
     }

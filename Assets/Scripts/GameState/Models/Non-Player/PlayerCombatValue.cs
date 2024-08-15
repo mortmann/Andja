@@ -16,11 +16,11 @@ namespace Andja.Model {
             Player = player;
             UnitValue = 0;
             foreach (Unit u in player.GetLandUnits()) {
-                UnitValue += u.Damage / 2 + u.MaxHealth / 2;
+                UnitValue += u.Damage / 2 + u.MaximumHealth / 2;
             }
             ShipValue = 0;
             foreach (Ship s in player.GetShipUnits()) {
-                ShipValue += s.Damage / 2 + s.MaxHealth / 2;
+                ShipValue += s.Damage / 2 + s.MaximumHealth / 2;
             }
             List<MilitaryStructure> militaryStructures = new List<MilitaryStructure>(player.AllStructures.OfType<MilitaryStructure>());
             MilitaryStructureValue = 0;

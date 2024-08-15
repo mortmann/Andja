@@ -22,14 +22,13 @@ namespace Andja.Model {
 
     public enum BuildRestriktions { Land, Shore, Mountain };
 
-    public class StructurePrototypeData : BaseThing {
+    public class StructurePrototypeData : BaseThingData {
 
         public int structureRange = 0;
         public int tileWidth;
         public int tileHeight;
         public bool canRotate = true;
         public bool canBeBuildOver = false;
-        public bool canTakeDamage = false;
         public bool hasHitbox;// { get; protected set; }
         /// <summary>
         /// Null means no restrikiton so all buildable tiles
@@ -111,18 +110,15 @@ namespace Andja.Model {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public abstract class Structure : GEventable {
+    public abstract class Structure : BaseThing {
         public const string InactiveEffectID = "inactive";
 
         #region variables
 
         #region Serialize
 
-        //prototype id
-        [JsonPropertyAttribute] public string ID;
         //build id -- when it was build
         [JsonPropertyAttribute] public uint BuildID;
-        [JsonPropertyAttribute] protected float _health;
         [JsonPropertyAttribute]
         public LandTile BuildTile {
             get {
@@ -181,15 +177,6 @@ namespace Andja.Model {
 
         #region EffectVariables
 
-        public float MaxHealth => CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth); 
-
-        public int UpkeepCost {
-            get {
-                //Is not allowed to be negativ AND it is not allowed to be <0
-                return Mathf.Clamp(CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost), 0, int.MaxValue);
-            }
-        }
-
         public int StructureRange => CalculateRealValue(nameof(Data.structureRange), Data.structureRange); 
 
         #endregion EffectVariables
@@ -197,10 +184,8 @@ namespace Andja.Model {
         public string Name => Data.Name; 
         public string Description => Data.Description; 
         public string ToolTip => Data.HoverOver; 
-        public int PopulationLevel => Data.populationLevel; 
-        public int PopulationCount => Data.populationCount; 
-        public int prototypeTileWidth => Data.tileWidth; 
-        public int prototypeTileHeight => Data.tileHeight; 
+        public int PrototypeTileWidth => Data.tileWidth; 
+        public int PrototypeTileHeight => Data.tileHeight; 
         public TileType?[,] BuildTileTypes => Data.buildTileTypes;
 
         public bool CanRotate => Data.canRotate; 
@@ -208,7 +193,6 @@ namespace Andja.Model {
 
         public string[] CanBeUpgradedTo => Data.canBeUpgradedTo;
         public virtual bool CanBeUpgraded => CanBeUpgradedTo != null && CanBeUpgradedTo.Length > 0; 
-        public bool CanTakeDamage => Data.canTakeDamage; 
 
         public BuildType BuildTyp => Data.buildTyp; 
         public StructureTyp StructureTyp => Data.structureTyp; 
@@ -219,11 +203,6 @@ namespace Andja.Model {
 
         public bool CanStartBurning => Data.canStartBurning; 
 
-        public int BuildCost => Data.buildCost; 
-
-        public Item[] BuildingItems => Data.buildingItems; 
-
-        public string SpriteName => Data.spriteBaseName/*TODO: make multiple saved sprites possible*/; 
         public Dictionary<Climate, string[]> ClimateSpriteModifier => Data.climateSpriteModifier;
         protected Action<Structure> cbStructureChanged;
         protected Action<Structure, IWarfare> cbStructureDestroy;
@@ -233,7 +212,7 @@ namespace Andja.Model {
         protected Action<Structure> cbRoutesChanged;
 
         protected HashSet<Route> Routes = new HashSet<Route>();
-        protected List<RoadStructure> Roads = new List<RoadStructure>();
+        protected List<RoadStructure> Roads = new();
 
         protected void BaseCopyData(Structure str) {
             ID = str.ID;
@@ -248,7 +227,6 @@ namespace Andja.Model {
         public Vector2 Size => new Vector2(TileWidth, TileHeight);
         public virtual bool IsActive => isActive;
         public virtual bool IsActiveAndWorking => isActive;
-        public bool IsDestroyed => CurrentHealth <= 0;
 
         public string SmallName => SpriteName.ToLower(); 
 
@@ -263,30 +241,17 @@ namespace Andja.Model {
             }
         }
 
-        public float CurrentHealth {
-            get => _health;
-            set {
-                _health = value;
-                if (CanTakeDamage == false) {
-                    return;
-                }
-                if (_health <= 0) {
-                    Destroy();
-                }
-            } 
-        } 
-
-        public bool NeedsRepair => CurrentHealth < MaxHealth;
+        public bool NeedsRepair => CurrentHealth < MaximumHealth;
 
         public int TileWidth {
             get {
                 switch (Rotation) {
                     case 0:
                     case 180:
-                        return prototypeTileWidth;
+                        return PrototypeTileWidth;
                     case 90:
                     case 270:
-                        return prototypeTileHeight;
+                        return PrototypeTileHeight;
                     default:
                         // should never come to this if its an error
                         Debug.LogError("Structure was rotated out of angle bounds: " + Rotation);
@@ -300,10 +265,10 @@ namespace Andja.Model {
                 switch (Rotation) {
                     case 0:
                     case 180:
-                        return prototypeTileHeight;
+                        return PrototypeTileHeight;
                     case 90:
                     case 270:
-                        return prototypeTileWidth;
+                        return PrototypeTileWidth;
                     default:
                         // should never come to this if its an error
                         Debug.LogError("Structure was rotated out of angle bounds: " + Rotation);
@@ -311,15 +276,6 @@ namespace Andja.Model {
                 }
             }
         }
-        public void Update(float deltaTime) {
-            if (CurrentHealth > MaxHealth) {
-                //Values got changed or maybe upgrade lost? we need to reduce it slowly
-                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
-            }
-            UpdateEffects(deltaTime);
-            OnUpdate(deltaTime);
-        }
-
         #endregion Properties
 
         #region Virtual/Abstract
@@ -339,9 +295,6 @@ namespace Andja.Model {
             cbStructureExtraUI?.Invoke(this, false);
         }
         public abstract Structure Clone();
-
-        public virtual void OnUpdate(float deltaTime) {
-        }
 
         public abstract void OnBuild(bool loading = false);
 
@@ -474,7 +427,7 @@ namespace Andja.Model {
             Tiles = new List<Tile>();
             Tiles.AddRange(tiles);
             if (loading == false) {
-                CurrentHealth = MaxHealth;
+                CurrentHealth = MaximumHealth;
                 DecideClimateSprite();
             }
             //if we are here we can build this and
@@ -617,9 +570,9 @@ namespace Andja.Model {
                 }
             }
             else {
-                for (int w = 0; w < prototypeTileWidth; w++) {
+                for (int w = 0; w < PrototypeTileWidth; w++) {
                     tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y));
-                    for (int h = 1; h < prototypeTileHeight; h++) {
+                    for (int h = 1; h < PrototypeTileHeight; h++) {
                         tiles.Add(World.Current.GetTileAt(tile.X + w, tile.Y + h));
                     }
                 }
@@ -677,35 +630,6 @@ namespace Andja.Model {
             return structures;
         }
 
-        public void ReduceHealth(float damage) {
-            if (CanTakeDamage == false) {
-                return;
-            }
-            if (CurrentHealth <= 0) // fix for killing it too many times -- triggering destroy multiple times
-                return;
-            if (damage < 0) {
-                Debug.LogWarning("Damage should be never smaller than 0 - Fix it!");
-                return;
-            }
-            CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
-        }
-
-        public void RepairHealth(float heal) {
-            if (IsDestroyed) return;
-            if (heal < 0) {
-                Debug.LogWarning("Healing should be never smaller than 0 - Fix it!");
-                return;
-            }
-            CurrentHealth += heal;
-            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
-        }
-
-        public void ChangeHealth(float change) {
-            if (change < 0)
-                ReduceHealth(-change); 
-            if (change > 0)
-                RepairHealth(change);
-        }
         public bool Demolish(bool isGod = false) {
             if (HasNegativeEffect && isGod == false)
                 return false; // we cannot just destroy structures that have a negative effect e.g. burning or illness or similar
@@ -727,8 +651,8 @@ namespace Andja.Model {
         /// <param name="destroyer"></param>
         /// <param name="onLoad"></param>
         /// <returns></returns>
-        public bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
-            _health = 0;
+        public override bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
+            currentHealth = 0;
             City.RemoveStructure(this);
             cbStructureDestroy?.Invoke(this, destroyer);
             if (onLoad == false) {
@@ -789,20 +713,20 @@ namespace Andja.Model {
                         case 90:
                             cX = -y;
                             cY = x;
-                            startX = prototypeTileWidth - 1;
+                            startX = PrototypeTileWidth - 1;
                             startY = 0;
                             break;
                         case 180:
                             cX = -x;
                             cY = -y;
-                            startX = prototypeTileWidth - 1;
-                            startY = prototypeTileHeight - 1;
+                            startX = PrototypeTileWidth - 1;
+                            startY = PrototypeTileHeight - 1;
                             break;
                         case 270:
                             cX = y;
                             cY = -x;
                             startX = 0;
-                            startY = prototypeTileHeight - 1;
+                            startY = PrototypeTileHeight - 1;
                             break;
                     }
                     if ((startX + cX) >= BuildTileTypes.GetLength(0) || (startY + cY) >= BuildTileTypes.GetLength(1)) {

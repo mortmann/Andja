@@ -92,7 +92,7 @@ namespace Andja.Model {
             return new ProductionStructure(this);
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if (Output == null) {
                 return;
             }

@@ -22,7 +22,7 @@ namespace Andja.UI.Model {
             }
         }
         private void Update() {
-            InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaxHealth);
+            InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaximumHealth);
             InfoUI.Instance.UpdateUpkeep(currentStructure.UpkeepCost);
             isActiveText.gameObject.SetActive(currentStructure.IsActive);
             if (currentStructure.IsActiveAndWorking) {

@@ -179,7 +179,7 @@ namespace Andja.Model {
         public void FixedUpdate(float deltaTime) {
             for (int i = Units.Count - 1; i >= 0; i--) {
                 Units[i].Update(deltaTime);
-                if (Units[i].IsDead == true) {
+                if (Units[i].IsDestroyed) {
                     Units.RemoveAt(i);
                 }
             }

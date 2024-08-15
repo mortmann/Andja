@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace Andja.Model {
 
-    public class UnitPrototypeData : BaseThing {
+    public class UnitPrototypeData : BaseThingData {
         public int inventoryPlaces;
         public int inventorySize;
 
@@ -21,7 +21,6 @@ namespace Andja.Model {
         public string[] mainAttackSoundName;
 
         public float buildTime = 1f;
-        public float maximumHealth;
         public float attackRange = 1f;
         public float damage = 10;
         public float attackRate = 1;
@@ -40,18 +39,16 @@ namespace Andja.Model {
     public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort, PickUpCrate }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Unit : GEventable, IWarfare, IPathfindAgent {
+    public class Unit : BaseThing, IWarfare, IPathfindAgent {
         public readonly float EscortDistance = 2f;
 
         //save these Variables
 
         #region Serialize
 
-        [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] public uint BuildID { get; protected set; }
         [JsonPropertyAttribute] public int playerNumber;
         [JsonPropertyAttribute] protected string playerSetName;
-        [JsonPropertyAttribute] protected float currentHealth;
 
         [JsonPropertyAttribute] private float aggroCooldownTimer = 1f;
 
@@ -118,11 +115,6 @@ namespace Andja.Model {
             protected set => playerSetName = value;
         }
 
-        public float CurrentHealth {
-            get => currentHealth;
-            protected set => currentHealth = value;
-        }
-
         public float X => Pathfinding.X;
 
         public float Y => Pathfinding.Y;
@@ -132,8 +124,6 @@ namespace Andja.Model {
         public Vector3 PositionVector => new Vector3(X, Y);
 
         public Vector2 PositionVector2 => new Vector2(X, Y);
-
-        public bool IsDead => currentHealth <= 0;
 
         #endregion calculated
 
@@ -145,7 +135,6 @@ namespace Andja.Model {
 
         public float AttackRange => CalculateRealValue(nameof(Data.attackRange), Data.attackRange);
         public float Damage => CalculateRealValue(nameof(Data.damage), Data.damage);
-        public float MaxHealth => CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth);
         public float AttackRate => CalculateRealValue(nameof(Data.attackRate), Data.attackRate);
         public float Speed => CalculateRealValue(nameof(Data.speed), Data.speed) * SpeedModifier;
 
@@ -155,23 +144,20 @@ namespace Andja.Model {
         public int InventoryPlaces => CalculateRealValue(nameof(Data.inventoryPlaces), Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
         public int InventorySize => CalculateRealValue(nameof(Data.inventorySize), Data.inventorySize); //UNTESTED HOW THIS WILL WORK
         public float AggroTime => CalculateRealValue(nameof(Data.aggroTime), Data.aggroTime); //UNTESTED HOW THIS WILL WORK
-        public int UpkeepCost => CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost); //UNTESTED HOW THIS WILL WORK
 
         public float BuildRange => CalculateRealValue(nameof(Data.buildRange), Data.buildRange);
         public virtual bool IsShip => false;
 
         public float BuildTime => Data.buildTime;
-        public int BuildCost => Data.buildCost;
+
+        public float Width => Data.width;
+        public float Height => Data.height;
+
+        #endregion prototype
 
         public virtual Unit Clone(int playerNumber, Tile startTile, uint buildID) {
             return new Unit(this, playerNumber, startTile, buildID);
         }
-
-        public float Width => Data.width;
-        public float Height => Data.height;
-        public Item[] BuildingItems => Data.buildingItems;
-
-        #endregion prototype
 
         protected UnitPrototypeData prototypeData;
 
@@ -185,19 +171,12 @@ namespace Andja.Model {
 
         public int PlayerNumber => playerNumber;
 
-        public float MaximumHealth => CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth); 
         public virtual float CurrentDamage => CalculateRealValue(nameof(CurrentDamage), Data.damage);
         public virtual float MaximumDamage => CalculateRealValue(nameof(MaximumDamage), Data.damage);
         public DamageType DamageType => Data.damageType;
         public ArmorType ArmorType => Data.armorType;
-        public bool IsDestroyed => IsDead;
 
         public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
-
-        public int PopulationLevel => Data.populationLevel;
-        public int PopulationCount => Data.populationCount;
-
-        public bool IsUnit => IsShip == false;
 
         public virtual TurningType TurnType => TurningType.OnPoint;
         public virtual PathDestination PathDestination => PathDestination.Exact;
@@ -208,7 +187,7 @@ namespace Andja.Model {
 
         public IReadOnlyList<int> CanEnterCities => PlayerController.Instance.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
 
-        public bool IsAlive => IsDead == false;
+        public bool IsAlive => IsDestroyed == false;
 
         public override string GetID() {
             return ID;
@@ -229,7 +208,7 @@ namespace Andja.Model {
             ID = unit.ID;
             PatrolCommand = new PatrolCommand();
             prototypeData = unit.Data;
-            CurrentHealth = MaxHealth;
+            CurrentHealth = MaximumHealth;
             this.playerNumber = playerNumber;
             PlayerSetName = Name + " " + Random.Range(0, 1000000000);
             Pathfinding = new IslandPathfinding(this, t);
@@ -237,12 +216,12 @@ namespace Andja.Model {
             this.BuildID = buildID;
             Setup();
         }
-        public void ReduceHealth(float damage, IWarfare warfare) {
+        protected override void OnReduceHealth(float damage, IWarfare warfare) {
             if (damage < 0) {
                 Debug.LogWarning("Damage should be never smaller than 0 - Fix it!");
                 return;
             }
-            CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
+            CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaximumHealth);
             if (CurrentHealth <= 0) {
                 Destroy(warfare);
             }
@@ -252,21 +231,6 @@ namespace Andja.Model {
             cbTakesDamageFrom?.Invoke(this, warfare);
         }
 
-        public void RepairHealth(float heal) {
-            if (heal < 0) {
-                Debug.LogWarning("Healing should be never smaller than 0 - Fix it!");
-                return;
-            }
-            CurrentHealth += heal;
-            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
-        }
-
-        public void ChangeHealth(float change, IWarfare warfare = null) {
-            if (change < 0)
-                ReduceHealth(-change, warfare); //damage should not be negativ
-            if (change > 0)
-                RepairHealth(change);
-        }
         public virtual void Load() {
             Setup();
             Inventory.Load();
@@ -285,11 +249,7 @@ namespace Andja.Model {
             cbUnitArrivedDestination?.Invoke(this, atDestination);
         }
 
-        public virtual void Update(float deltaTime) {
-            if (CurrentHealth > MaxHealth) {
-                //Values got changed or maybe upgrade lost? we need to reduce it slowly
-                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
-            }
+        protected override void OnUpdate(float deltaTime) {
             if (CurrentCommand is { IsFinished: true }) {
                 queuedCommands.Dequeue();
                 if (CurrentCommand == null)
@@ -683,7 +643,7 @@ namespace Andja.Model {
         public bool GiveMovementCommand(float x, float y, bool overrideCurrent = false) {
             if (Math.Abs(x - X) < 0.1f && Math.Abs(y - Y) < 0.1f)
                 return true;
-            if (IsUnit && CanReach(x, y) == false)
+            if (IsShip == false && CanReach(x, y) == false)
                 return false;
             AddCommand(new MoveCommand(new Vector2(x, y)), overrideCurrent);
             return true;

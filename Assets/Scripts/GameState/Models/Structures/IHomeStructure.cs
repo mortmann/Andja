@@ -24,7 +24,7 @@ namespace Andja.Model {
         void OnBuild(bool loading = false);
         void OnCityChange(Structure str, ICity old, ICity newOne);
         void OnDestroy();
-        void OnUpdate(float deltaTime);
+        void Update(float deltaTime);
         void OpenExtraUI();
         bool UpgradeHouse();
     }

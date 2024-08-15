@@ -70,7 +70,7 @@ public class GrowableStructureTest {
     }
     private void UpdateGrowable() {
         for (int i = 0; i < growable.ProduceTime + 1; i++) {
-            growable.OnUpdate(1);
+            growable.Update(1);
         }
     }
 }

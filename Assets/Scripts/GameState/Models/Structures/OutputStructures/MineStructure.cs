@@ -49,7 +49,7 @@ namespace Andja.Model {
             return true;
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
                 return;
             }

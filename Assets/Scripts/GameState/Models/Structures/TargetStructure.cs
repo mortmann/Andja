@@ -24,8 +24,6 @@ namespace Andja.Model {
             }
         }
 
-        public float MaximumHealth => Data.maxHealth;
-
         public Vector2 NextDestinationPosition => CurrentPosition;
         public Vector2 LastMovement => Vector2.zero;
 

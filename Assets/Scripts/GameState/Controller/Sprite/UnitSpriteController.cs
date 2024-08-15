@@ -41,7 +41,7 @@ namespace Andja.Controller {
             World.Current.RegisterCrateSpawned(OnCrateSpawned);
             World.Current.RegisterCrateDespawned(OnCrateDespawned);
 
-            foreach (var item in World.Current.Units.Where(item => item.IsDead == false)) {
+            foreach (var item in World.Current.Units.Where(item => item.IsAlive)) {
                 OnUnitCreated(item);
             }
             foreach (Crate c in World.Current.Crates) {

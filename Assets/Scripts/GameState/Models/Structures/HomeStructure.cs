@@ -111,7 +111,7 @@ namespace Andja.Model {
             }
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if (City.IsWilderness()) {
                 //here the People are very unhappy and will leave veryfast
                 CloseExtraUI();

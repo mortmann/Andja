@@ -94,7 +94,7 @@ namespace Andja.Model {
             }
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if (isActive == false) {
                 return;
             }
@@ -145,12 +145,12 @@ namespace Andja.Model {
         private void SpawnUnit(Unit unit) {
             if (toPlaceUnitTiles.Count == 0)
                 return;
-            if(unit.IsUnit) {
-                World.Current.CreateUnit(unit, PlayerController.Instance.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
+            if(unit.IsShip) {
+                World.Current.CreateUnit(unit, PlayerController.Instance.GetPlayer(PlayerNumber),
+                                        toPlaceUnitTiles.Find(x => x.Type == TileType.Ocean));
             }
             else {
-                World.Current.CreateUnit(unit, PlayerController.Instance.GetPlayer(PlayerNumber), 
-                                                        toPlaceUnitTiles.Find(x=>x.Type == TileType.Ocean));
+                World.Current.CreateUnit(unit, PlayerController.Instance.GetPlayer(PlayerNumber), toPlaceUnitTiles[0]);
             }
         }
         public override void ToggleActive() {

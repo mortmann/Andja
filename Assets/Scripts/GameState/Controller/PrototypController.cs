@@ -577,5 +577,6 @@ namespace Andja.Controller {
         public bool ExistsNeedId(string id) {
             return NeedPrototypeDatas.ContainsKey(id);
         }
+
     }
 }

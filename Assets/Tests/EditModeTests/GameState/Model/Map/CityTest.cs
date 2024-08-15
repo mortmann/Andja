@@ -40,7 +40,7 @@ public class CityTest {
         PlayerCity.AddHome(home.Object);
         PlayerCity.Update(City.UseTick - 1f);
         PlayerCity.PopulationLevels[0].PopulationCount = 1;
-        AssertThat(home).HasInvoked(h => h.OnUpdate(City.UseTick - 1f));
+        AssertThat(home).HasInvoked(h => h.Update(City.UseTick - 1f));
         AssertThat(PlayerCity.UseTickTimer).IsEqualTo(1);
         PlayerCity.Update(1f);
         AssertThat(PlayerCity.Expanses).IsEqualTo(0);

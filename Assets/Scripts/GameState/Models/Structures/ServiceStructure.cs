@@ -210,7 +210,7 @@ namespace Andja.Model {
 
         protected bool RepairStructure(Structure str, float deltaTime) {
             str.RepairHealth(WorkSpeed * deltaTime);
-            return str.CurrentHealth >= str.MaxHealth;
+            return str.CurrentHealth >= str.MaximumHealth;
         }
 
         protected void ImproveTarget(IGEventable target) {
@@ -247,7 +247,7 @@ namespace Andja.Model {
             }
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if(UsageItems != null) {
                 if(usageTickTimer > 0) {
                     usageTickTimer = Mathf.Clamp(usageTickTimer - deltaTime, 0, UsageTickTime);

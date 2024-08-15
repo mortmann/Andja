@@ -79,7 +79,7 @@ public class ProductionStructureTest_OrIntake {
         Production.OnBuild();
         Production.Intake = new Item[] { ItemProvider.Wood_1 };
         for (int i = 0; i < 4; i++) {
-            Production.OnUpdate(1f);
+            Production.Update(1f);
         }
         Assert.AreEqual(1, Production.Output[0].count);
     }
@@ -90,7 +90,7 @@ public class ProductionStructureTest_OrIntake {
         Production.ChangeInput(PrototypeData.intake[1]);
         Production.Intake = new Item[] { ItemProvider.Fish_2 };
         for (int i = 0; i < 4; i++) {
-            Production.OnUpdate(1f);
+            Production.Update(1f);
         }
         Assert.AreEqual(1, Production.Output[0].count);
     }

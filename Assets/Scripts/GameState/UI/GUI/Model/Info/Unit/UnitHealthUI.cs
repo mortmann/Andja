@@ -50,7 +50,7 @@ namespace Andja.UI {
         }
 
         public void Update() {
-            HealthBar.SetHealth(unit.CurrentHealth, unit.MaxHealth);
+            HealthBar.SetHealth(unit.CurrentHealth, unit.MaximumHealth);
         }
     }
 }

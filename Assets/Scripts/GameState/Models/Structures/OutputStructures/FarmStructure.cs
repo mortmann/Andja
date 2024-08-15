@@ -86,7 +86,7 @@ namespace Andja.Model {
                 rangeTile.RegisterTileOldNewStructureChangedCallback(OnTileStructureChange);
             }
         }
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             UpdateWorker(deltaTime);
             if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
                 return;

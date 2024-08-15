@@ -188,7 +188,7 @@ public class FarmStructureTest {
         farm.OnBuild();
         Assert.AreEqual(0, farm.Output[0].count);
         for (int i = 0; i < 20; i++) {
-            farm.OnUpdate(3);
+            farm.Update(3);
         }
         farm.CheckForOutputProduced();
         Assert.AreEqual(5, farm.Output[0].count);

@@ -52,7 +52,7 @@ namespace Andja.Model {
         protected override void OnUpgrade() {
             base.OnUpgrade();
         }
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
         }
     }
 }

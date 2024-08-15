@@ -216,7 +216,7 @@ public class ServiceStructureTest {
         Service.TestRepairStructure(structure, 1f);
         AssertThat(structure.CurrentHealth).IsEqualTo(51);
         Service.TestRepairStructure(structure, 123f);
-        AssertThat(structure.CurrentHealth).IsEqualTo(structure.MaxHealth);
+        AssertThat(structure.CurrentHealth).IsEqualTo(structure.MaximumHealth);
     }
 
     [Test]

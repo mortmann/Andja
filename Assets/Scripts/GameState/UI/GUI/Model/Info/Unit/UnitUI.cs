@@ -283,7 +283,7 @@ namespace Andja.UI.Model {
                 }
                 InfoUI.Instance.UpdateUpkeep(unit.UpkeepCost);
             } 
-            InfoUI.Instance.UpdateHealth(unit.CurrentHealth, unit.MaxHealth);
+            InfoUI.Instance.UpdateHealth(unit.CurrentHealth, unit.MaximumHealth);
         }
 
         //TODO: make this possible with

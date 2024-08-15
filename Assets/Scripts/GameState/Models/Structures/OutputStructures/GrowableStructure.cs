@@ -81,7 +81,7 @@ namespace Andja.Model {
             }
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if (hasProduced || LandGrowModifier <= 0) {
                 return;
             }

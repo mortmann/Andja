@@ -10,8 +10,9 @@ using UnityEngine;
 
 public abstract class BaseThing : GEventable {
 
-    BaseThingData prototypeData;
+    private BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
+
 
     private BaseThingData GetPrototypeData() {
         if(this is Structure) {
@@ -28,6 +29,7 @@ public abstract class BaseThing : GEventable {
 
     [JsonPropertyAttribute] protected float currentHealth;
 
+    protected List<Element> Elements = new List<Element>();
     public float MaximumHealth => CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth);
     public int UpkeepCost => CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost).ClampZero(); //UNTESTED HOW THIS WILL WORK
 
@@ -87,6 +89,7 @@ public abstract class BaseThing : GEventable {
         }
         UpdateEffects(deltaTime);
         OnUpdate(deltaTime);
+        Elements.ForEach(e => e.OnUpdate(deltaTime));
     }
 
     protected virtual void OnUpdate(float deltaTime) {
@@ -106,7 +109,12 @@ public abstract class BaseThing : GEventable {
     /// <param name="destroyer"></param>
     /// <param name="onLoad"></param>
     /// <returns></returns>
-    public virtual bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
+    public bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
+        Elements.ForEach(e => e.OnDestroy());
+        return OnDestroy(destroyer, onLoad);
+    }
+
+    protected virtual bool OnDestroy(IWarfare destroyer = null, bool onLoad = false) {
         return true;
     }
 }

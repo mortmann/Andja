@@ -787,11 +787,12 @@ namespace Andja.Model {
             PlayerSetName = name;
         }
 
-        public virtual void Destroy(IWarfare warfare) {
+        protected override bool OnDestroy(IWarfare warfare, bool onLoad = false) {
             //Do stuff here when on destroyed
             cbUnitDestroyed?.Invoke(this, warfare);
             currentHealth = 0;
             Pathfinding.CancelJob();
+            return true;
         }
         public void CallChangedCallback() {
             cbUnitChanged?.Invoke(this);

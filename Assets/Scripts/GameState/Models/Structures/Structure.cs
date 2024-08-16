@@ -651,7 +651,7 @@ namespace Andja.Model {
         /// <param name="destroyer"></param>
         /// <param name="onLoad"></param>
         /// <returns></returns>
-        public override bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
+        protected override bool OnDestroy(IWarfare destroyer = null, bool onLoad = false) {
             currentHealth = 0;
             City.RemoveStructure(this);
             cbStructureDestroy?.Invoke(this, destroyer);

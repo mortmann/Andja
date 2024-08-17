@@ -10,7 +10,6 @@ namespace Andja.Model {
     public class MarketPrototypeData : OutputPrototypData {
         public float takeOverStartGoal = 100;
 
-        //TODO: load this all in
         public float decreaseCaptureSpeed = 0.01f;
 
         public float maximumCaptureSpeed = 0.05f;

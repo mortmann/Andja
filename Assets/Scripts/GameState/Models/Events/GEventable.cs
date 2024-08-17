@@ -240,7 +240,7 @@ namespace Andja.Model {
         /// <param name="name"></param>
         /// <param name="currentValue"></param>
         /// <returns></returns>
-        protected float CalculateRealValue(string name, float currentValue, bool clampToZero = true) {
+        public float CalculateRealValue(string name, float currentValue, bool clampToZero = true) {
             float value = (GetAdditiveValue(name)) + currentValue * Mathf.Clamp(1 + GetMultiplicative(name),0,100);
             if (clampToZero)
                 return Mathf.Clamp(value, 0, value);

@@ -4,7 +4,7 @@ using Andja.Model;
 using Andja.Utility;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +13,7 @@ public abstract class BaseThing : GEventable {
     private BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
 
+    private Dictionary<Type, Element> Elements;
 
     private BaseThingData GetPrototypeData() {
         if(this is Structure) {
@@ -29,7 +30,6 @@ public abstract class BaseThing : GEventable {
 
     [JsonPropertyAttribute] protected float currentHealth;
 
-    protected List<Element> Elements = new List<Element>();
     public float MaximumHealth => CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth);
     public int UpkeepCost => CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost).ClampZero(); //UNTESTED HOW THIS WILL WORK
 
@@ -89,7 +89,9 @@ public abstract class BaseThing : GEventable {
         }
         UpdateEffects(deltaTime);
         OnUpdate(deltaTime);
-        Elements.ForEach(e => e.OnUpdate(deltaTime));
+        foreach(Element element in Elements.Values) {
+            element.OnUpdate(deltaTime);
+        }
     }
 
     protected virtual void OnUpdate(float deltaTime) {
@@ -110,10 +112,18 @@ public abstract class BaseThing : GEventable {
     /// <param name="onLoad"></param>
     /// <returns></returns>
     public bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
-        Elements.ForEach(e => e.OnDestroy());
+        foreach (Element element in Elements.Values) {
+            element.OnDestroy();
+        }
         return OnDestroy(destroyer, onLoad);
     }
-
+    public bool AddElement(Element element) {
+        return Elements.Add(element.GetType(), element);
+    }
+    public Element GetElement<T>() {
+        return Elements[typeof(T)];
+    }
+    
     protected virtual bool OnDestroy(IWarfare destroyer = null, bool onLoad = false) {
         return true;
     }

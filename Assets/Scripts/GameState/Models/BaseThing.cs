@@ -118,7 +118,7 @@ public abstract class BaseThing : GEventable {
         return OnDestroy(destroyer, onLoad);
     }
     public bool AddElement(Element element) {
-        return Elements.Add(element.GetType(), element);
+        return Elements.TryAdd(element.GetType(), element);
     }
     public Element GetElement<T>() {
         return Elements[typeof(T)];

@@ -13,7 +13,7 @@ public abstract class BaseThing : GEventable {
     private BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
 
-    private Dictionary<Type, Element> Elements;
+    private Dictionary<Type, Element> Elements = new Dictionary<Type, Element>();
 
     private BaseThingData GetPrototypeData() {
         if(this is Structure) {

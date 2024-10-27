@@ -18,7 +18,7 @@ namespace Andja.UI.Model {
         public GameObject buttonCanvas;
         public ItemUI cannonsItem;
         public GameObject unitCombatInfo;
-        public Inventory inv;
+        public UnitInventory inv;
         private Dictionary<int, ItemUI> itemToGO;
         private Unit unit;
         bool IsCurrentShipUI => unit is Ship;
@@ -41,17 +41,19 @@ namespace Andja.UI.Model {
             if (unit == showUnit) {
                 return;
             }
+            unit?.UnregisterOnDestroyCallback(OnUnitDestroy);
+            unit?.Inventory?.UnregisterOnChangedCallback(OnInvChange);
             unit = showUnit;
             if (unit == null)
                 return;
             UIController.Instance.HighlightUnits(unit);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
-            settleButton.gameObject.SetActive(unit.IsPlayer());
-            patrolButton.gameObject.SetActive(unit.IsPlayer());
-            cannonsItem.gameObject.SetActive(unit.IsPlayer());
-            addCannon.gameObject.SetActive(unit.IsPlayer());
-            removeCannon.gameObject.SetActive(unit.IsPlayer());
-            //clear inventory screen
+            settleButton.gameObject.SetActive(unit.IsOwnedByCurrentPlayer());
+            patrolButton.gameObject.SetActive(unit.IsOwnedByCurrentPlayer());
+            cannonsItem.gameObject.SetActive(unit.IsOwnedByCurrentPlayer());
+            addCannon.gameObject.SetActive(unit.IsOwnedByCurrentPlayer());
+            removeCannon.gameObject.SetActive(unit.IsOwnedByCurrentPlayer());
+            //clear Inventory screen
             foreach (Transform item in content.transform) {
                 GameObject.Destroy(item.gameObject);
             }
@@ -68,7 +70,7 @@ namespace Andja.UI.Model {
             }
             UnitInfos[3].Set(UISpriteController.GetIcon(unit.ArmorType.ID), unit.ArmorType);
             UnitInfos[4].Set(UISpriteController.GetIcon(unit.DamageType.ID), unit.DamageType);
-            if (unit.IsPlayer() == false) {
+            if (unit.IsOwnedByCurrentPlayer() == false) {
                 return;
             }
             UnitInfos[0].Set(UISpriteController.GetIcon(CommonIcon.CurrentDamage),
@@ -78,10 +80,10 @@ namespace Andja.UI.Model {
             UnitInfos[2].Set(UISpriteController.GetIcon(CommonIcon.Speed),
                 StaticLanguageVariables.Speed, () => { return unit.Speed + ""; });
             
-            OnPatrolRouteChange(unit.patrolCommand);
-            unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
+            OnPatrolRouteChange(unit.PatrolCommand);
+            unit.PatrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
 
-            inv = unit.inventory;
+            inv = (UnitInventory) unit.Inventory;
             buttonCanvas.SetActive(true);
 
             //only ships can settle
@@ -93,11 +95,11 @@ namespace Andja.UI.Model {
                 if (unit.rangeUStructure != null) {
                     if (unit.rangeUStructure is WarehouseStructure) {
                         if (unit.rangeUStructure.PlayerNumber == PlayerController.currentPlayerNumber) {
-                            unit.rangeUStructure.City.tradeUnit = unit;
-                            City city = unit.rangeUStructure.City;
-                            UIController.Instance.OpenCityInventory(
+                            unit.rangeUStructure.City.TradeUnit = unit;
+                            ICity city = unit.rangeUStructure.City;
+                            UIController.Instance.OpenOwnedCityInventory(
                                 city, 
-                                item => city.TradeWithShip(city.Inventory.GetItemInInventoryClone(item), 
+                                item => city.TradeWithShip(item, 
                                                         () => city.PlayerTradeAmount, 
                                                         ship)
                             );
@@ -141,7 +143,7 @@ namespace Andja.UI.Model {
                     foreach (LineRenderer goal in PatrolLineRendererList)
                         Destroy(goal.gameObject);
             }
-            Vector2[] array = unit.patrolCommand.ToPositionArray();
+            Vector2[] array = unit.PatrolCommand.ToPositionArray();
             if (array.Length == 0)
                 return;
             foreach (Vector2 v in array) {
@@ -164,7 +166,7 @@ namespace Andja.UI.Model {
                 if (array.Length == 2)
                     return;
             }
-            unit.patrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
+            unit.PatrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
         }
 
         private void TogglePatrol() {
@@ -244,14 +246,14 @@ namespace Andja.UI.Model {
             for (int i = 0; i < inv.NumberOfSpaces; i++) {
                 AddItemGameObject(i);
             }
-            inv = changedInv;
+            inv = (UnitInventory)changedInv;
         }
 
         public void Update() {
             if (unit.CurrentHealth <= 0) {
                 UIController.Instance.CloseInfoUI();
             }
-            if (unit.IsPlayer()) {
+            if (unit.IsOwnedByCurrentPlayer()) {
                 if (IsCurrentShipUI) {
                     Ship ship = ((Ship)unit);
                     if (ship.HasCannonsToAddInInventory() != addCannon.gameObject.activeSelf) {
@@ -281,7 +283,7 @@ namespace Andja.UI.Model {
                 }
                 InfoUI.Instance.UpdateUpkeep(unit.UpkeepCost);
             } 
-            InfoUI.Instance.UpdateHealth(unit.CurrentHealth, unit.MaxHealth);
+            InfoUI.Instance.UpdateHealth(unit.CurrentHealth, unit.MaximumHealth);
         }
 
         //TODO: make this possible with
@@ -303,11 +305,11 @@ namespace Andja.UI.Model {
 
         public void OnDisable() {
             if (unit != null) {
-                unit.patrolCommand.UnregisterOnRouteChange(OnPatrolRouteChange);
+                unit.PatrolCommand.UnregisterOnRouteChange(OnPatrolRouteChange);
                 unit.UnregisterOnDestroyCallback(OnUnitDestroy);
                 UIController.Instance?.DehighlightUnits(unit);
                 if (unit.rangeUStructure != null)
-                    unit.rangeUStructure.City.tradeUnit = null;
+                    unit.rangeUStructure.City.TradeUnit = null;
                 MouseController.Instance?.UnselectUnit(false);
             }
             DeselectButton();

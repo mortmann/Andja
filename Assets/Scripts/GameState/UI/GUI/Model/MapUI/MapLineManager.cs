@@ -8,7 +8,7 @@ using Andja.Utility;
 using System;
 
 namespace Andja.UI.Model {
-    public class MapLineManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler {
+    public class MapLineManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
         UILineRenderer lineRenderer;
         int stopIndex = -1;
         private Vector2 worldSize;
@@ -23,8 +23,16 @@ namespace Andja.UI.Model {
         private TradeRoute tradeRoute;
         Dictionary<TradeRoute.Stop, MapTradeStop> mapTradeStops = new Dictionary<TradeRoute.Stop, MapTradeStop>();
         List<Line> lines = new List<Line>();
+
         internal void SetTradeRoute(TradeRoute tradeRoute) {
-            this.tradeRoute = tradeRoute;
+            if(this.tradeRoute != null) {
+                this.tradeRoute.UnregisterGoalAdded(OnStopAdded);
+                this.tradeRoute.UnregisterGoalRemoved(OnStopRemoved);
+            }
+            this.tradeRoute = tradeRoute;            
+            this.tradeRoute.RegisterGoalAdded(OnStopAdded);
+            this.tradeRoute.RegisterGoalRemoved(OnStopRemoved);
+
             lineRenderer = GetComponent<UILineRenderer>();
             Line.LineThickness = lineRenderer.LineThickness;
             if (mapTradeStops != null) {
@@ -48,7 +56,7 @@ namespace Andja.UI.Model {
                 vecs = new Vector2[points.Count];
                 for (int i = 0; i < points.Count; i++) {
                     vecs[i] = ScalePositionToMap(points[i].Destination);
-                    CreateStop(points[i], vecs[i]);
+                    CreateStop(points[i]);
                 }
                 for (int i = 0; i < vecs.Length; i++) {
                     Line line = new Line(vecs[i], vecs[(i + 1) % vecs.Length], points[i % points.Count]);
@@ -60,6 +68,27 @@ namespace Andja.UI.Model {
             }
             UpdateSpots();
         }
+
+        private void OnStopRemoved(TradeRoute.Stop stop) {
+            Destroy(mapTradeStops[stop].gameObject);
+            mapTradeStops.Remove(stop);
+            RemoveLinePoint(lines.Find(x => x.startingStop == stop));
+        }
+
+        private void OnStopAdded(TradeRoute.Stop stop) {
+            CreateStop(stop);
+            if (tradeRoute.Valid == false) {
+                return;
+            }
+            if(stop is TradeRoute.Trade trade) {
+                AddCity(trade);
+            } else {
+                CreateNewLine(currentLocalPosition, stop);
+            }
+            //CreateNewLine(currentLocalPosition, stop);
+            UpdateSpots();
+        }
+
         public void OnPointerDown(PointerEventData eventData) {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(GetComponent<RectTransform>(), 
                                     eventData.position, eventData.pressEventCamera, out Vector2 position);
@@ -91,9 +120,7 @@ namespace Andja.UI.Model {
         public void OnPointerUp(PointerEventData eventData) {
             if (stopIndex == -1)
                 return;
-            TradeRoute.Stop stop = tradeRoute.AddStop(lines[stopIndex - 1].startingStop, currentWorldPosition);
-            CreateStop(stop, currentLocalPosition);
-            CreateNewLine(currentLocalPosition, stop);
+            tradeRoute.AddStop(lines[stopIndex - 1].startingStop, currentWorldPosition);
             stopIndex = -1;
         }
         private void CreateNewLine(Vector2 position, TradeRoute.Stop stop) {
@@ -106,15 +133,16 @@ namespace Andja.UI.Model {
         }
 
 
-        public void OnDrag(PointerEventData eventData) {
+        public void OnStopPointDrag(PointerEventData eventData) {
             if (stopIndex == -1)
                 return;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(GetComponent<RectTransform>(),
                                 eventData.position, eventData.pressEventCamera, out Vector2 position);
             currentLocalPosition = position;
             currentWorldPosition = ScalePositionToWorld(position);
-            tempPoints = new List<Vector2>(lineRenderer.Points);
-            tempPoints[stopIndex] = position;
+            tempPoints = new List<Vector2>(lineRenderer.Points) {
+                [stopIndex] = position
+            };
             lineRenderer.Points = tempPoints.ToArray();
         }
 
@@ -124,11 +152,11 @@ namespace Andja.UI.Model {
         /// </summary>
         /// <param name="point"></param>
         /// <param name="mapPos"></param>
-        private void CreateStop(TradeRoute.Stop point, Vector2 mapPos) {
+        private void CreateStop(TradeRoute.Stop point) {
             MapTradeStop mts = Instantiate(prefabStop).GetComponent<MapTradeStop>();
             mts.Setup(point, point is TradeRoute.Trade);
             mts.transform.SetParent(stopParent, false);
-            mts.transform.localPosition = mapPos;
+            mts.transform.localPosition = ScalePositionToMap(point.Destination);
             mapTradeStops[point] = mts;
             if (tradeRoute.Trades[0] == point) {
                 mts.SetFirst();
@@ -136,49 +164,43 @@ namespace Andja.UI.Model {
         }
         internal void RemoveStop(MapTradeStop mapStop) {
             tradeRoute.RemoveStop(mapStop.stop);
-            mapTradeStops.Remove(mapStop.stop);
-            RemoveLinePoint(lines.Find(x => x.startingStop == mapStop.stop));
         }
 
-        internal void AddCity(City city) {
-            TradeRoute.Stop stop = tradeRoute.GetTradeFor(city);
-            Vector2 dest = ScalePositionToMap(stop.Destination);
-            if(lines.Count == 1) {
-                //This is the for the case when the route first starts between 2 cities
-                lines.Add(new Line(ScalePositionToMap(tradeRoute.GetTrade(0).Destination), dest, stop));
+        internal void AddCity(TradeRoute.Stop stop) {
+            if (tradeRoute.Valid == false) {
+                return;
             }
-            else {
+            Vector2 dest = ScalePositionToMap(stop.Destination);
+            if(lines.Count == 0) {
+                //This is the for the case when the route first starts between 2 cities
+                TradeRoute.Trade trade = tradeRoute.GetTrade(0);
+                lines.Add(new Line(ScalePositionToMap(trade.Destination), dest, trade));
+
+                lines.Add(new Line(dest, ScalePositionToMap(trade.Destination), stop));
+            }
+            else if(lines.Count > 0) {
                 //modify old endline to end at new last
                 lines.Last().b = dest;
-            }
-            //line from stop to start
-            lines.Add(new Line(dest, lines.First().a, stop));
-            CreateStop(stop, ScalePositionToMap(city.warehouse.tradeTile.Vector2));
+                //line from stop to start
+                lines.Add(new Line(dest, lines.First().a, stop));
+            } 
             lineRenderer.Points = lines.Select(x => x.a).Append(lines.Last().b).ToArray();
             UpdateSpots();
         }
 
 
-        internal void RemoveCity(City city) {
-            var tradeStops = mapTradeStops.Keys.Where(x => x is TradeRoute.Trade t && t.city == city);
-            foreach(var ts in tradeStops.ToArray()) {
+        internal void RemoveCity(ICity city) {
+            var tradeStops = mapTradeStops.Keys.Where(x => x is TradeRoute.Trade t && t.city == city).ToArray();
+            foreach(var ts in tradeStops) {
                 Destroy(mapTradeStops[ts].gameObject);
                 mapTradeStops.Remove(ts);
             }
-            var l = lines.FindAll(x => x.startingStop is TradeRoute.Trade t && t.city == city);
-            if(tradeRoute.Trades.Count <= 1) {
-                foreach(TradeRoute.Stop s in mapTradeStops.Keys.ToArray()) {
-                    MapTradeStop mts = mapTradeStops[s];
-                    if (mts.cityStop)
-                        continue;
-                    mapTradeStops.Remove(s);
-                    RemoveStop(mts);
-                    Destroy(mts.gameObject);
-                }
-            } 
-            l.ForEach(x=>RemoveLinePoint(x));
+            lines.FindAll(x => x.startingStop is TradeRoute.Trade t && t.city == city)
+                .ForEach(x => RemoveLinePoint(x));
             UpdateSpots();
-            mapTradeStops[tradeRoute.Trades[0]].SetFirst();
+            if(tradeRoute.Trades.Count > 0) {
+                mapTradeStops[tradeRoute.Trades[0]].SetFirst();
+            }
         }
 
         private void UpdateSpots() {
@@ -210,6 +232,7 @@ namespace Andja.UI.Model {
             l.a = currentLocalPosition;
             stop.SetPosition(currentWorldPosition);
             stopIndex = -1;
+            UpdateSpots();
         }
 
     }

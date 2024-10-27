@@ -1,5 +1,6 @@
 using Andja.Model;
 using System;
+using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,9 +36,9 @@ namespace Andja.Pathfinding {
         internal Node GetNode(Tile t) {
             return GetNode(t.Vector2 - new Vector2(startX, startY));
         }
-        //Could cache routes here with start/end -- could be really useful for route pathfinding
+        //Could cache routes here with start/end -- could be really useful for route Pathfinding
         public PathGrid(Island island) {
-            playerOwnedNodes = new int[Controller.PlayerController.PlayerCount];
+            playerOwnedNodes = new int[Controller.PlayerController.Instance.PlayerCount];
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Island;
             SetIslandValues(island);
@@ -47,9 +48,13 @@ namespace Andja.Pathfinding {
                 }
             }
         }
-
+        public PathGrid() {
+#if !UNITY_INCLUDE_TESTS
+            Debug.LogError("Do no use this outside Tests.");
+#endif
+        }
         public PathGrid(Route route) {
-            playerOwnedNodes = new int[Controller.PlayerController.PlayerCount];
+            playerOwnedNodes = new int[Controller.PlayerController.Instance.PlayerCount];
             ID = Guid.NewGuid().ToString();
             pathGridType = PathGridType.Route;
             SetIslandValues(route.Tiles[0].Island);
@@ -84,7 +89,10 @@ namespace Andja.Pathfinding {
         internal void SetTemporaryWalkableNode(Vector2 pos) {
             Node n = GetNodeFromWorldCoord(pos);
             if (n == null) {
-                n = new Node(Mathf.FloorToInt(pos.x - startX), Mathf.FloorToInt(pos.y - startY), 0, 0, -1);
+                int x = Mathf.FloorToInt(pos.x - startX);
+                int y = Mathf.FloorToInt(pos.y - startY);
+                Tile tile = World.Current.GetTileAt(x, y);
+                n = new Node(x, y, tile.BaseMovementCost, tile.BaseMovementCost, -1);
                 Values[n.x, n.y] = n;
                 temporaryNodes.Add(n);
             }
@@ -121,6 +129,8 @@ namespace Andja.Pathfinding {
             if(t.City.PlayerNumber != GameData.WorldNumber) {
                 playerOwnedNodes[t.City.PlayerNumber]++;
             }
+            if (n.x < 0 || n.y < 0)
+                return n;
             Values[n.x,n.y] = n;
             IsDirty = true;
             Changed?.Invoke(t);
@@ -130,7 +140,7 @@ namespace Andja.Pathfinding {
         public void ChangeCityNode(Tile t) {
             Node n = GetNode(t);
             if(n == null) {
-                Debug.LogError("Tile should always have a node here.");
+                Debug.LogError("Tile " + t + " should always have a node here.");
                 return;
             }
             if (t.City.PlayerNumber != GameData.WorldNumber) {

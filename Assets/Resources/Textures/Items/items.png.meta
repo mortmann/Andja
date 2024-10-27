@@ -618,7 +618,7 @@ TextureImporter:
       213: 21300408
     second: horses
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -635,10 +635,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -648,8 +650,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: -1
-    mipBias: -100
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -677,6 +679,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -688,6 +692,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
@@ -700,6 +705,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
@@ -5020,9 +5026,214 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      ambergris: 21300188
+      armors: 21300396
+      beef: 21300110
+      beer: 21300066
+      beeswax: 21300134
+      betterclothes: 21300144
+      books: 21300120
+      bows: 21300402
+      bread: 21300058
+      brick: 21300006
+      candleholders: 21300138
+      candles: 21300136
+      cannons: 21300404
+      carpets: 21300180
+      casks: 21300080
+      cheese: 21300184
+      clay: 21300046
+      coal: 21300042
+      cocoa: 21300088
+      coffee: 21300086
+      coffeebeans: 21300084
+      color: 21300118
+      copperingots: 21300102
+      copperore: 21300100
+      cows: 21300108
+      cutlery: 21300104
+      diamonds: 21300174
+      fish: 21300052
+      flour: 21300056
+      flowers: 21300116
+      fruits: 21300074
+      fur: 21300164
+      glas: 21300008
+      goggles: 21300122
+      goldingots: 21300170
+      goldore: 21300168
+      grainsalt: 21300128
+      hemp: 21300092
+      hempclothes: 21300096
+      hempfabric: 21300094
+      honey: 21300132
+      hops: 21300064
+      horses: 21300408
+      ironingots: 21300040
+      ironore: 21300038
+      items_10: 21300020
+      items_100: 21300200
+      items_101: 21300202
+      items_102: 21300204
+      items_103: 21300206
+      items_104: 21300208
+      items_105: 21300210
+      items_106: 21300212
+      items_107: 21300214
+      items_108: 21300216
+      items_109: 21300218
+      items_11: 21300022
+      items_110: 21300220
+      items_111: 21300222
+      items_112: 21300224
+      items_113: 21300226
+      items_114: 21300228
+      items_115: 21300230
+      items_116: 21300232
+      items_117: 21300234
+      items_118: 21300236
+      items_119: 21300238
+      items_12: 21300024
+      items_120: 21300240
+      items_121: 21300242
+      items_122: 21300244
+      items_123: 21300246
+      items_124: 21300248
+      items_125: 21300250
+      items_126: 21300252
+      items_127: 21300254
+      items_128: 21300256
+      items_129: 21300258
+      items_13: 21300026
+      items_130: 21300260
+      items_131: 21300262
+      items_132: 21300264
+      items_133: 21300266
+      items_134: 21300268
+      items_135: 21300270
+      items_136: 21300272
+      items_137: 21300274
+      items_138: 21300276
+      items_139: 21300278
+      items_14: 21300028
+      items_140: 21300280
+      items_141: 21300282
+      items_142: 21300284
+      items_143: 21300286
+      items_144: 21300288
+      items_145: 21300290
+      items_146: 21300292
+      items_147: 21300294
+      items_148: 21300296
+      items_149: 21300298
+      items_15: 21300030
+      items_150: 21300300
+      items_151: 21300302
+      items_152: 21300304
+      items_153: 21300306
+      items_154: 21300308
+      items_155: 21300310
+      items_156: 21300312
+      items_157: 21300314
+      items_158: 21300316
+      items_159: 21300318
+      items_16: 21300032
+      items_160: 21300320
+      items_161: 21300322
+      items_162: 21300324
+      items_163: 21300326
+      items_164: 21300328
+      items_165: 21300330
+      items_166: 21300332
+      items_167: 21300334
+      items_168: 21300336
+      items_169: 21300338
+      items_17: 21300034
+      items_170: 21300340
+      items_171: 21300342
+      items_172: 21300344
+      items_173: 21300346
+      items_174: 21300348
+      items_175: 21300350
+      items_176: 21300352
+      items_177: 21300354
+      items_178: 21300356
+      items_179: 21300358
+      items_18: 21300036
+      items_180: 21300360
+      items_181: 21300362
+      items_182: 21300364
+      items_183: 21300366
+      items_184: 21300368
+      items_185: 21300370
+      items_186: 21300372
+      items_187: 21300374
+      items_188: 21300376
+      items_189: 21300378
+      items_190: 21300380
+      items_192: 21300382
+      items_193: 21300384
+      items_194: 21300386
+      items_195: 21300388
+      items_196: 21300390
+      items_197: 21300392
+      items_7: 21300014
+      items_8: 21300016
+      items_9: 21300018
+      items_95: 21300190
+      items_96: 21300192
+      items_97: 21300194
+      items_98: 21300196
+      items_99: 21300198
+      jewelry: 21300176
+      lampoil: 21300154
+      leather: 21300112
+      leathershoes: 21300186
+      liquor: 21300076
+      luxuryclothes: 21300166
+      luxurycutlery: 21300178
+      luxurywood: 21300012
+      marble: 21300010
+      medicinalherbs: 21300150
+      milk: 21300182
+      olives: 21300146
+      paper: 21300114
+      perfume: 21300158
+      perfumebottle: 21300156
+      pig: 21300060
+      pike: 21300400
+      pork: 21300062
+      potash: 21300048
+      potatoes: 21300072
+      quartzsand: 21300050
+      rifles: 21300406
+      ropes: 21300098
+      roughdiamonds: 21300172
+      rum: 21300070
+      sail: 21300394
+      salt: 21300130
+      sheepwool: 21300140
+      sheepwoolcloth: 21300142
+      silk: 21300160
+      silkbales: 21300162
+      soap: 21300148
+      spice: 21300106
+      stone: 21300004
+      sugar: 21300068
+      sweets: 21300090
+      swords: 21300398
+      tobacco: 21300124
+      tobaccoproducts: 21300126
+      tools: 21300002
+      venison: 21300044
+      whaleoil: 21300152
+      wheat: 21300054
+      wine: 21300082
+      winegrapes: 21300078
+      wood: 21300000
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

@@ -21,6 +21,28 @@
       <spreadProbability>0.0</spreadProbability>
       <spreadTileRange>1</spreadTileRange>
    </Effect>
+   <Effect ID="strongunitslow">
+      <Name>
+         <entry lang="Deutsch">Verlangsamung</entry>
+         <entry lang="English">Slowdown</entry>
+      </Name>
+      <Description>
+         <entry lang="Deutsch">Reduziert die Geschwindigkeit von Einheiten.</entry>
+         <entry lang="English">Slows movementspeed of units.</entry>
+      </Description>
+      <unique>false</unique>
+      <nameOfVariable>speed</nameOfVariable>
+      <change>-0.1</change>
+      <targets>
+         <Target>AllUnit</Target>
+      </targets>
+      <addType>Float</addType>
+      <modifierType>Multiplicative</modifierType>
+      <classification>Negative</classification>
+      <canSpread>false</canSpread>
+      <spreadProbability>0.0</spreadProbability>
+      <spreadTileRange>1</spreadTileRange>
+   </Effect>
    <Effect ID="fire">
       <Name>
          <entry lang="Deutsch">Feuer</entry>
@@ -30,16 +52,16 @@
       <nameOfVariable>CurrentHealth</nameOfVariable>
       <change>-1.0</change>
       <targets>
-         <Target>AllStructure</Target>
+         <Target>BurnableStructure</Target>
       </targets>
       <addType>Float</addType>
       <modifierType>Update</modifierType>
       <updateChange>Health</updateChange>
-      <classification>Negativ</classification>
+      <classification>Negative</classification>
       <uiSpriteName>fire</uiSpriteName>
       <onMapSpriteName>fire</onMapSpriteName>
-      <canSpread>false</canSpread>
-      <spreadProbability>0.0</spreadProbability>
+      <canSpread>true</canSpread>
+      <spreadProbability>0.05</spreadProbability>
       <spreadTileRange>1</spreadTileRange>
    </Effect>
    <Effect ID="volcanicearth">
@@ -56,7 +78,7 @@
       <addType>Float</addType>
       <modifierType>Additive</modifierType>
       <updateChange>None</updateChange>
-      <classification>Positiv</classification>
+      <classification>Positive</classification>
       <uiSpriteName>volcanicearth</uiSpriteName>
       <canSpread>false</canSpread>
       <spreadProbability>0.0</spreadProbability>
@@ -76,13 +98,35 @@
       <addType>Float</addType>
       <modifierType>Multiplicative</modifierType>
       <updateChange>None</updateChange>
-      <classification>Negativ</classification>
+      <classification>Negative</classification>
       <uiSpriteName>illness</uiSpriteName>
       <onMapSpriteName>illness</onMapSpriteName>
       <canSpread>false</canSpread>
       <spreadProbability>0.0</spreadProbability>
       <spreadTileRange>1</spreadTileRange>
    </Effect>
+   <GameEvent ID="storm">
+      <type>Weather</type>
+      <Name>
+         <entry lang="Deutsch">Sturm</entry>
+         <entry lang="English">Storm</entry>
+      </Name>
+      <Description>
+         <entry lang="Deutsch">Es stürmt :)</entry>
+         <entry lang="English">It storms :)</entry>
+      </Description>
+      <probability>10.0</probability>
+      <minDuration>90.0</minDuration>
+      <maxDuration>400.0</maxDuration>
+      <minRange>150.0</minRange>
+      <maxRange>300.0</maxRange>
+      <effects length="1">
+         <Effect>strongunitslow</Effect>
+      </effects>
+      <cloudCoverage>Full</cloudCoverage>
+      <cloudSpeed>Fast</cloudSpeed>
+      <oceanSpeed>LudicrousSpeed</oceanSpeed>
+   </GameEvent>
    <GameEvent ID="fireoutbreak">
       <Name>
          <entry lang="Deutsch">Feuerausbruch</entry>

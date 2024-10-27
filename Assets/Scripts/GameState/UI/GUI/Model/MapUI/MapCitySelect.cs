@@ -10,15 +10,14 @@ namespace Andja.UI.Model {
         public Text CityName;
         public Text Number;
         public Toggle toggle;
-        public City City;
-        private bool ignoreChange;
+        public ICity City;
 
-        public void Setup(City city) {
+        public void Setup(ICity city) {
             toggle.onValueChanged.AddListener(ToggleCity);
             this.City = city;
             CityName.text = city.Name;
-            if (city.warehouse != null)
-                OnWarehouseBuild(city.warehouse);
+            if (city.Warehouse != null)
+                OnWarehouseBuild(city.Warehouse);
             else {
                 SetPosition(city.Tiles.First());
                 OnWarehouseDestroy(null, null);
@@ -26,7 +25,7 @@ namespace Andja.UI.Model {
             city.RegisterCityDestroy(OnCityDestroy);
         }
 
-        private void OnCityDestroy(City city) {
+        private void OnCityDestroy(ICity city) {
             Destroy(this.gameObject);
         }
 
@@ -35,15 +34,11 @@ namespace Andja.UI.Model {
         }
 
         public void ToggleCity(bool isOn) {
-            if (ignoreChange) {
-                ignoreChange = false; // so the setting up doesnt change anything
-                return;
-            }
             int i = TradeRoutePanel.Instance.OnCityToggle(City, toggle.isOn);
             if (i > 0)
-                SelectAs(i, false);
+                SelectAs(i);
             else
-                Unselect(false);
+                Unselect();
         }
 
         public void OnWarehouseDestroy(Structure str, IWarfare destroyer) {
@@ -70,15 +65,13 @@ namespace Andja.UI.Model {
             pos.Scale(scale);
             transform.localPosition = pos;
         }
-        public void SelectAs(int number, bool ignore = true) {
+        public void SelectAs(int number) {
             Number.text = "" + number;
-            ignoreChange = ignore;
             toggle.isOn = true;
         }
 
-        internal void Unselect(bool ignore = true) {
+        internal void Unselect() {
             Number.text = "";
-            ignoreChange = ignore;
             toggle.isOn = false;
         }
 

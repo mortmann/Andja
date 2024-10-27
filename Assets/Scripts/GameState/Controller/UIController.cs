@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static Andja.UI.Model.EventUIManager;
 
 namespace Andja.Controller {
     public enum TextColor { Positive, Neutral, Negative }
@@ -48,7 +49,8 @@ namespace Andja.Controller {
         private static UIControllerSave uIControllerSave;
         public ChoiceDialog ChoiceDialog;
 
-        private void Start() {
+        public void Start() {
+            ShowBuildMenu(); //Allow it to setup itself
             Escape(true);
             endScoreScreen.SetActive(false);
             if (Instance != null) {
@@ -79,29 +81,33 @@ namespace Andja.Controller {
             ChoiceDialog.Show(choiceInformation);
         }
         public void OpenStructureUI(Structure str) {
-            if (str == null) {
-                return;
-            }
-            if (str is WarehouseStructure || str is MarketStructure) {
-                CloseInfoUI();
-                if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
-                    OpenOtherCity(str.City);
+            switch (str) {
+                case null:
+                    return;
+                case WarehouseStructure _:
+                case MarketStructure _: {
+                    CloseInfoUI();
+                    TileSpriteController.Instance.AddDecider(BuildController.Instance.TileCityDecider);
+                    if (str.PlayerNumber != PlayerController.currentPlayerNumber) {
+                        OpenOtherCity(str.City);
+                    }
+                    else {
+                        OpenOwnedCityInventory(str.City, str.City.TradeWithAnyShip);
+                    }
+                    return;
                 }
-                else {
-                    OpenCityInventory(str.City, str.City.TradeWithAnyShip);
-                }
-                return;
-            }
-            if (str is HomeStructure) {
-                if (str.PlayerNumber == PlayerController.currentPlayerNumber) {
+                case HomeStructure home: {
+                    if (home.PlayerNumber != PlayerController.currentPlayerNumber) return;
                     CloseRightUI();
                     CloseInfoUI();
-                    OpenHomeUI((HomeStructure)str);
+                    OpenHomeUI(home);
+                    return;
                 }
-                return;
+                default:
+                    uiInfoCanvas.SetActive(true);
+                    uiInfoCanvas.GetComponent<InfoUI>().Show(str);
+                    break;
             }
-            uiInfoCanvas.SetActive(true);
-            uiInfoCanvas.GetComponent<InfoUI>().Show(str);
         }
         internal void OpenUnitUI(Unit unit) {
             if (unit == null) {
@@ -148,7 +154,7 @@ namespace Andja.Controller {
             endScoreScreen.SetActive(true);
         }
 
-        public void OpenOtherCity(City city) {
+        public void OpenOtherCity(ICity city) {
             if (city == null) {
                 return;
             }
@@ -158,7 +164,7 @@ namespace Andja.Controller {
             otherCityUI.GetComponent<OtherCityUI>().Show(city);
         }
 
-        public void OpenCityInventory(City city, System.Action<Item> onItemPressed = null) {
+        public void OpenOwnedCityInventory(ICity city, Action<Item> onItemPressed = null) {
             if (city == null) {
                 return;
             }
@@ -168,9 +174,10 @@ namespace Andja.Controller {
             CityInventoryCanvas.GetComponent<CityInventoryUI>().ShowInventory(city, onItemPressed);
         }
 
-        public void HideCityUI(City city) {
+        public void HideCityUI(ICity city) {
             otherCityUI.SetActive(false);
             CityInventoryCanvas.SetActive(false);
+            TileSpriteController.Instance.RemoveDecider(BuildController.Instance.TileCityDecider);
         }
 
         public void ToggleRightUI() {
@@ -275,6 +282,7 @@ namespace Andja.Controller {
         }
 
         internal void CloseMouseUnselect() {
+            HideCityUI(null);
             CloseInfoUI();
             CloseRightUI();
             CloseChooseBuild();
@@ -287,7 +295,7 @@ namespace Andja.Controller {
                 consoleCanvas.activeSelf;
         }
 
-        public void SetDragAndDropBuild(GameObject go, Vector2 offset) {
+        public void SetDragAndDropBuild(StructureBuildUI go, Vector2 offset) {
             shortCutCanvas.GetComponent<ShortcutUI>().SetDragAndDropBuild(go, offset);
         }
 
@@ -315,24 +323,23 @@ namespace Andja.Controller {
             if ((EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>()) != null &&
                 (EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>()).isFocused)
                 return true;
-            if ((EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()) != null &&
-                (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused)
-                return true;
-            return false;
+            return (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()) != null &&
+                   (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>()).isFocused;
         }
 
         public UIControllerSave GetUISaveData() {
-            return new UIControllerSave(FindObjectOfType<ShortcutUI>().GetShortCutSave());
+            return new UIControllerSave(FindObjectOfType<ShortcutUI>().GetShortCutSave(), EventUIManager.Instance.GetSave());
         }
 
         public void LoadUISaveData() {
             FindObjectOfType<ShortcutUI>().LoadShortCuts(uIControllerSave.shortcuts);
+            EventUIManager.Instance.Load(uIControllerSave.eventUIData);
             uIControllerSave = null;
         }
         public void ToggleDebugData() {
             DebugData.SetActive(!DebugData.activeSelf);
         }
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 
@@ -340,28 +347,27 @@ namespace Andja.Controller {
             uIControllerSave = uics;
         }
         public static string GetTextColor(TextColor color) {
-            switch (color) {
-                case TextColor.Positive:
-                    return "#27ae60";
-                case TextColor.Neutral:
-                    return "#323232";
-                case TextColor.Negative:
-                    return "#e74c3c";
-                default:
-                    return "#000000";
-            }
+            return color switch {
+                TextColor.Positive => "#27ae60",
+                TextColor.Neutral => "#323232",
+                TextColor.Negative => "#e74c3c",
+                _ => "#000000"
+            };
         }
     }
 
     [Serializable]
     public class UIControllerSave : BaseSaveData {
         public string[] shortcuts;
+        public EventUISave eventUIData;
 
-        public UIControllerSave(string[] shortcuts) {
+        public UIControllerSave(string[] shortcuts, EventUISave eventUIData) {
             this.shortcuts = shortcuts;
+            this.eventUIData = eventUIData;
         }
 
         public UIControllerSave() {
+
         }
     }
 }

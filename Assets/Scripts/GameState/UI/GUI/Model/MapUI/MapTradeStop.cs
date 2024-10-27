@@ -33,14 +33,12 @@ namespace Andja.UI.Model {
         public void OnPointerUp(PointerEventData eventData) {
             if (cityStop)
                 return;
-            Debug.Log("OnPointerUp");
             switch (eventData.button) {
                 case PointerEventData.InputButton.Left:
                     TradeRoutePanel.Instance.tradeRouteLine.OnTradeStopUp(stop);
                     break;
                 case PointerEventData.InputButton.Right:
                     TradeRoutePanel.Instance.tradeRouteLine.RemoveStop(this);
-                    Destroy(gameObject);
                     break;
                 case PointerEventData.InputButton.Middle:
                     break;
@@ -48,11 +46,15 @@ namespace Andja.UI.Model {
         }
 
         public void OnDrag(PointerEventData eventData) {
-            TradeRoutePanel.Instance.tradeRouteLine.OnDrag(eventData);
+            if (cityStop)
+                return;
+            TradeRoutePanel.Instance.tradeRouteLine.OnStopPointDrag(eventData);
             transform.localPosition = TradeRoutePanel.Instance.tradeRouteLine.currentLocalPosition;
         }
 
         public void OnEndDrag(PointerEventData eventData) {
+            if (cityStop)
+                return;
             TradeRoutePanel.Instance.tradeRouteLine.OnTradeStopUp(stop);
         }
 

@@ -82,7 +82,7 @@ namespace Andja.UI.Model {
                     ngui.transform.Cast<Transform>().Any(child => child.gameObject.activeInHierarchy)
                     );
             }
-            float F = (float)Math.Round(home.GetTaxPercantage() * 100f, 2);
+            float F = (float)Math.Round(home.GetTaxPercentage() * 100f, 2);
             taxSlider.value = F;
             structureUI.Show(home);
             ChangeNeedLevel(0);
@@ -120,23 +120,23 @@ namespace Andja.UI.Model {
             if (home == null || home.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }
-            peopleCount.text = home.people + "/" + home.MaxLivingSpaces;
+            peopleCount.text = home.People + "/" + home.MaxLivingSpaces;
             if (home.CanBeUpgraded) {
                 upgradeButton.SetActive(true);
             }
             else {
                 upgradeButton.SetActive(false);
             }
-            switch (home.currentMood) {
-                case HomeStructure.CitizienMoods.Mad:
+            switch (home.CurrentMood) {
+                case HomeStructure.CitizenMoods.Mad:
                     citizenCanvas.color = Color.red;
                     break;
 
-                case HomeStructure.CitizienMoods.Neutral:
+                case HomeStructure.CitizenMoods.Neutral:
                     citizenCanvas.color = Color.white;
                     break;
 
-                case HomeStructure.CitizienMoods.Happy:
+                case HomeStructure.CitizenMoods.Happy:
                     citizenCanvas.color = Color.green;
                     break;
             }

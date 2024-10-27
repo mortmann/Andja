@@ -11,6 +11,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using Range = Andja.Utility.Range;
 
 namespace Andja.Editor {
 
@@ -165,9 +166,7 @@ namespace Andja.Editor {
                 dragging = false;
             }
             if (InputHandler.GetButtonDown(InputName.Rotate)) {
-                if (BuildController.Instance.toBuildStructure != null) {
-                    BuildController.Instance.toBuildStructure.RotateStructure();
-                }
+                BuildController.Instance.RotateBuildStructure();
             }
         }
 
@@ -383,7 +382,7 @@ namespace Andja.Editor {
 
         public void SetStructure(string id) {
             structure = PrototypController.Instance.StructurePrototypes[id];
-            BuildController.Instance.StartStructureBuild(id, null, structure);
+            BuildController.Instance.StartStructureBuild(id, structure);
             if (brushBuild) {
                 MouseController.Instance.SetMouseState(MouseState.Idle);
                 MouseController.Instance.ToBuildStructure = null;
@@ -470,34 +469,5 @@ namespace Andja.Editor {
             return new SaveIsland(world.Islands[0].Cities[0].Structures, toSave.ToArray(), Width, Height, climate, Resources);
         }
 
-        [JsonObject]
-        public class SaveIsland {
-            [JsonPropertyAttribute] public int Width;
-            [JsonPropertyAttribute] public int Height;
-            [JsonPropertyAttribute] public Climate climate;
-            [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.None)] public LandTile[] tiles;
-            [JsonPropertyAttribute(TypeNameHandling = TypeNameHandling.Auto)] public List<Structure> structures;
-            [JsonPropertyAttribute] public Dictionary<string, Range> Resources;
-
-            [JsonIgnore] public string Name; // for loading in image or similar things
-            [JsonPropertyAttribute] public List<IslandFeature> features;
-
-            public SaveIsland() {
-            }
-
-            public SaveIsland(List<Structure> structures, Tile[] tiles, int Width, int Height, Climate climate, Dictionary<string, Range> Resources) {
-                this.Width = Width;
-                this.Height = Height;
-                this.climate = climate;
-                this.structures = new List<Structure>(structures);
-                this.tiles = tiles.Cast<LandTile>().ToArray();
-                this.Resources = new Dictionary<string, Range>();
-                foreach (string id in Resources.Keys) {
-                    if (Resources[id].upper <= 0)
-                        continue;
-                    this.Resources[id] = Resources[id];
-                }
-            }
-        }
     }
 }

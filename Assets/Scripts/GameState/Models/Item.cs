@@ -12,82 +12,71 @@ namespace Andja.Model {
         [Ignore] public int UnlockPopulationCount;
         [Ignore] public List<Need> SatisfiesNeeds;
         [Ignore] public float[] TotalUsagePerLevel; // is only for luxury goods & ai
-        [Ignore] public float AIValue {
+        [Ignore] public float AIValue =>
             //TODO: calculate the *worth* of an item based on the cost/rarity of it
-            get {
-                return (UnlockLevel / PrototypController.Instance.NumberOfPopulationLevels);
-            } 
-        }
+            UnlockLevel / (float)PrototypController.Instance.NumberOfPopulationLevels;
     }
 
     [JsonObject(MemberSerialization.OptIn)]
     public class Item {
+        protected ItemPrototypeData prototypeData;
+
         [JsonPropertyAttribute] public string ID;
         [JsonPropertyAttribute] public int count;
 
-        protected ItemPrototypeData _prototypData;
-        internal string countString => count + "t";
+        internal string CountString => count + "t";
 
-        public ItemPrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetItemPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public ItemPrototypeData Data => prototypeData ??= PrototypController.Instance.GetItemPrototypDataForID(ID);
 
-        public ItemType Type {
-            get {
-                return Data.type;
-            }
-        }
+        public ItemType Type => Data.type;
 
-        public string Name {
-            get {
-                return Data.Name;
-            }
-        }
+        public string Name => Data.Name;
 
         public Item(string id, int count = 0) {
             this.ID = id;
             this.count = count;
         }
 
-        public Item(string id, ItemPrototypeData ipd) {
-            this.ID = id;
-            this._prototypData = ipd;
+        public Item(string id, ItemPrototypeData ipd) : this(id) {
+            this.prototypeData = ipd;
             this.count = 0;
         }
 
-        public Item(Item other) {
-            this.ID = other.ID;
+        public Item(Item other) : this(other.ID) {
         }
-
+        public Item(Item other, int count = 0) : this(other.ID, count) {
+        }
         public Item() {
         }
 
-        virtual public Item Clone() {
+        public virtual Item Clone() {
             return new Item(this);
         }
-
-        virtual public Item CloneWithCount() {
+        public virtual Item Clone(int amount) {
+            return new Item(this, amount);
+        }
+        public virtual Item CloneWithCount(int times = 1) {
             Item i = new Item(this) {
-                count = this.count
+                count = this.count * times
             };
             return i;
         }
 
         internal string ToSmallString() {
-            return string.Format(Name + ":" + count + "t");
+            return Data == null ? ID : string.Format(Name + ":" + count + "t");
         }
 
         public override string ToString() {
-            return string.Format("[Item] " + ID + ":" + Name + ":" + count);
+            return Data == null ? ID : string.Format("[Item] " + ID + ":" + Name + ":" + count);
         }
 
-        internal bool Exists() {
+        public bool Exists() {
             return Data.type != ItemType.Missing;
         }
+
+        public static bool AreSame(Item one, Item two) {
+            return one.ID == two.ID && one.count == two.count;
+        }
+
     }
 }

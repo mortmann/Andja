@@ -41,8 +41,6 @@ namespace Andja.Pathfinding {
             }
             return movementCost > 0 && movementCost < float.PositiveInfinity;
         }
-        public Node(Model.Tile t) : this(t.X,t.Y, t.MovementCost, t.BaseMovementCost, t.City.PlayerNumber) {
-        }
         public Node(int x, int y, float movementCost, float baseCost, int PlayerNumber) {
             this.x = x;
             this.y = y;
@@ -55,6 +53,7 @@ namespace Andja.Pathfinding {
             this.x = node.x;
             this.y = node.y;
             movementCost = node.movementCost;
+            baseMovementCost = node.baseMovementCost;
             PlayerNumber = node.PlayerNumber;
         }
 

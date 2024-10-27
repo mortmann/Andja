@@ -29,13 +29,15 @@ namespace Andja.Pathfinding {
             DestTile = World.Current.GetTileAt(x, y);
             if (startTile == null) {
                 startTile = World.Current.GetTileAt(X, Y);
+                if (startTile.Island == null) {
+                    Debug.Log(startTile);
+                    return;
+                }
             } 
             AddPathJob();
         }
-        bool debug;
 
-        public void SetDestination(List<Tile> startTiles, List<Tile> endTiles, bool debug = false) {
-            this.debug = debug;
+        public void SetDestination(List<Tile> startTiles, List<Tile> endTiles) {
             this.startTiles = startTiles;
             this.endTiles = endTiles;
             AddPathJob();
@@ -44,10 +46,10 @@ namespace Andja.Pathfinding {
         protected override void CalculatePath() {
             if (startTiles == null) {
                 startTiles = new List<Tile> {
-                    startTile
+                    World.Current.GetTileAt(startTile.X, startTile.Y)
                 };
                 endTiles = new List<Tile> {
-                    DestTile
+                    World.Current.GetTileAt(DestTile.X, DestTile.Y)
                 };
             }
             IsAtDestination = false;
@@ -56,8 +58,8 @@ namespace Andja.Pathfinding {
             Job = PathfindingThreadHandler.EnqueueJob(agent, startTiles[0].Island.Grid,
                                                                 startTiles[0].Vector2, endTiles[0].Vector2,
                                                                 startTiles.Select(x => x.Vector2).ToList(),
-                                                                endTiles.Select(x => x.Vector2).ToList()
-                                                                , OnPathJobFinished);
+                                                                endTiles.Select(x => x.Vector2).ToList(),
+                                                                OnPathJobFinished);
         }
 
         private void OnPathJobFinished() {
@@ -77,7 +79,7 @@ namespace Andja.Pathfinding {
 
         public override void HandleNoPathFound() {
             if(agent is Worker w) {
-                w.GoHome(true);
+                w.Destroy();
             } else {
                 Debug.LogWarning("TilesPathfinding HandleNoPathFound for agent " + agent.GetType() + " is not implemented");
             }

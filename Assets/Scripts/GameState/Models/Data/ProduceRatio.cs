@@ -5,7 +5,7 @@ namespace Andja.Model.Data {
     /// Produce need in Ratio by the owning Produce
     /// </summary>
     public struct ProduceRatio {
-        public Produce Producer;
+        public IProduce Producer;
         public float Ratio;
 
         internal List<SupplyChain> CalculateSupplyChain(SupplyChain supplyChain, int tier) {

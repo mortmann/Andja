@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Smaa;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -79,7 +78,7 @@ namespace Andja.UI.Menu {
                     break;
 
                 case GraphicsSetting.Framelimit:
-                    SetFramelimit(Screen.currentResolution.refreshRate);
+                    SetFramelimit(Convert.ToInt32(Screen.currentResolution.refreshRateRatio.value));
                     break;
 
                 default:
@@ -289,15 +288,12 @@ namespace Andja.UI.Menu {
             value = Mathf.Clamp(value, 0, GS_AntiAliasing.PresetValues.Length - 1);
             if (value == 2) {
                 MainCamera.GetComponent<Antialiasing>().enabled = false;
-                MainCamera.GetComponent<SMAA>().enabled = true;
             }
             else if (value == 1) {
                 MainCamera.GetComponent<Antialiasing>().enabled = true;
-                MainCamera.GetComponent<SMAA>().enabled = false;
             }
             else {
                 MainCamera.GetComponent<Antialiasing>().enabled = false;
-                MainCamera.GetComponent<SMAA>().enabled = false;
             }
             SetSavedGraphicsOption(GraphicsSetting.AntiAliasing, value);
         }
@@ -314,7 +310,7 @@ namespace Andja.UI.Menu {
                 if (GS_Fullscreen.DisableExklusivFullscreen && value == 0)
                     value = 1;
                 Screen.SetResolution(Screen.width, Screen.height,
-                    (FullScreenMode)value, Screen.currentResolution.refreshRate);
+                    (FullScreenMode)value, Screen.currentResolution.refreshRateRatio);
             }
             SetSavedGraphicsOption(GraphicsSetting.Fullscreen, value);
         }
@@ -343,7 +339,7 @@ namespace Andja.UI.Menu {
             if (res == null)
                 return;
             if(CustomResolution.IsCurrentResolution(res) == false) {
-                Screen.SetResolution(res.width, res.height, Screen.fullScreen, res.refreshRate);
+                Screen.SetResolution(res.width, res.height, Screen.fullScreenMode, res.refreshRate);
             }
             SetSavedGraphicsOption(GraphicsSetting.Resolution, res);
         }
@@ -351,7 +347,7 @@ namespace Andja.UI.Menu {
         public void SetTextureQuality(int value) {
             value = Mathf.Clamp(value, 0, 3);
             // In the quality settings 0 is full quality textures, while 3 is the lowest.
-            QualitySettings.masterTextureLimit = 3 - value;
+            QualitySettings.globalTextureMipmapLimit = 3 - value;
             SetSavedGraphicsOption(GraphicsSetting.TextureQuality, value);
         }
 
@@ -367,7 +363,7 @@ namespace Andja.UI.Menu {
         public class CustomResolution {
             public int width;
             public int height;
-            public int refreshRate;
+            public RefreshRate refreshRate;
 
             public CustomResolution() {
             }
@@ -375,13 +371,13 @@ namespace Andja.UI.Menu {
             public CustomResolution(Resolution res) {
                 width = res.width;
                 height = res.height;
-                refreshRate = res.refreshRate;
+                refreshRate = res.refreshRateRatio;
             }
 
             internal static bool IsCurrentResolution(CustomResolution res) {
                 if (Screen.currentResolution.width != res.width || Screen.currentResolution.height != res.height)
                     return false;
-                if (Screen.currentResolution.refreshRate != res.refreshRate)
+                if (Screen.currentResolution.refreshRateRatio.Equals(res.refreshRate) == false)
                     return false;
                 return true;
             }

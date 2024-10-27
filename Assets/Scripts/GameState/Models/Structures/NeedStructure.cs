@@ -19,14 +19,9 @@ namespace Andja.Model {
     [JsonObject(MemberSerialization.OptIn)]
     public class NeedStructure : TargetStructure {
         private NeedStructurePrototypeData _needStructureData;
-        public NeedStructurePrototypeData NeedStructureData {
-            get {
-                if (_needStructureData == null) {
-                    _needStructureData = (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _needStructureData;
-            }
-        }
+        public NeedStructurePrototypeData NeedStructureData =>
+            _needStructureData ??= (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+
         public NeedStructure(string pid, NeedStructurePrototypeData nspd) {
             this.ID = pid;
             this._needStructureData = nspd;
@@ -49,7 +44,7 @@ namespace Andja.Model {
             return new NeedStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             foreach (Tile t in RangeTiles) {
                 t.AddNeedStructure(this);
             }
@@ -57,7 +52,7 @@ namespace Andja.Model {
         protected override void OnUpgrade() {
             base.OnUpgrade();
         }
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
         }
     }
 }

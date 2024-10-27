@@ -248,7 +248,7 @@ namespace Andja.Utility {
             return loadedSprites.ToArray();
         }
 
-        public static void LoadXMLs(PrototypController.XMLFilesTypes type, Action<string> readFromXML) {
+        public static void LoadXMLs(PrototypController.XmlFilesTypes type, Action<string> readFromXML) {
             foreach (Mod mod in LoadedMods) {
                 try {
                     if (mod.xmlTypeToXMLString.ContainsKey(type.ToString()) == false)

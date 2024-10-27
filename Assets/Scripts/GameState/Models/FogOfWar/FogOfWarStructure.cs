@@ -34,7 +34,7 @@ namespace Andja.FogOfWar {
         public void Link(Structure structure) {
             SpriteRenderer sr = GetComponent<SpriteRenderer>();
             sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-            Data.buildID = structure.buildID;
+            Data.buildID = structure.BuildID;
             this.structure = structure;
             structure.RegisterOnDestroyCallback(Destroyed);
         }
@@ -43,7 +43,7 @@ namespace Andja.FogOfWar {
             sr.sprite = StructureSpriteController.Instance.GetSprite(Data.lastShownSprite);
         }
         public void LoadStructure() {
-            this.structure = BuildController.Instance.buildIdToStructure[Data.buildID];
+            this.structure = BuildController.Instance.BuildIdToStructure[Data.buildID];
             ShowLastShown();
         }
         public void LoadStructureDestroyed() {
@@ -70,7 +70,7 @@ namespace Andja.FogOfWar {
                 return;
             }
             Data.id = str.ID;
-            Data.rotation = str.rotation;
+            Data.rotation = str.Rotation;
             structure = null;
             Data.buildID = 0;
             Data.buildTileVector = str.BuildTile.Vector2;
@@ -106,8 +106,8 @@ namespace Andja.FogOfWar {
             if(data.buildID == 0) {
                 LoadStructureDestroyed();
             } else
-            if(BuildController.Instance.buildIdToStructure.ContainsKey(data.buildID)) {
-                Link(BuildController.Instance.buildIdToStructure[data.buildID]);
+            if(BuildController.Instance.BuildIdToStructure.ContainsKey(data.buildID)) {
+                Link(BuildController.Instance.BuildIdToStructure[data.buildID]);
             }
         }
 

@@ -17,7 +17,7 @@ namespace Andja.Model {
 
         [JsonPropertyAttribute] private float startCooldown;
         [JsonPropertyAttribute] private List<TradeShip> Ships;
-        private List<City> TradeCities;
+        private List<ICity> TradeCities;
         public FlyingTrader() {
             Setup();
         }
@@ -28,12 +28,12 @@ namespace Andja.Model {
 
         private void Setup() {
             Instance = this;
-            TradeCities = new List<City>();
+            TradeCities = new List<ICity>();
             Ships = new List<TradeShip>();
             BuildController.Instance.RegisterCityCreated(OnCityCreated);
         }
 
-        private void OnCityCreated(City city) {
+        private void OnCityCreated(ICity city) {
             TradeCities.Add(city);
         }
 
@@ -82,23 +82,23 @@ namespace Andja.Model {
             Instance = null;
         }
 
-        protected City GetNextDestination(TradeShip tradeShip, List<City> visited) {
+        protected ICity GetNextDestination(TradeShip tradeShip, List<ICity> visited) {
             Vector2 shipPos = tradeShip.Ship.PositionVector2;
             if (TradeCities.Count == 0)
                 return null;
-            IEnumerable<City> remaining = TradeCities.Except(visited);
+            IEnumerable<ICity> remaining = TradeCities.Except(visited).Where(c => c.Warehouse != null);
             if (remaining.Count() == 0)
                 return null;
             return remaining.Aggregate((x, y) => {
-                return Vector2.Distance(shipPos, x.warehouse.tradeTile.Vector2) < Vector2.Distance(shipPos, y.warehouse.tradeTile.Vector2) ? x : y;
+                return Vector2.Distance(shipPos, x.Warehouse.TradeTile.Vector2) < Vector2.Distance(shipPos, y.Warehouse.TradeTile.Vector2) ? x : y;
             });
         }
 
         [JsonObject(MemberSerialization.OptIn)]
         public class TradeShip {
             [JsonPropertyAttribute] public Ship Ship;
-            [JsonPropertyAttribute] private City CurrentDestination;
-            [JsonPropertyAttribute] private List<City> visitedCities;
+            [JsonPropertyAttribute] private ICity CurrentDestination;
+            [JsonPropertyAttribute] private List<ICity> visitedCities;
             [JsonPropertyAttribute] private float tradeTimer;
             [JsonPropertyAttribute] private bool isAtTrade;
 
@@ -106,7 +106,7 @@ namespace Andja.Model {
             }
 
             public TradeShip(Ship ship) {
-                visitedCities = new List<City>();
+                visitedCities = new List<ICity>();
                 this.Ship = ship;
                 tradeTimer = TradeTime;
                 GoToNextCity();
@@ -148,9 +148,9 @@ namespace Andja.Model {
                 }
                 visitedCities.Add(CurrentDestination);
                 OffworldMarket market = WorldController.Instance.offworldMarket;
-                if (CurrentDestination.itemIDtoTradeItem != null) {
-                    foreach (string item_id in CurrentDestination.itemIDtoTradeItem.Keys) {
-                        TradeItem ti = CurrentDestination.itemIDtoTradeItem[item_id];
+                if (CurrentDestination.ItemIDtoTradeItem != null) {
+                    foreach (string item_id in CurrentDestination.ItemIDtoTradeItem.Keys) {
+                        TradeItem ti = CurrentDestination.ItemIDtoTradeItem[item_id];
                         int inInvCount = CurrentDestination.GetAmountForThis(new Item(item_id));
                         switch (ti.trade) {
                             case Trade.Buy:
@@ -160,8 +160,8 @@ namespace Andja.Model {
                                 float percentage = (ti.price) / (omSellPrice * BuyDifference);
                                 if (percentage >= 1) {
                                     int toSell = Mathf.Clamp(Mathf.FloorToInt((ti.count - inInvCount) * (percentage - BuyDifference)), 0, Ship.InventorySize);
-                                    Ship.inventory.AddItem(new Item(item_id, toSell)); // ... cheater ...
-                                    CurrentDestination.BuyingTradeItem(item_id, null, Ship, toSell);
+                                    Ship.Inventory.AddItem(new Item(item_id, toSell)); // ... cheater ...
+                                    CurrentDestination.BuyingTradeItem(item_id, Ship, toSell);
                                 }
                                 break;
 
@@ -172,14 +172,14 @@ namespace Andja.Model {
                                 percentage = (ti.price * BuyDifference) / omBuyPrice;
                                 if (percentage <= 1) {
                                     int toBuy = Mathf.Clamp(Mathf.FloorToInt((inInvCount - ti.count) * (1 - percentage)), 0, Ship.InventorySize);
-                                    CurrentDestination.SellingTradeItem(item_id, null, Ship, toBuy);
+                                    CurrentDestination.SellingTradeItem(item_id, Ship, toBuy);
                                 }
                                 break;
                         }
                     }
                 }
-                if (Ship.inventory.IsFullWithItems()) {
-                    //TODO: maybe check other cities for in inventory items?
+                if (Ship.Inventory.AreSlotsFilledWithItems()) {
+                    //TODO: maybe check other cities for in Inventory items?
                     SendHome();
                 }
                 else {
@@ -188,7 +188,7 @@ namespace Andja.Model {
                 isAtTrade = false;
             }
 
-            private void OnNextDestinationDestroy(City city) {
+            private void OnNextDestinationDestroy(ICity city) {
                 city.UnregisterCityDestroy(OnNextDestinationDestroy);
                 GoToNextCity();
             }
@@ -200,13 +200,13 @@ namespace Andja.Model {
                     return;
                 }
                 CurrentDestination.RegisterCityDestroy(OnNextDestinationDestroy);
-                if (CurrentDestination.warehouse == null) {
+                if (CurrentDestination.Warehouse == null) {
                     GoToNextCity();
                     visitedCities.Add(CurrentDestination);
                     return;
                 }
-                CurrentDestination.warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
-                Ship.GiveMovementCommand(CurrentDestination.warehouse.tradeTile);
+                CurrentDestination.Warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
+                Ship.GiveMovementCommand(CurrentDestination.Warehouse.TradeTile);
             }
 
             private void OnWarehouseDestroy(Structure str, IWarfare destroyer) {
@@ -226,8 +226,8 @@ namespace Andja.Model {
                     SendHome();
                 }
                 else {
-                    CurrentDestination.warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
-                    Ship.GiveMovementCommand(CurrentDestination.warehouse.tradeTile, true);
+                    CurrentDestination.Warehouse.RegisterOnDestroyCallback(OnWarehouseDestroy);
+                    Ship.GiveMovementCommand(CurrentDestination.Warehouse.TradeTile, true);
                 }
                 Setup();
             }

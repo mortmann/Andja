@@ -14,40 +14,22 @@ namespace Andja.Model {
 
         #region RuntimeOrOther
 
-        public string Resource {
-            get {
-                if (OutputData.output[0] == null) return null;
-                return OutputData.output[0].ID;
-            }
-        }
+        public string Resource => OutputData.output[0]?.ID;
 
-        public override float EfficiencyPercent {
-            get {
-                if (BuildTile.Island.HasResource(Resource)) {
-                    return 100;
-                }
-                return 0;
-            }
-        }
+        public override float EfficiencyPercent => BuildTile.Island.HasResource(Resource) ? 100 : 0;
 
-        protected MinePrototypeData _mineData;
+        private MinePrototypeData _mineData;
 
-        public MinePrototypeData MineData {
-            get {
-                if (_mineData == null) {
-                    _mineData = (MinePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _mineData;
-            }
-        }
+        public MinePrototypeData MineData =>
+            _mineData ??= (MinePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
         #endregion RuntimeOrOther
 
-        public static ResourceMode CurrentResourceMode;
+        public static ResourceMode CurrentResourceMode = ResourceMode.PerMine;
 
-        public MineStructure(string pid, MinePrototypeData MineData) {
+        public MineStructure(string pid, MinePrototypeData mineData) {
             this.ID = pid;
-            _mineData = MineData;
+            _mineData = mineData;
         }
 
         /// <summary>
@@ -61,35 +43,34 @@ namespace Andja.Model {
         }
 
         public override bool SpecialCheckForBuild(List<Tile> tiles) {
-            if (BuildTile.Island.HasResource(Resource) == false) {
+            if (tiles[0].Island.HasResource(Resource) == false) {
                 return false;
             }
             return true;
         }
 
-        public override void OnUpdate(float deltaTime) {
+        protected override void OnUpdate(float deltaTime) {
             if (IsActiveAndWorking == false || Output[0].count >= MaxOutputStorage) {
                 return;
             }
             if (CurrentResourceMode == ResourceMode.PerProduce && BuildTile.Island.HasResource(Resource) == false) {
                 return;
             }
-            produceTimer += deltaTime;
-            if (produceTimer >= ProduceTime) {
-                produceTimer = 0;
-                Output[0].count += OutputData.output[0].count;
-                if (CurrentResourceMode == ResourceMode.PerProduce)
-                    City.Island.RemoveResources(Resource, OutputData.output[0].count);
-                cbOutputChange?.Invoke(this);
-            }
+            ProduceTimer += deltaTime;
+            if (ProduceTimer < ProduceTime) return;
+            ProduceTimer = 0;
+            Output[0].count += OutputData.output[0].count;
+            if (CurrentResourceMode == ResourceMode.PerProduce)
+                City.Island.RemoveResources(Resource, OutputData.output[0].count);
+            cbOutputChange?.Invoke(this);
         }
 
         public override Structure Clone() {
             return new MineStructure(this);
         }
 
-        public override void OnBuild() {
-            if (CurrentResourceMode == ResourceMode.PerMine) {
+        public override void OnBuild(bool loading = false) {
+            if (loading == false && CurrentResourceMode == ResourceMode.PerMine) {
                 City.Island.RemoveResources(Resource, 1);
             }
         }
@@ -97,7 +78,7 @@ namespace Andja.Model {
             base.OnUpgrade();
             _mineData = null;
         }
-        protected override void OnDestroy() {
+        public override void OnDestroy() {
             if (CurrentResourceMode == ResourceMode.PerMine) {
                 City.Island.AddResources(Resource, 1);
             }

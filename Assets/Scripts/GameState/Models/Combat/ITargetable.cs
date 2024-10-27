@@ -16,7 +16,6 @@ namespace Andja.Model {
         float Speed { get; }
         float Width { get; }
         float Height { get; }
-        float Rotation { get; }
 
         bool IsAttackableFrom(IWarfare warfare);
 

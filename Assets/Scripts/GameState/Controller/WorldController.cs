@@ -28,12 +28,8 @@ namespace Andja.Controller {
         private bool _isPaused = false;
 
         public bool IsPaused {
-            get {
-                return _isPaused || Loading.IsLoading;
-            }
-            set {
-                _isPaused = value;
-            }
+            get => _isPaused || Loading.IsLoading;
+            set => _isPaused = value;
         }
 
         public float DeltaTime { get { return Time.deltaTime * TimeMultiplier; } }
@@ -47,7 +43,7 @@ namespace Andja.Controller {
                 if (TimeMultiplier < 0.5f) return GameSpeed.StopMotion;
                 if (TimeMultiplier < 0.75f) return GameSpeed.Slowest;
                 if (TimeMultiplier < 1f) return GameSpeed.Slow;
-                if (TimeMultiplier == 1f) return GameSpeed.Normal;
+                if (Math.Abs(TimeMultiplier - 1f) < 0.01) return GameSpeed.Normal;
                 if (TimeMultiplier <= 2f) return GameSpeed.Fast;
                 if (TimeMultiplier <= 4f) return GameSpeed.Fastest;
                 return GameSpeed.LudicrousSpeed;
@@ -58,16 +54,14 @@ namespace Andja.Controller {
             UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
         }
 
-        // Use this for initialization
-        private void OnEnable() {
-            Debug.Log("Intializing World Controller");
+        public void OnEnable() {
             if (Instance != null) {
                 Debug.LogError("There should never be two world controllers.");
             }
             else {
                 Instance = this;
             }
-            new Pathfinding.PathfindingThreadHandler();
+            new Pathfinding.PathfindingThreadHandler().Start();
         }
 
         public void Start() {
@@ -94,20 +88,22 @@ namespace Andja.Controller {
             StartingLoadout loadout = GameData.Instance.Loadout;
             if (loadout == null)
                 return;
-            for (int i = 0; i < PlayerController.Players.Count; i++) {
+            for (int i = 0; i < PlayerController.Instance.Players.Count; i++) {
                 Item[] startItems = loadout.GetItemsCopy();
-                Player player = PlayerController.Players[i];
+                Player player = PlayerController.Instance.Players[i];
                 Vector2 shipSpawn = new Vector2(-1, -1);
                 //TODO: place structures! -- for now only warehouse?
                 if (loadout.Structures != null && player.IsHuman && Array.Exists(loadout.Structures, x => x is WarehouseStructure)) {
                     //here then place em
                     AIPlayer temp = new AIPlayer(player, true);
-                    temp.DecideIsland(true);
+                    var placeWarehouse = temp.DecideIsland(true);
+                    BuildController.Instance.BuildOnTile(placeWarehouse.Item2, placeWarehouse.Item2.GetBuildingTiles(placeWarehouse.Item1), 
+                                                         player.Number, false, false, null, false, true);
                     if (player.Cities.Count == 0) {
                         Debug.LogError("-- Could not fit any Warehouse on the selected island --");
                     }
                     else {
-                        shipSpawn = player.Cities[0].warehouse.tradeTile.Vector2;
+                        shipSpawn = player.Cities[0].Warehouse.TradeTile.Vector2;
                         foreach (Item item in startItems) {
                             if(loadout.Units != null && Array.Exists(loadout.Units,x=>x is Ship s && s.CannonItem.ID == item.ID)) {
                                 continue;
@@ -116,25 +112,23 @@ namespace Andja.Controller {
                         }
                     }
                 }
-                if (loadout.Units != null) {
-                    foreach (Unit prefab in loadout.Units) {
-                        if (prefab.IsShip == false) {
-                            Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
-                            continue;
-                        }
-                        if (shipSpawn.x == -1) {
-                            shipSpawn = spawnPoints[i % spawnPoints.Length];
-                        }
-                        Tile start = World.GetTileAt(shipSpawn);
-                        Unit unit = World.CreateUnit(prefab, player, start);
-                        foreach (Item item in startItems) {
-                            unit.TryToAddItem(item);
-                            if (unit is Ship s) {
-                                if (item.ID == s.CannonItem.ID) {
-                                    s.AddCannonsFromInventory(true);
-                                    continue;
-                                }
-                            }
+
+                if (loadout.Units == null) continue;
+                foreach (Unit prefab in loadout.Units) {
+                    if (prefab.IsShip == false) {
+                        Debug.LogWarning("Unit is not a ship -- currently not supported to spawn!");
+                        continue;
+                    }
+                    if (shipSpawn.x == -1) {
+                        shipSpawn = spawnPoints[i % spawnPoints.Length];
+                    }
+                    Tile start = World.GetTileAt(shipSpawn);
+                    Unit unit = World.CreateUnit(prefab, player, start);
+                    foreach (Item item in startItems) {
+                        unit.TryToAddItem(item);
+                        if (unit is Ship s) {
+                            if (item.ID != s.CannonItem.ID) continue;
+                            s.AddCannonsFromInventory(true);
                         }
                     }
                 }
@@ -163,7 +157,7 @@ namespace Andja.Controller {
             World.OnEventEnded(ge);
         }
 
-        private void Update() {
+        public void Update() {
             if (World == null || IsPaused) {
                 return;
             }
@@ -181,12 +175,7 @@ namespace Andja.Controller {
         }
 
         public void TogglePause() {
-            if (IsPaused) {
-                ChangeGameSpeed(GameSpeed.Normal);
-            }
-            else {
-                ChangeGameSpeed(GameSpeed.Paused);
-            }
+            ChangeGameSpeed(IsPaused ? GameSpeed.Normal : GameSpeed.Paused);
         }
 
         public void ChangeGameSpeed(GameSpeed multi) {
@@ -214,16 +203,19 @@ namespace Andja.Controller {
                 case GameSpeed.Fastest:
                     SetSpeed(4f);
                     break;
+                case GameSpeed.StopMotion:
+                    SetSpeed(0.1f);
+                    break;
+                case GameSpeed.LudicrousSpeed:
+                    SetSpeed(10f);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(multi), multi, null);
             }
         }
 
         internal void SetSpeed(float speed) {
-            if (speed == 0) {
-                IsPaused = true;
-            }
-            else {
-                IsPaused = false;
-            }
+            IsPaused = speed == 0;
             TimeMultiplier = Mathf.Clamp(speed, 0, 100);
             cbGameSpeedChange?.Invoke(CurrentSpeed, speed);
         }
@@ -251,7 +243,7 @@ namespace Andja.Controller {
         public void UnregisterSpeedChange(Action<GameSpeed, float> callbackfunc) {
             cbGameSpeedChange -= callbackfunc;
         }
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
             flyingTrader?.OnDestroy();
             World?.Destroy();
@@ -286,17 +278,16 @@ namespace Andja.Controller {
             List<MapGenerator.IslandData> structs = MapGenerator.Instance.GetIslandStructs();
             foreach (Island island in World.Islands) {
                 MapGenerator.IslandData thisStruct = structs.Find(s =>
-                        island.StartTile.X >= s.x && (s.x + s.Width) >= island.StartTile.X &&
-                        island.StartTile.Y >= s.y && (s.y + s.Height) >= island.StartTile.Y
+                        island.StartTile.X >= s.X && (s.X + s.Width) >= island.StartTile.X &&
+                        island.StartTile.Y >= s.Y && (s.Y + s.Height) >= island.StartTile.Y
                 );
                 island.Fertilities = thisStruct.GetFertilities();
+                island.Features = thisStruct.Features;
                 structs.Remove(thisStruct);
                 if (thisStruct.Tiles == null)
                     Debug.LogError("thisStruct.Tiles is null " + island.StartTile.X + " " + island.StartTile.Y);
 
-                foreach (string id in thisStruct.Resources.Keys) {
-                    if (island.HasResource(id))
-                        continue;
+                foreach (var id in thisStruct.Resources.Keys.Where(id => island.HasResource(id) == false)) {
                     island.Resources[id] = thisStruct.Resources[id];
                 }
                 island.SetTiles(thisStruct.Tiles);

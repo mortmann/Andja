@@ -1,3 +1,4 @@
+using System;
 using Andja.Editor;
 using Andja.UI;
 using Andja.UI.Menu;
@@ -7,20 +8,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Video;
+using static Andja.Controller.Cheat;
 
 namespace Andja.Controller {
 
     public class KeyboardController : MonoBehaviour {
         // Use this for initialization
-        UIController UIC => UIController.Instance;
 
-        MouseController MouseController => MouseController.Instance;
-        BuildController BuildController => BuildController.Instance;
-
-        private VideoPlayer videoPlayer;
-        private enum CheatCode { GodMode }
-
-        readonly Cheat[] codes = new Cheat[] {
+        private readonly Cheat[] _codes = new Cheat[] {
             new Cheat (
                 new KeyCode[]
                 {
@@ -31,8 +26,8 @@ namespace Andja.Controller {
                 CheatCode.GodMode),
         };
 
-        private static readonly float cheatCodeMaxDelay = 1.5f;
-        private float currentCheatCodeInputDelay = 0;
+        private const float CheatCodeMaxDelay = 1.5f;
+        private float _currentCheatCodeInputDelay = 0;
 
         private void Start() {
             new InputHandler();
@@ -53,53 +48,51 @@ namespace Andja.Controller {
             UpdateCheatCodes();
             if (WorldController.Instance == null)
                 return;
-            if (PlayerController.GameOver)
+            if (PlayerController.Instance.GameOver)
                 return;
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                UIC.Escape(BuildController.BuildState != BuildStateModes.None);
-                MouseController.Escape();
-                BuildController.Escape();
+                UIController.Instance.Escape(BuildController.Instance.BuildState != BuildStateModes.None);
+                MouseController.Instance.Escape();
+                BuildController.Instance.Escape();
                 ShortcutUI.Instance.StopDragAndDropBuild();
-                EndVideoReached(null);
+                _codes[0].Stop();
             }
             if (InputHandler.GetButtonDown(InputName.Console)) {
-                UIC.ToggleConsole();
+                UIController.Instance.ToggleConsole();
             }
             if (UIController.IsTextFieldFocused()) {
                 return;
             }
-            if (UIC.IsPauseMenuOpen()) {
+            if (UIController.Instance.IsPauseMenuOpen()) {
                 return;
             }
             if (InputHandler.GetButtonDown(InputName.BuildMenu)) {
-                UIC.ShowBuildMenu();
+                UIController.Instance.ShowBuildMenu();
             }
             if (InputHandler.GetButtonDown(InputName.TradeMenu)) {
-                UIC.ToggleTradeMenu();
+                UIController.Instance.ToggleTradeMenu();
             }
             if (InputHandler.GetButtonDown(InputName.Offworld)) {
-                UIC.ToggleOffWorldMenu();
+                UIController.Instance.ToggleOffWorldMenu();
             }
             if (InputHandler.GetButtonDown(InputName.TogglePause)) {
                 WorldController.Instance.TogglePause();
             }
             if (InputHandler.GetButtonDown(InputName.Stop)) {
-                MouseController.StopUnit();
+                MouseController.Instance.StopUnit();
             }
             if (InputHandler.GetButtonDown(InputName.UpgradeTool)) {
-                MouseController.SetMouseState(MouseState.Upgrade);
+                MouseController.Instance.SetMouseState(MouseState.Upgrade);
             }
             if (InputHandler.GetButtonUp(InputName.UpgradeTool)) {
-                if(MouseController.MouseState == MouseState.Upgrade)
-                    MouseController.SetMouseState(MouseState.Idle);
+                if(MouseController.Instance.MouseState == MouseState.Upgrade)
+                    MouseController.Instance.SetMouseState(MouseState.Idle);
             }
             if (InputHandler.GetButtonDown(InputName.DiplomacyMenu)) {
-                UIC.ToggleDiplomacyMenu();
+                UIController.Instance.ToggleDiplomacyMenu();
             }
             if (InputHandler.GetButtonDown(InputName.Rotate)) {
-                if (BuildController.toBuildStructure != null) {
-                    BuildController.toBuildStructure.RotateStructure();
-                }
+                BuildController.Instance.RotateBuildStructure();
             }
             if (InputHandler.GetButtonDown(InputName.CopyStructure)) {
                 MouseController.Instance.SetCopyMode(true);
@@ -135,7 +128,7 @@ namespace Andja.Controller {
             if (Application.isEditor) {
                 if (Input.GetKey(KeyCode.LeftShift)) {
                     if (EventSystem.current.IsPointerOverGameObject() == false) {
-                        FindObjectOfType<ToolTip>().DebugTileInfo(MouseController.GetTileUnderneathMouse());
+                        FindObjectOfType<ToolTip>().DebugTileInfo(MouseController.Instance.GetTileUnderneathMouse());
                     }
                 }
                 if (Input.GetKeyUp(KeyCode.LeftShift)) {
@@ -149,117 +142,26 @@ namespace Andja.Controller {
         /// </summary>
         private void UpdateCheatCodes() {
             if (Input.anyKeyDown) {
-                foreach (Cheat item in codes) {
+                foreach (Cheat item in _codes) {
                     if(item.Check())
-                        currentCheatCodeInputDelay = 0;
+                        _currentCheatCodeInputDelay = 0;
                     if (item.IsActivated()) {
                         item.Reset();
-                        switch (item.Code) {
-                            case CheatCode.GodMode:
-                                GodMode();
-                                break;
-                        }
+                        item.Do();
                     }
                 }
             }
             else {
-                if (currentCheatCodeInputDelay > cheatCodeMaxDelay) {
-                    foreach (Cheat item in codes) {
+                if (_currentCheatCodeInputDelay > CheatCodeMaxDelay) {
+                    foreach (Cheat item in _codes) {
                         item.Reset();
                     }
                 }
                 else {
-                    currentCheatCodeInputDelay += Time.deltaTime;
+                    _currentCheatCodeInputDelay += Time.deltaTime;
                 }
             }
         }
-        /// <summary>
-        /// Troll the player who thought to activate godmode.
-        /// </summary>
-        private void GodMode() {
-            StartCoroutine(PlayVideo());
-        }
-
-        /// <summary>
-        /// This will play when the game has Internet a never gonna give you up song.
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator PlayVideo() {
-            if (Application.internetReachability == NetworkReachability.NotReachable) {
-                Debug.Log("You need Internet to be able to activate GODMODE");
-                yield return null;
-            }
-            Debug.Log("ACTIVATING GODMODE");
-            WorldController.Instance.ChangeGameSpeed(GameSpeed.Paused);
-            if (videoPlayer != null)
-                yield return null;
-            GameObject go = new GameObject();
-            videoPlayer = go.AddComponent<VideoPlayer>();
-            go.layer = LayerMask.NameToLayer("UI");
-            videoPlayer.playOnAwake = false;
-            AudioSource a = go.AddComponent(SoundController.Instance.musicSource.audioSource);
-            a.clip = null;
-            a.playOnAwake = false;
-            videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
-            videoPlayer.controlledAudioTrackCount = 1;
-            videoPlayer.EnableAudioTrack(0, true);
-            videoPlayer.SetTargetAudioSource(0, a);
-            videoPlayer.source = VideoSource.Url;
-            videoPlayer.skipOnDrop = true;
-            videoPlayer.url = "https://ia800803.us.archive.org/29/items/MacArthur_Foundation_100andChange_dQw4w9WgXcQ/Rick_Astley_-_Never_Gonna_Give_You_Up_dQw4w9WgXcQ.mp4";
-            //"https://rickrolled.fr/rickroll.mp4";
-                //"https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4";
-
-            videoPlayer.renderMode = VideoRenderMode.CameraNearPlane;
-            videoPlayer.targetCamera = Camera.main;
-            videoPlayer.waitForFirstFrame = true;
-
-            videoPlayer.Prepare();            
-            while (videoPlayer.isPrepared == false) {
-                yield return null;
-            }
-            SoundController.Instance.PauseMusicPlayback(true);
-            UIController.Instance.ChangeAllUI(false);
-            videoPlayer.Play();
-            a.Play();
-            videoPlayer.loopPointReached += EndVideoReached;
-        }
-
-        private void EndVideoReached(VideoPlayer source) {
-            if (videoPlayer == null)
-                return;
-            Debug.Log("Deactivated GODMODE");
-            UIController.Instance.ChangeAllUI(true);
-            Destroy(videoPlayer.gameObject);
-            SoundController.Instance.PauseMusicPlayback(false);
-        }
-        class Cheat {
-            public KeyCode[] KeyCodes;
-            public CheatCode Code;
-            bool possible = true;
-            byte keystroke;
-
-            public Cheat(KeyCode[] keyCodes, CheatCode code) {
-                KeyCodes = keyCodes;
-                Code = code;
-            }
-            public bool IsActivated() {
-                return KeyCodes.Length == keystroke;
-            }
-            public bool Check() {
-                if (possible == false)
-                    return false;
-                if(Input.GetKeyDown(KeyCodes[keystroke]) == false) {
-                    possible = false;
-                    return false;
-                }
-                keystroke++;
-                return true;
-            }
-            public void Reset() {
-                possible = true;
-                keystroke = 0;
-            }
-        }
+        
     }
 }

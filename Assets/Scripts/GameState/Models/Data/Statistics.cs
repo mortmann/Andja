@@ -33,21 +33,6 @@ namespace Andja.Model {
             structureStatistic = new StructureStatistic(playerNumber);
             diplomaticStatistic = new DiplomaticStatistic(playerNumber);
             warStatistic = new WarStatistics(playerNumber);
-
-            //foreach (TrackedStatisticGroups group in Enum.GetValues(typeof(TrackedStatisticGroups))) {
-            //    switch (group) {
-            //        case TrackedStatisticGroups.Unit:
-            //            break;
-            //        case TrackedStatisticGroups.City:
-            //            break;
-            //        case TrackedStatisticGroups.Structure:
-            //            break;
-            //        case TrackedStatisticGroups.Diplomatic:
-            //            break;
-            //        case TrackedStatisticGroups.War:
-            //            break;
-            //    }
-            //}
         }
 
         public void SetUnitStatistic(TrackedUnitStatistics stat) {
@@ -106,17 +91,17 @@ namespace Andja.Model {
             }
 
             private void OnUnitCreated(Unit unit) {
-                if (IsTracker(unit.playerNumber)) {
+                if (IsTracker(unit.PlayerNumber)) {
                     AddStat(TrackedUnitStatistics.Built);
                 }
             }
 
             private void OnUnitDestroy(Unit destroyed, IWarfare destroyer) {
-                if (IsTracker(destroyed.playerNumber)) {
+                if (IsTracker(destroyed.PlayerNumber)) {
                     AddStat(TrackedUnitStatistics.Lost);
                 }
                 if (destroyer != null && IsTracker(destroyer.PlayerNumber)) {
-                    if (destroyed.playerNumber == Pirate.Number) {
+                    if (destroyed.PlayerNumber == Pirate.Number) {
                         AddStat(TrackedUnitStatistics.PiratesDestroyed);
                     }
                     else {
@@ -210,13 +195,13 @@ namespace Andja.Model {
                 BuildController.Instance.RegisterAnyCityDestroyed(OnCityDestroyed);
             }
 
-            private void OnCityDestroyed(City city) {
+            private void OnCityDestroyed(ICity city) {
                 if (IsTracker(city.PlayerNumber)) {
                     AddStat(TrackedCityStatistics.Lost);
                 }
             }
 
-            private void OnCityCreated(City city) {
+            private void OnCityCreated(ICity city) {
                 if (IsTracker(city.PlayerNumber)) {
                     AddStat(TrackedCityStatistics.Created);
                 }

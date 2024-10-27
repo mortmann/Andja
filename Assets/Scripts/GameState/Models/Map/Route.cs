@@ -17,6 +17,11 @@ namespace Andja.Model {
 
         public List<Tile> Tiles;
         public HashSet<MarketStructure> MarketStructures;
+        public Route() {
+#if !UNITY_INCLUDE_TESTS
+            Debug.LogError("Wrong Constructor! Only for testing");
+#endif
+        }
         public Route(Tile startTile, bool floodfill = false) {
             Tiles = new List<Tile> {
                 startTile
@@ -64,7 +69,7 @@ namespace Andja.Model {
 
         public void AddRoadTile(Tile tile) {
             Tiles.Add(tile);
-            Grid.ChangeNode(tile, Walkable.Normal);
+            Grid?.ChangeNode(tile, Walkable.Normal);
         }
 
         public void RemoveRoadTile(Tile tile) {
@@ -127,7 +132,7 @@ namespace Andja.Model {
             MarketStructures.Remove(ms);
         }
 
-        internal void CheckForCity(City old) {
+        internal void CheckForCity(ICity old) {
             if (Tiles.Exists(t => t.City == old) == false) {
                 old.RemoveRoute(this);
             }

@@ -1,23 +1,27 @@
-﻿using Andja.Pathfinding;
+﻿using Andja.Controller;
+using Andja.Editor;
+using Andja.Model.Generator;
+using Andja.Pathfinding;
 using Andja.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Range = Andja.Utility.Range;
 
 namespace Andja.Model {
 
     public enum Climate { Cold, Middle, Warm };
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Island : IGEventable {
+    public class Island : GEventable, IIsland {
 
         #region Serialize
 
-        [JsonPropertyAttribute] public List<City> Cities;
-        [JsonPropertyAttribute] public Climate Climate;
-        [JsonPropertyAttribute] public Dictionary<string, int> Resources;
-        [JsonPropertyAttribute] public Tile StartTile;
+        [JsonPropertyAttribute] public List<ICity> Cities { get; set; }
+        [JsonPropertyAttribute] public Climate Climate { get; set; }
+        [JsonPropertyAttribute] public Dictionary<string, int> Resources { get; set; }
+        [JsonPropertyAttribute] public Tile StartTile { get; set; }
 
         #endregion Serialize
 
@@ -26,7 +30,7 @@ namespace Andja.Model {
         //TODO: find better space for ai variable?
         public bool startClaimed;
 
-        public List<Fertility> Fertilities;
+        public List<Fertility> Fertilities { get; set; }
         public PathGrid Grid { get; protected set; }
 
         public int Width {
@@ -41,7 +45,7 @@ namespace Andja.Model {
             }
         }
 
-        public City Wilderness {
+        public ICity Wilderness {
             get {
                 if (_wilderness == null)
                     _wilderness = Cities.Find(x => x.PlayerNumber == GameData.WorldNumber);
@@ -53,8 +57,8 @@ namespace Andja.Model {
             }
         }
 
-        internal void ChangeGridTile(LandTile landTile, bool cityChange = false) {
-            if(cityChange) {
+        public void ChangeGridTile(LandTile landTile, bool cityChange = false) {
+            if (cityChange) {
                 Grid?.ChangeCityNode(landTile);
             }
             else {
@@ -62,63 +66,53 @@ namespace Andja.Model {
             }
         }
 
-        public List<IslandFeature> Features { get; internal set; }
+        public List<IslandFeature> Features { get; set; }
+        public bool AlreadyHighlighted { get; set; }
 
         public List<Tile> Tiles;
-        public Vector2 Placement;
-        public Vector2 Minimum;
-        public Vector2 Maximum;
-        public Vector2 Center;
-        private City _wilderness;
-        public bool allReadyHighlighted;
+        public Vector2 Placement { get; set; }
+        public Vector2 Minimum { get; set; }
+        public Vector2 Maximum { get; set; }
+        public Vector2 Center { get; set; }
+        private ICity _wilderness;
 
         #endregion RuntimeOrOther
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Island"/> class.
-        /// DO not change anything in here unless(!!) it should not happen on load also
-        /// IF both times should happen then put it into Setup!
-        /// </summary>
-        /// <param name="startTile">Start tile.</param>
-        /// <param name="climate">Climate.</param>
-        public Island(Tile startTile, Climate climate = Climate.Middle) {
-            StartTile = startTile; // if it gets loaded the StartTile will already be set
-            Resources = new Dictionary<string, int>();
-            Cities = new List<City>();
-
-            this.Climate = climate;
-
-            Tiles = new List<Tile>();
-            StartTile.Island = this;
-            foreach (Tile t in StartTile.GetNeighbours()) {
-                IslandFloodFill(t);
-            }
-            Setup();
-        }
-
-        internal void RemoveResources(string resourceID, int count) {
+        public void RemoveResources(string resourceID, int count) {
             if (Resources.ContainsKey(resourceID) == false)
                 return;
             Resources[resourceID] -= count;
         }
 
-        internal void AddResources(string resourceID, int count) {
+        public void AddResources(string resourceID, int count) {
             if (Resources.ContainsKey(resourceID) == false)
                 return;
             Resources[resourceID] += count;
         }
 
-        internal bool HasResource(string resourceID) {
+        public bool HasResource(string resourceID) {
             if (Resources.ContainsKey(resourceID) == false)
                 return false;
             return Resources[resourceID] > 0;
         }
 
+        public Island(MapGenerator.IslandData islandStruct) {
+            Resources = new Dictionary<string, int>();
+            Cities = new List<ICity>();
+            this.Climate = islandStruct.Climate;
+            SetTiles(islandStruct.Tiles);
+            Features = islandStruct.Features;
+            Fertilities = islandStruct.GetFertilities();
+            Placement = new Vector2(islandStruct.X, islandStruct.Y);
+            Resources = islandStruct.Resources;
+            Setup();
+        }
+
         public Island(Tile[] tiles, Climate climate = Climate.Middle) {
             Resources = new Dictionary<string, int>();
-            Cities = new List<City>();
+            Cities = new List<ICity>();
             this.Climate = climate;
-            SetTiles(tiles);           
+            SetTiles(tiles);
             Setup();
         }
 
@@ -126,19 +120,22 @@ namespace Andja.Model {
         }
 
         private void Setup() {
-            allReadyHighlighted = false;
-            World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
+            AlreadyHighlighted = false;
+            ((World)World.Current).RegisterOnEvent(OnEventCreate, OnEventEnded);
             //city that contains all the structures like trees that doesnt belong to any player
             //so it has the playernumber -1 -> needs to be checked for when buildings are placed
             //have a function like is notplayer city
             //it does not need NEEDs
             if (Cities.Count > 0) {
 
-            } else {
+            }
+            else {
                 Cities.Add(new City(Tiles, this));
                 Wilderness = Cities[0];
             }
-            Grid = new PathGrid(this);
+            if(EditorController.IsEditor == false) {
+                Grid = new PathGrid(this);
+            }
         }
 
         public IEnumerable<Structure> Load() {
@@ -154,77 +151,31 @@ namespace Andja.Model {
             return structs;
         }
 
-        internal void SetTiles(Tile[] tiles) {
+        public void SetTiles(Tile[] tiles) {
             this.Tiles = new List<Tile>(tiles);
             StartTile = tiles[0];
-            Minimum = new Vector2(tiles[0].X, tiles[0].Y);
-            Maximum = new Vector2(tiles[0].X, tiles[0].Y);
+            Vector2 minimum = new Vector2(tiles[0].X, tiles[0].Y);
+            Vector2 maximum = new Vector2(tiles[0].X, tiles[0].Y);
             foreach (Tile t in tiles) {
                 t.Island = this;
-                if (Minimum.x > t.X) {
-                    Minimum.x = t.X;
+                if (minimum.x > t.X) {
+                    minimum.x = t.X;
                 }
-                if (Minimum.y > t.Y) {
-                    Minimum.y = t.Y;
+                if (minimum.y > t.Y) {
+                    minimum.y = t.Y;
                 }
-                if (Maximum.x < t.X) {
-                    Maximum.x = t.X;
+                if (maximum.x < t.X) {
+                    maximum.x = t.X;
                 }
-                if (Maximum.y < t.Y) {
-                    Maximum.y = t.Y;
+                if (maximum.y < t.Y) {
+                    maximum.y = t.Y;
                 }
             }
-            Center = Minimum + ((Maximum - Minimum) / 2);
+            this.Maximum = maximum;
+            this.Minimum = minimum;
+            Center = minimum + ((maximum - minimum) / 2);
             if (Wilderness != null)
                 Wilderness.AddTiles(Tiles);
-        }
-
-        /// <summary>
-        /// DEPRACATED -- Not needed anymore! Tiles are now determined by the Mapgenerator, which gives the world them for each island!
-        /// </summary>
-        /// <param name="tile"></param>
-        protected void IslandFloodFill(Tile tile) {
-            if (tile == null) {
-                // We are trying to flood fill off the map, so just return
-                // without doing anything.
-                return;
-            }
-            if (tile.Type == TileType.Ocean) {
-                // Water is the border of every island :>
-                return;
-            }
-            if (tile.Island == this) {
-                // already in there
-                return;
-            }
-            Minimum = new Vector2(tile.X, tile.Y);
-            Maximum = new Vector2(tile.X, tile.Y);
-            Queue<Tile> tilesToCheck = new Queue<Tile>();
-            tilesToCheck.Enqueue(tile);
-            while (tilesToCheck.Count > 0) {
-                Tile t = tilesToCheck.Dequeue();
-                if (Minimum.x > t.X) {
-                    Minimum.x = t.X;
-                }
-                if (Minimum.y > t.Y) {
-                    Minimum.y = t.Y;
-                }
-                if (Maximum.x < t.X) {
-                    Maximum.x = t.X;
-                }
-                if (Maximum.y < t.Y) {
-                    Maximum.y = t.Y;
-                }
-
-                if (t.Type != TileType.Ocean && t.Island != this) {
-                    Tiles.Add(t);
-                    t.Island = this;
-                    Tile[] ns = t.GetNeighbours();
-                    foreach (Tile t2 in ns) {
-                        tilesToCheck.Enqueue(t2);
-                    }
-                }
-            }
         }
 
         public void Update(float deltaTime) {
@@ -233,23 +184,23 @@ namespace Andja.Model {
             }
         }
 
-        public City FindCityByPlayer(int playerNumber) {
+        public ICity FindCityByPlayer(int playerNumber) {
             return Cities.Find(x => x.PlayerNumber == playerNumber);
         }
 
-        public City CreateCity(int playerNumber) {
+        public ICity CreateCity(int playerNumber) {
             if (Cities.Exists(x => x.PlayerNumber == playerNumber)) {
                 Debug.LogError("TRIED TO CREATE A SECOND CITY -- IS NEVER ALLOWED TO HAPPEN!");
                 return Cities.Find(x => x.PlayerNumber == playerNumber);
             }
-            allReadyHighlighted = false;
-            City c = new City(playerNumber, this);
+            AlreadyHighlighted = false;
+            ICity c = new City(playerNumber, this);
             Cities.Add(c);
             return c;
         }
 
-        public void RemoveCity(City c) {
-            if(c.IsWilderness()) {
+        public void RemoveCity(ICity c) {
+            if (c.IsWilderness()) {
                 //We could remove it still and recreate it, if it is needed but for now just prevent the deletion 
                 Debug.LogWarning("Wanted to remove Wilderniss. It is still needed even if empty: For the case that their will be once again.");
                 return;
@@ -275,6 +226,10 @@ namespace Andja.Model {
                 ac?.Invoke(ge);
                 return;
             }
+        }
+
+        internal ICity GetCurrentPlayerCity() {
+            return Cities.Find(c => c.PlayerNumber == PlayerController.currentPlayerNumber);
         }
 
         public override void OnEventEnded(GameEvent ge) {

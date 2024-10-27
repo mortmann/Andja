@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Andja.Pathfinding {
 
     public class OceanPathfinding : BasePathfinding {
-        private Tile start;
 
         public OceanPathfinding() : base() {
             if (_x < 0)
@@ -25,7 +24,7 @@ namespace Andja.Pathfinding {
 
         public override void HandleNoPathFound() {
             //Ocean Paths are always viable and never gets blocked for now so it if it is 
-            //than it is 100% faulty pathfinding
+            //than it is 100% faulty Pathfinding
             Debug.LogError("Ocean Pathfinding did not find Path to destination " + DestTile + " (" + Destination + ")");
         }
 
@@ -36,7 +35,6 @@ namespace Andja.Pathfinding {
         public override void SetDestination(float x, float y) {
             dest_X = x;
             dest_Y = y;
-            this.start = World.Current.GetTileAt(X, Y);
             this.DestTile = World.Current.GetTileAt(x, y);
             AddPathJob();
         }
@@ -53,7 +51,7 @@ namespace Andja.Pathfinding {
             worldPath = Job.Path;
             CreateReversePath();
             backPath.Enqueue(Position2);
-            if(World.Current.Tilesmap[Mathf.FloorToInt(dest_X)][Mathf.FloorToInt(dest_Y)] == false){
+            if(World.Current.TilesMap[Mathf.FloorToInt(dest_X)][Mathf.FloorToInt(dest_Y)] == false){
                 Vector2 v = worldPath.Last();
                 dest_X = v.x;
                 dest_Y = v.y;

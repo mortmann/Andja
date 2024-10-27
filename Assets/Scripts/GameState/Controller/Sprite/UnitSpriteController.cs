@@ -4,6 +4,7 @@ using Andja.Utility;
 using DigitalRuby.AdvancedPolygonCollider;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Controller {
@@ -11,28 +12,23 @@ namespace Andja.Controller {
     public class UnitSpriteController : MonoBehaviour {
         public static UnitSpriteController Instance;
 
-        private Dictionary<string, Sprite> unitSprites;
+        private Dictionary<string, Sprite> _unitSprites;
         public Dictionary<Unit, GameObject> unitGameObjectMap;
         public GameObject unitPathPrefab;
         public GameObject unitCirclePrefab;
         public Dictionary<Crate, GameObject> crateGameObjectMap;
         public Dictionary<Projectile, GameObject> projectileGameObjectMap;
 
-        private Unit circleUnit;
-        private const string circleGOname = "buildrange_circle_gameobject";
-        private MouseController mouseController;
+        private Unit _circleUnit;
+        private const string CircleGOName = "buildrange_circle_gameobject";
         public Material SpriteHighlightMaterial;
 
-        private World World {
-            get { return World.Current; }
-        }
-
-        private void Awake() {
+        public void Awake() {
             Instance = this;
         }
 
         // Use this for initialization
-        private void Start() {
+        public void Start() {
             Setup();
         }
 
@@ -41,43 +37,36 @@ namespace Andja.Controller {
             crateGameObjectMap = new Dictionary<Crate, GameObject>();
             projectileGameObjectMap = new Dictionary<Projectile, GameObject>();
             LoadSprites();
-            World.RegisterUnitCreated(OnUnitCreated);
-            World.RegisterCrateSpawned(OnCrateSpawned);
-            World.RegisterCrateDespawned(OnCrateDespawned);
+            World.Current.RegisterUnitCreated(OnUnitCreated);
+            World.Current.RegisterCrateSpawned(OnCrateSpawned);
+            World.Current.RegisterCrateDespawned(OnCrateDespawned);
 
-            foreach (var item in World.Units) {
-                if(item.IsDead) {
-                    continue;
-                }
+            foreach (var item in World.Current.Units.Where(item => item.IsAlive)) {
                 OnUnitCreated(item);
             }
-            foreach (Crate c in World.Crates) {
+            foreach (Crate c in World.Current.Crates) {
                 OnCrateSpawned(c);
             }
-            foreach (Projectile pro in World.Projectiles) {
+            foreach (Projectile pro in World.Current.Projectiles) {
                 OnProjectileCreated(pro);
             }
-            mouseController = MouseController.Instance;
-            World.RegisterOnCreateProjectileCallback(OnProjectileCreated);
+            World.Current.RegisterOnCreateProjectileCallback(OnProjectileCreated);
             BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
-        }
-
-        private void Update() {
         }
 
         public void OnUnitCreated(Unit unit) {
             // This creates a new GameObject and adds it to our scene.
             GameObject go = new GameObject();
             go.layer = LayerMask.NameToLayer("Unit");
-            go.name = unit.playerNumber +":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
-            GameObject line_go = Instantiate(unitPathPrefab);
-            line_go.transform.SetParent(go.transform);
+            go.name = unit.PlayerNumber + ":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
+            GameObject lineGo = Instantiate(unitPathPrefab);
+            lineGo.transform.SetParent(go.transform);
             // Add our tile/GO pair to the dictionary.
             unitGameObjectMap.Add(unit, go);
             go.AddComponent<SpriteOutline>().enabled = false;
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
             sr.sortingLayerName = "Units";
-            sr.sprite = unitSprites[unit.Data.spriteBaseName];
+            sr.sprite = _unitSprites[unit.Data.spriteBaseName];
             sr.material = SpriteHighlightMaterial;
             //go.transform.SetParent(this.transform, true);
             go.AddComponent<ITargetableHoldingScript>().Holding = unit;
@@ -98,11 +87,11 @@ namespace Andja.Controller {
             unit.RegisterOnChangedCallback(OnUnitChanged);
             unit.RegisterOnDestroyCallback(OnUnitDestroy);
             if (FogOfWarController.FogOfWarOn) {
-                if (unit.PlayerNumber == PlayerController.currentPlayerNumber) {
+                if (unit.IsOwnedByCurrentPlayer()) {
                     FogOfWarController.Instance.AddUnitFogModule(go, unit);
                 }
                 if (FogOfWarController.IsFogOfWarAlways) {
-                    if (unit.PlayerNumber != PlayerController.currentPlayerNumber) {
+                    if (unit.IsOwnedByCurrentPlayer() == false) {
                         // boom this should make one part of fog always work
                         sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; 
                     }
@@ -131,25 +120,25 @@ namespace Andja.Controller {
         }
 
         public void OnProjectileCreated(Projectile projectile) {
-            GameObject pro_go = new GameObject {
+            GameObject proGo = new GameObject {
                 name = "Projectile"
             };
-            SpriteRenderer sr = pro_go.AddComponent<SpriteRenderer>();
+            SpriteRenderer sr = proGo.AddComponent<SpriteRenderer>();
             if (FogOfWarController.FogOfWarOn) {
                 if (FogOfWarController.IsFogOfWarAlways) {
                     sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                 }
             }
             sr.sortingLayerName = "Units";
-            sr.sprite = unitSprites["cannonball_1"];
+            sr.sprite = _unitSprites["cannonball_1"];
             projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
             if (projectile.HasHitbox) {
-                BoxCollider2D col = pro_go.AddComponent<BoxCollider2D>();
+                BoxCollider2D col = proGo.AddComponent<BoxCollider2D>();
                 col.isTrigger = true;
                 col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
                                         sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
             }
-            pro_go.AddComponent<ProjectileHoldingScript>().Projectile = projectile;
+            proGo.AddComponent<ProjectileHoldingScript>().Projectile = projectile;
         }
 
         private void OnProjectileDestroy(Projectile pro) {
@@ -162,14 +151,9 @@ namespace Andja.Controller {
                 Debug.LogError("OnUnitChanged -- trying to change visuals for character not in our map.");
                 return;
             }
-            GameObject char_go = unitGameObjectMap[c];
-            if (c is Ship) {
-                if (((Ship)c).isOffWorld) {
-                    char_go.SetActive(false);
-                }
-                else {
-                    char_go.SetActive(true);
-                }
+            GameObject charGo = unitGameObjectMap[c];
+            if (c is Ship ship) {
+                charGo.SetActive(ship.isOffWorld == false);
                 //change this so it does use the rigidbody to move
                 //char_go.transform.position = new Vector3(c.X, c.Y, 0);
                 //Quaternion q = char_go.transform.rotation;
@@ -177,10 +161,10 @@ namespace Andja.Controller {
                 //char_go.transform.rotation = q;
             }
             else {
-                char_go.transform.position = new Vector3(c.X, c.Y, 0);
-                Quaternion q = char_go.transform.rotation;
+                charGo.transform.position = new Vector3(c.X, c.Y, 0);
+                Quaternion q = charGo.transform.rotation;
                 q.eulerAngles = new Vector3(0, 0, c.Rotation);
-                char_go.transform.rotation = q;
+                charGo.transform.rotation = q;
             }
         }
 
@@ -189,8 +173,8 @@ namespace Andja.Controller {
                 //Debug.LogError("OnUnitDestroy -- trying to change visuals for character not in our map.");
                 return;
             }
-            GameObject char_go = unitGameObjectMap[c];
-            Destroy(char_go);
+            GameObject charGo = unitGameObjectMap[c];
+            Destroy(charGo);
             unitGameObjectMap.Remove(c);
             c.UnregisterOnChangedCallback(OnUnitChanged);
         }
@@ -204,7 +188,7 @@ namespace Andja.Controller {
                     sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                 }
             }
-            sr.sprite = unitSprites["Crate"];
+            sr.sprite = _unitSprites["Crate"];
             go.AddComponent<CrateHoldingScript>().thisCrate = c;
             go.transform.SetParent(this.transform);
             go.name = "Crate";
@@ -223,21 +207,21 @@ namespace Andja.Controller {
         }
 
         private void LoadSprites() {
-            unitSprites = new Dictionary<string, Sprite>();
+            _unitSprites = new Dictionary<string, Sprite>();
             Sprite[] sprites = Resources.LoadAll<Sprite>("Textures/Units/");
             foreach (Sprite s in sprites) {
-                unitSprites[s.name] = s;
+                _unitSprites[s.name] = s;
             }
             Sprite[] custom = ModLoader.LoadSprites(SpriteType.Unit);
             if (custom == null)
                 return;
             foreach (Sprite s in custom) {
-                unitSprites[s.name] = s;
+                _unitSprites[s.name] = s;
             }
         }
 
-        private void OnDestroy() {
-            World.UnregisterUnitCreated(OnUnitCreated);
+        public void OnDestroy() {
+            World.Current.UnregisterUnitCreated(OnUnitCreated);
         }
 
         private void OnBuildStateChange(BuildStateModes bsm) {
@@ -251,29 +235,29 @@ namespace Andja.Controller {
         }
 
         private void RemoveBuildCircle() {
-            if (circleUnit == null) {
+            if (_circleUnit == null) {
                 return; // can be because cheats
             }
-            if (unitGameObjectMap.ContainsKey(circleUnit) == false) {
+            if (unitGameObjectMap.ContainsKey(_circleUnit) == false) {
                 return;//maybe it has been destroyed or other bug calls this function twice or cheats cause to call this without create
             }
-            GameObject go = unitGameObjectMap[circleUnit].transform.Find(circleGOname).gameObject;
+            GameObject go = unitGameObjectMap[_circleUnit].transform.Find(CircleGOName).gameObject;
             Destroy(go);
         }
 
         private void CreateBuildCircle() {
-            Unit u = mouseController.SelectedUnit;
-            if (u == null) {
+            Unit circleUnit = MouseController.Instance.SelectedUnit;
+            if (circleUnit == null) {
                 return;
             }
-            Transform parent = unitGameObjectMap[u].transform;
+            Transform parent = unitGameObjectMap[circleUnit].transform;
             GameObject go = Instantiate(unitCirclePrefab);
-            go.name = circleGOname;
+            go.name = CircleGOName;
             //buildrange is radius
-            go.transform.localScale = new Vector3(u.BuildRange, u.BuildRange);
+            go.transform.localScale = new Vector3(circleUnit.BuildRange, circleUnit.BuildRange);
             go.transform.SetParent(parent);
             go.transform.localPosition = new Vector3(0, 0, -0.5f);
-            circleUnit = u;
+            _circleUnit = circleUnit;
         }
 
         internal void Highlight(Unit[] units) {

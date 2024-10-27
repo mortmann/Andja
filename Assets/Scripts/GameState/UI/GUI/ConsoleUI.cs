@@ -68,33 +68,35 @@ namespace Andja.UI {
             List<string> predicted = null;
             string toPredicte = "";
             string[] parts = text.Split(null); // splits whitespaces
-            
+            var entryCommands = cc.EntryCommand.GetCommandList();
             string first = parts[0];
             if (parts.Length == 1) {
                 toPredicte = parts[0];
-                predicted = GetFilterCommands(cc.FirstLevelCommands.ToList(), toPredicte);
+                predicted = GetFilterCommands(entryCommands, toPredicte);
             }
-            for (int i = 1; i < parts.Length; i++) {
-                if (cc.FirstLevelCommands.Contains(first) == false) {
-                    //doesnt exist so do nothing more
-                    predictiveText.text = "";
-                    return;
-                }
-                if (i < parts.Length - 1) {
-                    if(GetCommands(parts[i - 1], i - 1 == 0).ToList().Contains(parts[i].ToLower())) {
-                        continue;
-                    } else {
-                        return;
+            ConsoleCommand currentCommand = cc.EntryCommand;
+            if(entryCommands.Contains(first)) {
+                for (int i = 1; i < parts.Length; i++) {
+                    currentCommand = currentCommand.NextLevelCommands.First(c => c.Argument == parts[i - 1]);
+                    var commands = Array.Find(cc.EntryCommand.NextLevelCommands, (a) => a.Argument == first).GetCommandList();
+                    if (i < parts.Length - 1) {
+                        if (commands.Contains(parts[i].ToLower())) {
+                            continue;
+                        }
+                        else {
+                            return;
+                        }
                     }
                 }
-                toPredicte = parts[parts.Length-1];
-                predicted = GetFilterCommands(GetCommands(parts[i-1], i-1 == 0).ToList(), toPredicte);
             }
+            toPredicte = parts[parts.Length-1];
+            predicted = GetFilterCommands(currentCommand.GetCommandList(), toPredicte);
 
             if (predicted == null || predicted.Count == 0) {
                 predictiveText.text = "";
                 return;
             }
+            predicted.Sort();
             string allPredicatedText = "";
             if (string.IsNullOrEmpty(text)) {
                 allPredicatedText += "\n";
@@ -156,77 +158,12 @@ namespace Andja.UI {
         /// <param name="filter"></param>
         /// <returns></returns>
         private List<string> GetFilterCommands(List<string> commands, string filter) {
+            if (commands == null)
+                return new List<string>();
             if(string.IsNullOrEmpty(filter)) {
                 return commands;
             } else {
                 return commands.FindAll(x => x.StartsWith(filter));
-            }
-        }
-
-        IReadOnlyList<string> GetCommands(string lastCommand, bool isFirstLevel) {
-            switch (lastCommand) {
-                case "speed":
-                    return new List<string>();
-
-                case "player":
-                    return cc.PlayerCommands;
-
-                case "maxfps":
-                    return new List<string>();
-
-                case "city":
-                    return cc.CityCommands;
-
-                case "unit":
-                    if(isFirstLevel)
-                        return cc.UnitCommands;
-                    else
-                        return UnitIDs;
-
-                case "ship":
-                    return cc.ShipCommands;
-
-                case "island":
-                    return new List<string>();
-
-                case "spawn":
-                    return cc.SpawnCommands;
-
-                case "event":
-                    if (isFirstLevel)
-                        return cc.EventsCommands;
-                    else
-                        return EventIDs;
-
-                case "camera":
-                    return new List<string>();
-
-                case "effect":
-                    return cc.EffectsCommands;
-
-                case "graphy":
-                    return cc.GraphyCommands;
-
-                case "toggle":
-                    return cc.CheatCommands;
-
-                case "structure":
-                    return cc.StructureCommands;
-                case "item":
-                case "crate":
-                    return ItemIDs;
-
-                case "trigger":
-                    return EventIDs;
-
-                case "diplomatic":
-                    return new List<string>(Enum.GetNames(typeof(DiplomacyType)));
-                //IMPORTANT if in future any other type of command gets add/remove this needs rework then
-                case "add":
-                case "remove":
-                    return EffectIDs;
-                default:
-                    return new List<string>();
             }
         }
 

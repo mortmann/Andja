@@ -1,6 +1,6 @@
+using System;
 using Andja.Utility;
 using Newtonsoft.Json;
-using System;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -56,7 +56,7 @@ namespace Andja.Model {
 
         public AggroCommand(ITargetable target, Vector2 startPosition) {
             this.target = target;
-            this.StartPosition = startPosition;
+            StartPosition = startPosition;
         }
 
         public AggroCommand() {
@@ -104,7 +104,7 @@ namespace Andja.Model {
         //this only exists for it to be removed from the queue
         //so if its removed it is not finished anymore
         //not sure if it is needed
-        private bool currentlyActive = false;
+        private bool currentlyActive;
 
         public override bool IsFinished => currentlyActive;
         public override UnitMainModes MainMode => UnitMainModes.Patrol;
@@ -113,7 +113,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public RotatingList<SeriaziableVector2> Positions { get; protected set; }
 
         public PatrolCommand(RotatingList<SeriaziableVector2> positions) {
-            this.Positions = positions;
+            Positions = positions;
         }
 
         public PatrolCommand() {
@@ -153,9 +153,7 @@ namespace Andja.Model {
         }
 
         internal Vector2[] ToPositionArray() {
-            return Positions.ConvertAllToArray<Vector2>(new Converter<SeriaziableVector2, Vector2>(
-                (sv) => sv.Vec
-            ));
+            return Positions.ConvertAllToArray(sv => sv.Vec);
         }
     }
 }

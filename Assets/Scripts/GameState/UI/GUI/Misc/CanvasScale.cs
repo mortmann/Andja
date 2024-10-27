@@ -21,7 +21,9 @@ namespace Andja.UI {
         internal static void RegisterOnResolutionChange(Action onResolutionChange) {
             cbResolutionChange += onResolutionChange;
         }
-
+        internal static void UnregisterOnResolutionChange(Action onResolutionChange) {
+            cbResolutionChange -= onResolutionChange;
+        }
         private void Update() {
             if (lastScreenWidth != Screen.width || lastScreenHeight != Screen.height) {
                 referenceResolution = GetComponentInParent<CanvasScaler>().referenceResolution;

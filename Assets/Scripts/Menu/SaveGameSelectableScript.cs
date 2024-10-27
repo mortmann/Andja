@@ -1,5 +1,6 @@
 ﻿using Andja.Controller;
 using Andja.Editor;
+using Andja.Utility;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,9 +14,9 @@ namespace Andja.UI.Menu {
         public Text TimeText;
         public Button DeleteButton;
 
-        internal void Show(SaveController.SaveMetaData saveMetaData, Action<string, GameObject> clickedFunction, Action<string> deleteFunction) {
+        internal void Show(SaveMetaData saveMetaData, Action<string, GameObject> clickedFunction, Action<string> deleteFunction) {
             if (EditorController.IsEditor == false)
-                SavegameImage.sprite = SaveController.GetSaveFileScreenShot(saveMetaData.saveName);
+                SavegameImage.sprite = ScreenshotHelper.GetSaveFileScreenShot(saveMetaData.saveName);
             TitleText.text = saveMetaData.saveName;
             TimeText.text = saveMetaData.saveTime.ToString("G", System.Threading.Thread.CurrentThread.CurrentCulture);
             EventTrigger trigger = GetComponent<EventTrigger>();

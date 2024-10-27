@@ -73,43 +73,6 @@ namespace Andja.Pathfinding {
             foreach (DirectionalRect dr in directionalRects) {
                 rects.Add(dr.rect);
             }
-
-            //int rectTiles = 100;
-            //for(int y = 0; y < World.Current.Height; y++) {
-            //    for (int x = 0; x < World.Current.Width; x++) {
-            //        Rect r = new Rect(x, y, World.Current.Width / rectTiles, World.Current.Height / rectTiles);
-            //        List<Rect> overlap = islandRects.FindAll(ir => ir.Overlaps(r));
-            //        if (overlap.Count>0) {
-            //            foreach(Rect o in overlap) {
-            //                if(r.xMax > o.xMin && r.xMax < o.xMax) {
-            //                    if(r.xMin > o.xMin) {
-            //                        Rectangle.
-            //                    }                               
-            //                }
-            //                if (r.xMax > o.xMin && r.xMax < o.xMax) {
-
-            //                }
-            //            }
-            //        }
-            //        rects.Add(r);
-            //    }
-            //}
-
-            //int currentY = 0;
-            //for (int y = 0; y < ys.Count - 1; y++) {
-            //    int currentX = 0;
-            //    for (int x = 0; x < xs.Count - 1; x++) {
-            //        Rect rect = new Rect(currentX, currentY, xs[x + 1] - currentX, ys[y + 1] - currentY);
-            //        rects.Add(rect);
-            //        currentX = (int)rect.xMax;
-            //    }
-            //    currentY = (int)rects[0].yMax;
-            //}
-            //foreach(Rect r in rects.ToArray()) {
-            //    foreach (Rect re in islandRects.ToArray())
-            //        if(r.Overlaps(re) == false)
-            //            rects.Remove(r);
-            //    }
         }
     }
 }

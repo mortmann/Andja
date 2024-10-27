@@ -25,7 +25,7 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn, ItemTypeNameHandling = TypeNameHandling.None)]
     [MoonSharp.Interpreter.MoonSharpUserData]
-    public class Tile : IComparable<Tile>, IEqualityComparer<Tile> {
+    public class Tile : IComparable<Tile>, IEqualityComparer<Tile>, ITile {
         public static TileType[] BuildLand => new TileType[]{
             TileType.Dirt, TileType.Grass, TileType.Stone, TileType.Desert, TileType.Steppe, TileType.Jungle
         };
@@ -110,7 +110,7 @@ namespace Andja.Model {
                 (diagOkay && (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1)); // Check diag adjacency
         }
 
-        internal string ToBaseString() {
+        public string ToBaseString() {
             return string.Format("[{0}:{1}]Type:{2}", X, Y, Type);
         }
 
@@ -173,7 +173,24 @@ namespace Andja.Model {
         public Tile West() {
             return World.Current.GetTileAt(X - 1, Y);
         }
-
+        public Tile GetDirectionTile(Direction direction) {
+            return direction switch {
+                Direction.N => North(),
+                Direction.E => East(),
+                Direction.S => South(),
+                Direction.W => West(),
+                _ => throw new ArgumentException(nameof(direction)),
+            };
+        }
+        public Tile GetOppositeDirectionTile(Direction direction) {
+            return direction switch {
+                Direction.S => North(),
+                Direction.W => East(),
+                Direction.N => South(),
+                Direction.E => West(),
+                _ => throw new ArgumentException(nameof(direction)),
+            };
+        }
         /// <summary>
         /// Checks if Structure can be placed on the tile.
         /// </summary>
@@ -183,7 +200,7 @@ namespace Andja.Model {
             if (Array.Exists(NoBuildLand, x => Type == x))
                 return false;
             if (Structure != null) {
-                if(upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x=>x == upgradeTo.ID)) {
+                if (upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x => x == upgradeTo.ID)) {
                     return true;
                 }
                 if (Structure.CanBeBuildOver == false) {
@@ -225,19 +242,15 @@ namespace Andja.Model {
         //Want to have more than one structure in one tile!
         //more than one tree or tree and bench! But for now only one
         public virtual Structure Structure {
-            get {
-                return null;
-            }
+            get => null;
             set {
             }
         }
 
-        public virtual Island Island { get { return null; } set { } }
+        public virtual Island Island { get => null; set { } }
 
-        public virtual City City {
-            get {
-                return null;
-            }
+        public virtual ICity City {
+            get => null;
             set {
             }
         }

@@ -3,6 +3,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Andja.Model.Components;
+using Andja.UI;
+using Andja.Utility;
 
 namespace Andja.Controller {
     //TODO:
@@ -44,82 +47,73 @@ namespace Andja.Controller {
     public class EventController : MonoBehaviour {
         public static EventController Instance { get; protected set; }
         public static float RandomTickTime = 1f;
-
-        private uint lastID = 0;
-        private Dictionary<EventType, List<GameEvent>> typeToEvents;
-        private Dictionary<uint, GameEvent> idToActiveEvent;
-
+        public EventHoldingScript EventRangePrefab;
+        private uint _lastId = 0;
+        private Dictionary<EventType, List<GameEvent>> _typeToEvents;
+        private Dictionary<uint, GameEvent> _idToActiveEvent;
+        public IEnumerable<GameEvent> AllActiveEvents => _idToActiveEvent.Values;
         //Every EventType has a chance to happen
-        private Dictionary<EventType, float> chanceToEvent;
+        private Dictionary<EventType, float> _chanceToEvent;
 
-        private Action<GameEvent> cbEventCreated;
-        private Action<GameEvent> cbEventEnded;
+        private Action<GameEvent> _cbEventCreated;
+        private Action<GameEvent> _cbEventEnded;
 
-        private float timeSinceLastEvent = 0;
-        private World world;
-        float nextRandomTick = RandomTickTime;
-        // Use this for initialization
-        private void Awake() {
+        private float _timeSinceLastEvent;
+        private float _nextRandomTick = RandomTickTime;
+
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two event controllers.");
             }
             Instance = this;
-
-            //for (int i = 0; i < s; i++) {
-            //    x += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
-            //    y += (UnityEngine.Random.Range(0, 2) * 500 + GetWeightedYFromRandomX(500, 750, UnityEngine.Random.Range(0, 500)));
-            //}
-
         }
 
-        private void Start() {
-            world = World.Current;
-            idToActiveEvent = new Dictionary<uint, GameEvent>();
-            chanceToEvent = new Dictionary<EventType, float>();
-            typeToEvents = new Dictionary<EventType, List<GameEvent>>();
+        public void Start() {
+            _idToActiveEvent = new Dictionary<uint, GameEvent>();
+            _chanceToEvent = new Dictionary<EventType, float>();
+            _typeToEvents = new Dictionary<EventType, List<GameEvent>>();
             foreach(EventType et in Enum.GetValues(typeof(EventType))) {
-                typeToEvents[et] = new List<GameEvent>();
+                _typeToEvents[et] = new List<GameEvent>();
             }
             foreach(var gpd in PrototypController.Instance.GameEventPrototypeDatas.Values) {
-                typeToEvents[gpd.type].Add(new GameEvent(gpd.ID));
+                _typeToEvents[gpd.type].Add(new GameEvent(gpd.ID));
             }
-            foreach(var tte in typeToEvents) {
-                chanceToEvent[tte.Key] = tte.Value.Sum(x => x.Probability);
+            foreach(var tte in _typeToEvents) {
+                _chanceToEvent[tte.Key] = tte.Value.Sum(x => x.Probability);
             }
-            float allChance = chanceToEvent.Values.Sum();
-            foreach (var tte in typeToEvents) {
-                chanceToEvent[tte.Key] /= allChance;
+            float allChance = _chanceToEvent.Values.Sum();
+            foreach (var tte in _typeToEvents) {
+                _chanceToEvent[tte.Key] /= allChance;
             }
         }
 
         // Handle here Events that will effect whole islands or
         // World-Segments, maybe fire and similars
-        private void FixedUpdate() {
+        public void FixedUpdate() {
             if (WorldController.Instance.IsPaused) {
                 return;
             }
             //update and remove inactive events
-            List<uint> ids = new List<uint>(idToActiveEvent.Keys);
-            foreach (uint i in ids) {
-                if (idToActiveEvent[i].IsDone) {
+            foreach (uint i in _idToActiveEvent.Keys.ToArray()) {
+                if (_idToActiveEvent[i].IsDone) {
                     StopGameEvent(i);
                 }
                 else {
-                    idToActiveEvent[i].Update(WorldController.Instance.FixedDeltaTime);
+                    _idToActiveEvent[i].Update(WorldController.Instance.FixedDeltaTime);
                 }
             }
-            if(nextRandomTick > 0) {
-                nextRandomTick = Mathf.Clamp01(nextRandomTick - Time.fixedDeltaTime);
+            if(_nextRandomTick > 0) {
+                _nextRandomTick = Mathf.Clamp01(_nextRandomTick - Time.fixedDeltaTime);
                 return;
             }
-            nextRandomTick = RandomTickTime;
+            _nextRandomTick = RandomTickTime;
             //Now will there be an event or not?
             if (RandomIf() == false) {
                 return;
             }
             //Debug.Log("event " + GameData.Instance.playTime);
             if(CreateRandomEvent()) {
-                timeSinceLastEvent = 0;
+                _timeSinceLastEvent = 0;
             }
         }
 
@@ -134,25 +128,53 @@ namespace Andja.Controller {
         }
 
         internal void SetGameEventData(GameEventSave ges) {
-            idToActiveEvent = ges.idToActiveEvent;
-            nextRandomTick = ges.nextRandomTick;
+            _idToActiveEvent = ges.idToActiveEvent;
+            _nextRandomTick = ges.nextRandomTick;
         }
 
         public bool CreateGameEvent(GameEvent ge) {
             if (ge == null || ge.IsValid() == false) {
                 return false;
             }
-            if (ge.Targeted != null && ge.target == null) {
-                return false;
-            }
             Debug.Log("Created event " + ge.eventID);
             //fill the type
-            idToActiveEvent.Add(lastID, ge);
-            ge.eventID = lastID;
-            ge.StartEvent();
-            cbEventCreated(ge);
-            lastID++;
+            _idToActiveEvent.Add(_lastId, ge);
+            ge.eventID = _lastId;
+            switch (ge.Type) {
+                case EventType.Weather:
+                    ge.StartEvent(GetRandomVector2());
+                    break;
+                case EventType.Disaster:
+                    ge.StartEvent(GetRandomValidIsland(ge));
+                    break;
+                case EventType.City:
+                case EventType.Structure:
+                case EventType.Quest:
+                case EventType.Other:
+                    ge.StartEvent();
+                    break;
+            }
+            if (ge.Targeted.HasUnitTarget()) {
+                CreateEventHoldingGameObject(ge);
+            }
+            _cbEventCreated(ge);
+            _lastId++;
             return true;
+        }
+
+        private IGEventable GetRandomValidIsland(GameEvent ge) {
+            if (ge.ID != "volcanic_eruption")
+                Log.GAME_WARNING("GetRandomValidIsland is not fully implemented yet");
+            List<Island> islands = World.Current.Islands.FindAll(i => i.Features?.Exists(f => f.type == FeatureType.Volcano) == true);
+            if(islands.Count == 0) {
+                return null;
+            }
+            return islands.RandomElement();
+        }
+
+        private void CreateEventHoldingGameObject(GameEvent ge) {
+            EventHoldingScript eventHoldingScript = Instantiate(EventRangePrefab);
+            eventHoldingScript.gameEvent = ge;
         }
 
         /// <summary>
@@ -161,26 +183,30 @@ namespace Andja.Controller {
         /// <param name="id"></param>
         internal bool TriggerEvent(string id) {
             GameEvent gameEvent = new GameEvent(id);
+            if(gameEvent.Type == EventType.Weather || gameEvent.Type == EventType.Disaster) {
+                return CreateGameEvent(gameEvent); 
+            }
             return TriggerEventForPlayer(gameEvent, PlayerController.Instance.GetRandomPlayer());
         }
 
         internal bool TriggerEventForPlayer(GameEvent gameEvent, Player player) {
             List<IGEventable> playerTargets = GetPlayerTargets(gameEvent.Targeted, player);
-            if (playerTargets.Count == 0)
-                return false;
-            return TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
+            return playerTargets.Count != 0 && TriggerEventForEventable(gameEvent, playerTargets[UnityEngine.Random.Range(0, playerTargets.Count)]);
         }
 
         internal bool TriggerEventForEventable(GameEvent gameEvent, IGEventable eventable) {
             gameEvent.target = eventable;
             return CreateGameEvent(gameEvent);
         }
-
+        public List<uint> GetActiveEventsIDs() {
+            return _idToActiveEvent.Keys.ToList();
+        }
         internal bool StopGameEvent(uint id) {
-            if (idToActiveEvent.ContainsKey(id) == false)
+            if (_idToActiveEvent.ContainsKey(id) == false)
                 return false;
-            cbEventEnded(idToActiveEvent[id]);
-            return idToActiveEvent.Remove(id);
+            _cbEventEnded(_idToActiveEvent[id]);
+            _idToActiveEvent[id].Stop();
+            return _idToActiveEvent.Remove(id);
         }
 
         public List<IGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
@@ -204,13 +230,13 @@ namespace Andja.Controller {
                         break;
 
                     case Target.City:
-                        targets.AddRange(player.Cities);
+                        targets.AddRange(player.Cities.ConvertAll(x=>(City)x));
                         break;
 
                     case Target.AllStructure:
                         targets.AddRange(player.AllStructures);
                         break;
-                    case Target.DamagableStructure:
+                    case Target.DamageableStructure:
                         targets.AddRange(player.AllStructures.Where(x => x.CanTakeDamage));
                         break;
                     case Target.BurnableStructure:
@@ -262,21 +288,21 @@ namespace Andja.Controller {
             return targets;
         }
 
-        private IGEventable GetEventTargetForEventType(EventType type) {
-            IGEventable ige = null;
+        private GEventable GetEventTargetForEventType(EventType type) {
+            GEventable ige = null;
             //some times should be target all cities...
             //idk how todo do it tho...
             switch (type) {
                 case EventType.City:
-                    List<City> cities = new List<City>();
-                    foreach (Island item in world.Islands) {
+                    List<ICity> cities = new List<ICity>();
+                    foreach (Island item in World.Current.Islands) {
                         cities.AddRange(item.Cities);
                     }
-                    ige = RandomItemFromList<City>(cities);
+                    ige = RandomItemFromList(cities.ConvertAll(x=>(City)x));
                     break;
 
                 case EventType.Disaster:
-                    ige = RandomItemFromList<Island>(world.Islands);
+                    ige = RandomItemFromList(World.Current.Islands);
                     break;
 
                 case EventType.Weather:
@@ -296,13 +322,13 @@ namespace Andja.Controller {
                     if (r < 0.4f) { //idk
                         return null; // there is no specific target
                     }
-                    Island i = RandomItemFromList<Island>(world.Islands);
-                    City c = RandomItemFromList<City>(i.Cities);
+                    IIsland i = RandomItemFromList(World.Current.Islands);
+                    ICity c = RandomItemFromList(i.Cities);
                     if (c.PlayerNumber == -1) { // random decided there will be no event?
                                                 // are there events for wilderniss structures?
                     }
                     else {
-                        ige = RandomItemFromList<Structure>(c.Structures);
+                        ige = RandomItemFromList(c.Structures);
                     }
                     break;
 
@@ -313,28 +339,27 @@ namespace Andja.Controller {
                 case EventType.Other:
                     Debug.LogWarning("Not yet implemented");
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
             return ige;
         }
 
         private bool RandomIf() {
-            timeSinceLastEvent += WorldController.Instance.DeltaTime;
+            _timeSinceLastEvent += WorldController.Instance.DeltaTime;
             return UnityEngine.Random.Range(-1, 2) *
-                (UnityEngine.Random.Range(-1f, 0.901f + Mathf.Max(0f, Mathf.Exp(0.01f * timeSinceLastEvent / 15f) - 1f))
-                + Mathf.Max(0, (Mathf.Exp((1f / 180f) * (timeSinceLastEvent / 15f)) - 2f))) > 1;
+                (UnityEngine.Random.Range(-1f, 0.901f + Mathf.Max(0f, Mathf.Exp(0.01f * _timeSinceLastEvent / 15f) - 1f))
+                + Mathf.Max(0, (Mathf.Exp((1f / 180f) * (_timeSinceLastEvent / 15f)) - 2f))) > 1;
         }
 
         private GameEvent RandomEvent(EventType type) {
-            if (typeToEvents.ContainsKey(type) == false)
+            if (_typeToEvents.ContainsKey(type) == false)
                 return null;
-            if (typeToEvents[type].Count == 0)
+            if (_typeToEvents[type].Count == 0)
                 return null;
-            List<GameEvent> ges = typeToEvents[type];
+            List<GameEvent> ges = _typeToEvents[type];
             //TODO move this to the load -> dic<type,sum>
-            float sumOfProbability = 0;
-            foreach (GameEvent item in ges) {
-                sumOfProbability += item.Probability;
-            }
+            float sumOfProbability = ges.Sum(item => item.Probability);
             float randomNumber = UnityEngine.Random.Range(0, sumOfProbability);
             float sum = 0;
             foreach (GameEvent item in ges) {
@@ -350,8 +375,8 @@ namespace Andja.Controller {
         private EventType RandomType() {
             float r = UnityEngine.Random.Range(0f, 1f);
             float sum = 0;
-            foreach (EventType item in chanceToEvent.Keys) {
-                sum += chanceToEvent[item];
+            foreach (EventType item in _chanceToEvent.Keys) {
+                sum += _chanceToEvent[item];
                 if (sum >= r) {
                     return item;
                 }
@@ -363,15 +388,15 @@ namespace Andja.Controller {
         internal void ListAllActiveEvents() {
             string list = "Active Events:\n";
             list += "EventID - ID(Type) - Target - CurrentDuration/Duration\n";
-            foreach (uint id in idToActiveEvent.Keys) {
+            foreach (uint id in _idToActiveEvent.Keys) {
                 string target;
-                if(idToActiveEvent[id].target == null) {
-                    target = (idToActiveEvent[id].position + " " + idToActiveEvent[id].range);
+                if(_idToActiveEvent[id].target == null) {
+                    target = (_idToActiveEvent[id].DefinedPosition + " " + _idToActiveEvent[id].Range);
                 } else {
-                    target = idToActiveEvent[id].target.ToString();
+                    target = _idToActiveEvent[id].target.ToString();
                 }
-                list += id + " - " + idToActiveEvent[id].ID + " ("+idToActiveEvent[id].Type+")" + " - " + target
-                    + " - " + idToActiveEvent[id].currentDuration + "/" + idToActiveEvent[id].Duration + "\n";
+                list += id + " - " + _idToActiveEvent[id].ID + " ("+_idToActiveEvent[id].Type+")" + " - " + target
+                    + " - " + _idToActiveEvent[id].currentDuration + "/" + _idToActiveEvent[id].Duration + "\n";
             }
             list += "END";
             Debug.Log(list);
@@ -428,66 +453,50 @@ namespace Andja.Controller {
         }
 
         public void RegisterOnEvent(Action<GameEvent> create, Action<GameEvent> ending) {
-            cbEventCreated += create;
-            cbEventEnded += ending;
+            _cbEventCreated += create;
+            _cbEventEnded += ending;
         }
 
         public static Type TargetToType(Target target) {
-            switch (target) {
-                case Target.World:
-                    return typeof(World);
-                case Target.Player:
-                    return typeof(Player);
-                case Target.Island:
-                    return typeof(Island);
-                case Target.City:
-                    return typeof(City);
-                case Target.AllUnit:
-                    return typeof(Unit);
-                case Target.Ship:
-                    return typeof(Ship);
-                case Target.LandUnit://default type is unit -- so dunno what todo in this case
-                    return typeof(Unit);
-                case Target.AllStructure:
-                    return typeof(Structure);
-                case Target.DamagableStructure://is selected over bool -- so dunno what todo in this case
-                    return typeof(Structure);
-                case Target.RoadStructure:
-                    return typeof(RoadStructure);
-                case Target.NeedStructure:
-                    return typeof(NeedStructure);
-                case Target.MilitaryStructure:
-                    return typeof(MilitaryStructure);
-                case Target.HomeStructure:
-                    return typeof(HomeStructure);
-                case Target.ServiceStructure:
-                    return typeof(ServiceStructure);
-                case Target.GrowableStructure:
-                    return typeof(GrowableStructure);
-                case Target.OutputStructure:
-                    return typeof(OutputStructure);
-                case Target.MarketStructure:
-                    return typeof(MarketStructure);
-                case Target.WarehouseStructure:
-                    return typeof(WarehouseStructure);
-                case Target.MineStructure:
-                    return typeof(MineStructure);
-                case Target.FarmStructure:
-                    return typeof(FarmStructure);
-                case Target.ProductionStructure:
-                    return typeof(ProductionStructure);
-                default:
-                    return null;
-            }
+            return target switch {
+                Target.World => typeof(World),
+                Target.Player => typeof(Player),
+                Target.Island => typeof(Island),
+                Target.City => typeof(City),
+                Target.AllUnit => typeof(Unit),
+                Target.Ship => typeof(Ship),
+                //default type is unit -- so dunno what todo in this case
+                Target.LandUnit => typeof(Unit),
+                Target.AllStructure => typeof(Structure),
+                //is selected over bool -- so dunno what todo in this case
+                Target.DamageableStructure => typeof(Structure),
+                Target.RoadStructure => typeof(RoadStructure),
+                Target.NeedStructure => typeof(NeedStructure),
+                Target.MilitaryStructure => typeof(MilitaryStructure),
+                Target.HomeStructure => typeof(HomeStructure),
+                Target.ServiceStructure => typeof(ServiceStructure),
+                Target.GrowableStructure => typeof(GrowableStructure),
+                Target.OutputStructure => typeof(OutputStructure),
+                Target.MarketStructure => typeof(MarketStructure),
+                Target.WarehouseStructure => typeof(WarehouseStructure),
+                Target.MineStructure => typeof(MineStructure),
+                Target.FarmStructure => typeof(FarmStructure),
+                Target.ProductionStructure => typeof(ProductionStructure),
+                _ => null
+            };
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 
         public GameEventSave GetSaveGameEventData() {
-            GameEventSave ges = new GameEventSave(idToActiveEvent, nextRandomTick);
+            GameEventSave ges = new GameEventSave(_idToActiveEvent, _nextRandomTick);
             return ges;
+        }
+
+        public GameEvent GetEventByID(uint gameEventID) {
+            return _idToActiveEvent[gameEventID];
         }
     }
 

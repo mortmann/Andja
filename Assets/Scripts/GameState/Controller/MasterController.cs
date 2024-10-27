@@ -6,15 +6,15 @@ namespace Andja.Controller {
     /// </summary>
     public class MasterController : MonoBehaviour {
         public bool isLoadingScreen;
-        private static GameObject loadMaster;
+        private static GameObject _loadMaster;
 
-        private void OnEnable() {
+        public void OnEnable() {
             //Get the FIRST active master -> when loaded to gamestate
             //this will be the loadstate one
-            if (loadMaster != null && loadMaster != this && isLoadingScreen == false) {
+            if (_loadMaster != null && _loadMaster != this && isLoadingScreen == false) {
                 //to make it look better in hierachy we will resume the parent state of controller
-                for (int i = loadMaster.transform.childCount - 1; i >= 0; i--) {
-                    Transform child = loadMaster.transform.GetChild(i);
+                for (int i = _loadMaster.transform.childCount - 1; i >= 0; i--) {
+                    Transform child = _loadMaster.transform.GetChild(i);
                     //if we find this child already
                     //kill it because the new one is better
                     Destroy(transform.Find(child.name)?.gameObject);
@@ -22,14 +22,14 @@ namespace Andja.Controller {
                     child.SetParent(this.transform);
                 }
                 // Death to the MASTER -- LONG LIVE THE MASTER!
-                Destroy(loadMaster);
+                Destroy(_loadMaster);
 
                 //TODO: find a better fix for this:
                 CameraController.Instance.GameScreenSetup();
                 WorldController.Instance.SetRandomSeed();
             }
             else if (isLoadingScreen) {
-                loadMaster = gameObject;
+                _loadMaster = gameObject;
                 //if there is no other master yet -- we are loadstate
                 DontDestroyOnLoad(this);
             }

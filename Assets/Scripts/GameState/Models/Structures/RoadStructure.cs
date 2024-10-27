@@ -1,7 +1,10 @@
 ﻿using Andja.Controller;
+using Andja.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Andja.Model {
     public class RoadStructurePrototypeData : StructurePrototypeData {
@@ -16,31 +19,26 @@ namespace Andja.Model {
         private Route _route;
         public override string SortingLayer => "Road";
         public Route Route {
-            get { return _route; }
+            get => _route;
             set {
-                cbRouteChanged?.Invoke(_route, value);
+                _cbRouteChanged?.Invoke(_route, value);
                 _route = value;
             }
         }
         private RoadStructurePrototypeData _roadStructureData;
-        public RoadStructurePrototypeData RoadStructureData {
-            get {
-                if (_roadStructureData == null) {
-                    _roadStructureData = (RoadStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-                }
-                return _roadStructureData;
-            }
-        }
+        public RoadStructurePrototypeData RoadStructureData =>
+            _roadStructureData ??= (RoadStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+
         public float MovementCost => RoadStructureData.movementCost;
 
         #endregion RuntimeOrOther
 
-        private Action<RoadStructure> cbRoadChanged;
-        private Action<Route, Route> cbRouteChanged;
+        private Action<RoadStructure> _cbRoadChanged;
+        private Action<Route, Route> _cbRouteChanged;
 
         public RoadStructure(string ID, StructurePrototypeData spd) {
             this.ID = ID;
-            this._prototypData = spd;
+            this.prototypeData = spd;
         }
 
         protected RoadStructure(RoadStructure str) {
@@ -56,45 +54,38 @@ namespace Andja.Model {
             return new RoadStructure(this);
         }
 
-        public override void OnBuild() {
+        public override void OnBuild(bool loading = false) {
             List<Route> routes = new List<Route>();
             int routeCount = 0;
-            foreach (Tile t in NeighbourTiles) {
-                if (t.Structure == null) {
-                    continue;
+            foreach (var t in NeighbourTiles.Where(t => t.Structure != null)) {
+                if (!(t.Structure is RoadStructure road)) continue;
+                if (road.Route == null) continue;
+                if (routes.Contains(road.Route) == false) {
+                    routes.Add(road.Route);
+                    routeCount++;
                 }
-                if (t.Structure.BuildTyp != BuildType.Path) {
-                    continue;
-                }
-                if (t.Structure is RoadStructure) {
-                    if (((RoadStructure)t.Structure).Route != null) {
-                        if (routes.Contains(((RoadStructure)t.Structure).Route) == false) {
-                            routes.Add(((RoadStructure)t.Structure).Route);
-                            routeCount++;
-                        }
-                        ((RoadStructure)t.Structure).UpdateOrientation();
-                    }
-                }
+                road.UpdateOrientation();
             }
-            if (routeCount == 0) {
-                //If there is no route next to it
-                //so create a new route
-                Route = new Route(Tiles[0]);
-                City.AddRoute(Route);
-            }
-            else
-            if (routeCount == 1) {
-                // there is already a route
-                // so add it and return
-                routes[0].AddRoadTile(Tiles[0]);
-                Route = routes[0];
-            }
-            else {
-                routes[0].AddRoadTile(Tiles[0]);
-                //add all Roads from the others to road 1!
-                for (int i = 1; i < routes.Count; i++) {
-                    routes[0].AddRoute(routes[i]);
+            switch (routeCount) {
+                case 0:
+                    //If there is no route next to it
+                    //so create a new route
+                    Route = new Route(Tiles[0]);
+                    City.AddRoute(Route);
+                    break;
+                case 1:
+                    // there is already a route
+                    // so add it and return
+                    routes[0].AddRoadTile(Tiles[0]);
                     Route = routes[0];
+                    break;
+                default: {
+                    Route biggestRoute = routes.MaxBy(m => m.Tiles.Count);
+                    routes.Remove(biggestRoute);
+                    routes.ForEach(biggestRoute.AddRoute);
+                    biggestRoute.AddRoadTile(Tiles[0]);
+                    Route = biggestRoute;
+                    break;
                 }
             }
             foreach (Tile t in NeighbourTiles) {
@@ -104,7 +95,7 @@ namespace Andja.Model {
             RegisterOnOwnerChange(OnCityChange);
         }
 
-        protected void OnCityChange(Structure str, City old, City newOne) {
+        protected void OnCityChange(Structure str, ICity old, ICity newOne) {
             if (newOne.Routes.Contains(Route) == false) {
                 newOne.AddRoute(Route);
             }
@@ -114,58 +105,33 @@ namespace Andja.Model {
         }
 
         public void UpdateOrientation() {
-            Tile[] neig = Tiles[0].GetNeighbours();
-
-            connectOrientation = "_";
-
-            if (neig[0].Structure != null) {
-                if (neig[0].Structure is RoadStructure) {
-                    connectOrientation += "N";
-                }
-            }
-            if (neig[1].Structure != null) {
-                if (neig[1].Structure is RoadStructure) {
-                    connectOrientation += "E";
-                }
-            }
-            if (neig[2].Structure != null) {
-                if (neig[2].Structure is RoadStructure) {
-                    connectOrientation += "S";
-                }
-            }
-            if (neig[3].Structure != null) {
-                if (neig[3].Structure is RoadStructure) {
-                    connectOrientation += "W";
-                }
-            }
-            cbRoadChanged?.Invoke(this);
+            connectOrientation = UpdateOrientation(BuildTile, new List<Tile>());
+            _cbRoadChanged?.Invoke(this);
         }
 
         public static string UpdateOrientation(Tile tile, IEnumerable<Tile> tiles) {
-            Tile[] neig = tile.GetNeighbours();
+            Tile[] neighbours = tile.GetNeighbours();
             HashSet<Tile> temp = new HashSet<Tile>(tiles);
             string connectOrientation = "_";
-            if (temp.Contains(neig[0]) || neig[0].Structure is RoadStructure) {
+            if (temp.Contains(neighbours[0]) || neighbours[0].Structure is RoadStructure) {
                 connectOrientation += "N";
             }
-            if (temp.Contains(neig[1]) || neig[1].Structure is RoadStructure) {
+            if (temp.Contains(neighbours[1]) || neighbours[1].Structure is RoadStructure) {
                 connectOrientation += "E";
             }
-            if (temp.Contains(neig[2]) || neig[2].Structure is RoadStructure) {
+            if (temp.Contains(neighbours[2]) || neighbours[2].Structure is RoadStructure) {
                 connectOrientation += "S";
             }
-            if (temp.Contains(neig[3]) || neig[3].Structure is RoadStructure) {
+            if (temp.Contains(neighbours[3]) || neighbours[3].Structure is RoadStructure) {
                 connectOrientation += "W";
             }
             return connectOrientation;
         }
 
-        protected override void OnDestroy() {
-            cbRoadChanged = null;
-            cbRouteChanged = null;
-            if (Route != null) {
-                Route.RemoveRoadTile(BuildTile);
-            }
+        public override void OnDestroy() {
+            _cbRoadChanged = null;
+            _cbRouteChanged = null;
+            Route?.RemoveRoadTile(BuildTile);
             foreach (Tile item in BuildTile.GetNeighbours()) {
                 if(item.Structure is RoadStructure rs) {
                     rs.UpdateOrientation();
@@ -178,19 +144,19 @@ namespace Andja.Model {
         }
 
         public void RegisterOnRoadCallback(Action<RoadStructure> cb) {
-            cbRoadChanged += cb;
+            _cbRoadChanged += cb;
         }
 
         public void UnregisterOnRoadCallback(Action<RoadStructure> cb) {
-            cbRoadChanged -= cb;
+            _cbRoadChanged -= cb;
         }
 
         public void RegisterOnRouteCallback(Action<Route, Route> cb) {
-            cbRouteChanged += cb;
+            _cbRouteChanged += cb;
         }
 
         public void UnregisterOnRouteCallback(Action<Route, Route> cb) {
-            cbRouteChanged -= cb;
+            _cbRouteChanged -= cb;
         }
         protected override void OnUpgrade() {
             base.OnUpgrade();
@@ -199,7 +165,7 @@ namespace Andja.Model {
         public override string ToString() {
             if (BuildTile == null)
                 return base.ToString();
-            return Name + " " + Route.ToString();
+            return base.ToString() + " " + Route;
         }
     }
 }

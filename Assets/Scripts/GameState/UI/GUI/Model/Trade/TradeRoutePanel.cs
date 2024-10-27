@@ -15,7 +15,7 @@ namespace Andja.UI.Model {
         public const int TradeAmountMaximum = 100;
         public Text text;
 
-        public City city;
+        public ICity city;
         public GameObject fromShip;
         public GameObject toShip;
         public GameObject itemPrefab;
@@ -65,7 +65,7 @@ namespace Andja.UI.Model {
             amountSlider.onValueChanged.AddListener(OnAmountSliderMoved);
             World.Current.RegisterUnitCreated(OnShipCreate);
             foreach (Unit item in World.Current.Units) {
-                if (item.IsShip == false || item.IsPlayer() == false) {
+                if (item.IsShip == false || item.IsOwnedByCurrentPlayer() == false) {
                     continue;
                 }
                 OnShipCreate(item);
@@ -86,7 +86,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnShipDestroy(Unit unit, IWarfare warfare) {
-            if (unit.IsPlayer() == false || unit is Ship == false)
+            if (unit.IsOwnedByCurrentPlayer() == false || unit is Ship == false)
                 return;
             Ship ship = (Ship)unit;
             Destroy(shipToGOElement[ship].gameObject);
@@ -94,7 +94,7 @@ namespace Andja.UI.Model {
         }
 
         public void OnShipCreate(Unit unit) {
-            if (unit is Ship == false)
+            if (unit is Ship == false || unit.IsOwnedByCurrentPlayer() == false)
                 return;
             Ship ship = (Ship)unit;
             unit.RegisterOnDestroyCallback(OnShipDestroy);
@@ -151,9 +151,9 @@ namespace Andja.UI.Model {
                 Destroy(t.gameObject);
             tradeRouteLine.SetTradeRoute(tr);
             UpdateCitySelects();
-            foreach (Ship ship in tradeRoute.Ships) {
-                AddShipToList(ship);
-            }
+            //foreach (Ship ship in tradeRoute.Ships) {
+            //    AddShipToList(ship);
+            //}
             SetCity(tr.GetTrade(0)?.city);
         }
 
@@ -190,7 +190,7 @@ namespace Andja.UI.Model {
             UpdateShipListOrder();
         }
 
-        public void OnWarehouseClick(City c) {
+        public void OnWarehouseClick(ICity c) {
             if (tradeRoute.Contains(c) == false) {
                 return;
             }
@@ -209,11 +209,11 @@ namespace Andja.UI.Model {
         }
 
         public void OnLoadItemAdd() {
-            UIController.Instance.OpenCityInventory(city, AddLoadItem);
+            UIController.Instance.OpenOwnedCityInventory(city, AddLoadItem);
         }
 
         public void OnUnloadItemAdd() {
-            UIController.Instance.OpenCityInventory(city, AddUnloadItem);
+            UIController.Instance.OpenOwnedCityInventory(city, AddUnloadItem);
         }
 
         public void AddLoadItem(Item item) {
@@ -257,7 +257,7 @@ namespace Andja.UI.Model {
             itemToGameObject.Remove(item);
         }
 
-        public int OnCityToggle(City city, bool selected) {
+        public int OnCityToggle(ICity city, bool selected) {
             if (tradeRoute == null) {
                 Debug.LogError("NO TRADEROUTE");
                 return -1;
@@ -266,12 +266,10 @@ namespace Andja.UI.Model {
                 SetCity(city);
                 //not that good
                 tradeRoute.AddCity(city);
-                tradeRouteLine.AddCity(city);
                 return tradeRoute.GetLastNumber();
             }
             else {
                 tradeRoute.RemoveCity(city);
-                tradeRouteLine.RemoveCity(city);
                 UpdateCitySelects();
                 return -1;
             }
@@ -293,7 +291,7 @@ namespace Andja.UI.Model {
             TradeRoute.Trade t = tradeRoute.GetTrade(tradeRouteCityState);
             SetCity(t.city);
         }
-        public void SetCity(City c) {
+        public void SetCity(ICity c) {
             if(c != null) {
                 text.text = c.Name;
                 ResetItemIcons();

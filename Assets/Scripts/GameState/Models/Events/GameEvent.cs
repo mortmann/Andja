@@ -15,13 +15,12 @@ namespace Andja.Model {
         public float maxDuration = 100;
         public float minRange = 50;
         public float maxRange = 100;
-        public Effect[] effects;
+        public IEffect[] effects;
         public Dictionary<Target, List<string>> specialRange;
 
         public ShadowType cloudCoverage;
         public Speed cloudSpeed;
         public Speed oceanSpeed;
-
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -29,60 +28,54 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public string ID;
 
         protected GameEventPrototypData _PrototypData;
+        public Action<GameEvent> CbEventEnded;
 
-        public GameEventPrototypData PrototypData {
-            get {
-                if (_PrototypData == null) {
-                    _PrototypData = (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
-                }
-                return _PrototypData;
-            }
-        }
+        public GameEventPrototypData PrototypeData =>
+            _PrototypData ??= (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
 
-        public Dictionary<Target, List<string>> SpecialRange => PrototypData.specialRange;
+        public Dictionary<Target, List<string>> SpecialRange => PrototypeData.specialRange;
 
-        public EventType Type => PrototypData.type;
+        public EventType Type => PrototypeData.type;
 
-        public Effect[] Effects => PrototypData.effects;
-        public float Probability => PrototypData.probability;
-        public float MinDuration => PrototypData.minDuration;
-        public float MaxDuration => PrototypData.maxDuration;
-        public bool IsDone { get { return currentDuration <= 0; } }
-        public bool IsOneTime { get { return MaxDuration <= 0; } }
-        public string Name => PrototypData.Name;
-        public string Description => PrototypData.Description;
-        public ShadowType CloudCoverage => PrototypData.cloudCoverage;
-        public Speed CloudSpeed => PrototypData.cloudSpeed;
-        public Speed OceanSpeed => PrototypData.oceanSpeed;
+        public IEffect[] Effects => PrototypeData.effects;
+        public float Probability => PrototypeData.probability;
+        public float MinDuration => PrototypeData.minDuration;
+        public float MaxDuration => PrototypeData.maxDuration;
+        public bool IsDone => currentDuration <= 0;
+        public bool IsOneTime => MaxDuration <= 0;
+        public string Name => PrototypeData.Name;
+        public string Description => PrototypeData.Description;
+        public ShadowType CloudCoverage => PrototypeData.cloudCoverage;
+        public Speed CloudSpeed => PrototypeData.cloudSpeed;
+        public Speed OceanSpeed => PrototypeData.oceanSpeed;
 
-        private TargetGroup _Targeted = new TargetGroup();
+        private TargetGroup _targeted = new TargetGroup();
 
         public TargetGroup Targeted {
             get {
-                if (Effects != null) {
-                    foreach (Effect e in Effects) {
-                        _Targeted.AddTargets(e.Targets);
-                    }
+                if (Effects == null) return _targeted;
+                foreach (IEffect e in Effects) {
+                    _targeted.AddTargets(e.Targets);
                 }
-                return _Targeted;
+                return _targeted;
             }
         }
 
         [JsonPropertyAttribute] public float Duration;
         [JsonPropertyAttribute] public float currentDuration;
 
-        //MAYBE range can also be a little random...?
-        //around this as middle? Range+(-1^RandomInt(1,2)*Random(0,(Random(2,3)*Range)/(Range*Random(0.75,1)));
-        [JsonPropertyAttribute] public float range;
+        [JsonPropertyAttribute] public float Range;
+        public float Radius => Range / 2;
 
-        [JsonPropertyAttribute] public Vector2 position;
 
-        internal Vector2 GetPosition() {
-            if (target is Structure s)
-                return s.Center;
-            if (target is Unit u)
-                return u.PositionVector2;
-            return position;
+        [JsonPropertyAttribute] public Vector2 DefinedPosition;
+
+        public Vector2 GetRealPosition() {
+            return target switch {
+                Structure s => s.Center,
+                Unit u => u.PositionVector2,
+                _ => DefinedPosition
+            };
         }
 
         // this one says what it is...
@@ -90,8 +83,8 @@ namespace Andja.Model {
         // can be null if its not set to which type
         [JsonPropertyAttribute] public IGEventable target;  //TODO make a check for it!
 
-        [JsonPropertyAttribute] internal uint eventID;
-        [JsonPropertyAttribute] private float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
+        [JsonPropertyAttribute] public uint eventID;
+        [JsonPropertyAttribute] public float triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
 
         /// <summary>
         /// Needed for Serializing
@@ -116,11 +109,16 @@ namespace Andja.Model {
             currentDuration = Duration;
             //DO smth on start event?!
             if (ID == "volcanic_eruption") {
-                position = ((Island)target).Features.Find(x => x.type == FeatureType.Volcano).position;
+                DefinedPosition = ((IIsland)target).Features.Find(x => x.type == FeatureType.Volcano).position;
                 CreateVolcanicEruption();
             }
             if(target != null) {
-
+                
+            }
+            if (Type == EventType.Weather) { 
+                if (Targeted.HasStructureTarget()) {
+                    //loop through all tiles?
+                }
             }
         }
 
@@ -129,7 +127,16 @@ namespace Andja.Model {
                 Debug.LogError("Events that have a position/range can't only target specific target.");
                 return;
             }
-            position = pos;
+            DefinedPosition = pos;
+            Range = (PrototypeData.minRange + (PrototypeData.maxRange - PrototypeData.minRange) * UnityEngine.Random.Range(0, 1f));
+            StartEvent();
+        }
+        public void StartEvent(IGEventable target) {
+            if (target == null) {
+                Debug.LogError("Events needs to be none null.");
+                return;
+            }
+            this.target = target;
             StartEvent();
         }
 
@@ -153,7 +160,7 @@ namespace Andja.Model {
         private float WeightedRandomDuration(int numDice = 5) {
             float num = 0;
             for (var i = 0; i < numDice; i++) {
-                num += UnityEngine.Random.Range(0, 1.1f) * ((MaxDuration - MinDuration) / numDice);
+                num += UnityEngine.Random.Range(0, 1f) * ((MaxDuration - MinDuration) / numDice);
             }
             num += MinDuration;
             return num;
@@ -162,7 +169,7 @@ namespace Andja.Model {
         public bool HasWorldEffect() {
             if (Effects == null)
                 return false;
-            foreach (Effect item in Effects) {
+            foreach (IEffect item in Effects) {
                 if (item.InfluenceRange == InfluenceRange.World) {
                     return true;
                 }
@@ -170,10 +177,10 @@ namespace Andja.Model {
             return false;
         }
 
-        internal bool IsValid() {
+        public bool IsValid() {
             if (target is Island) {
-                if (((Island)target).Features != null) {
-                    if (SpecialRange[Target.Island].Exists(t => ((Island)target).Features.Exists(x => x.ID == t))) {
+                if (((IIsland)target).Features != null) {
+                    if (SpecialRange[Target.Island].Exists(t => ((IIsland)target).Features.Exists(x => x.ID == t))) {
                         return true;
                     }
                 }
@@ -220,17 +227,27 @@ namespace Andja.Model {
             return true;
         }
 
-        public void EffectTarget(IGEventable t, bool start) {
-            Effect[] effectsForTarget = GetEffectsForTarget(t);
+        internal void Stop() {
+            CbEventEnded?.Invoke(this);
+        }
+
+        public void EffectTarget(GEventable t, bool start) {
+            IEffect[] effectsForTarget = GetEffectsForTarget(t);
             if (effectsForTarget == null) {
                 return;
             }
-            foreach (Effect e in effectsForTarget) {
-                t.AddEffect(new Effect(e));
+            if(start) {
+                foreach (IEffect e in effectsForTarget) {
+                    t.AddEffect(new Effect(e));
+                }
+            } else {
+                foreach (IEffect e in effectsForTarget) {
+                    t.RemoveEffect(new Effect(e));
+                }
             }
         }
 
-        public Effect[] GetEffectsForTarget(IGEventable t) {
+        public Effect[] GetEffectsForTarget(GEventable t) {
             if (Effects == null)
                 return null;
             List<Effect> effectsForTarget = new List<Effect>();
@@ -253,7 +270,7 @@ namespace Andja.Model {
 
         public void UpdateVolcanicEruption() {
             //create the image of lava
-            EventSpriteController.Instance.UpdateEventTileSprites(this, currentDuration / Duration);
+            //EventSpriteController.Instance.UpdateEventTileSprites(this, currentDuration / Duration);
             if (currentDuration > Duration) {
                 StopVolcanicEruption();
                 return;
@@ -262,22 +279,15 @@ namespace Andja.Model {
                 return;
             if (UnityEngine.Random.Range(0f, 1f) > 1f - currentDuration / Duration) {
                 for (int i = UnityEngine.Random.Range(1, 3); i > 0; i--) {
-                    Vector2 goal = position + new Vector2(UnityEngine.Random.Range(-30, 31), UnityEngine.Random.Range(-30, 31));
-                    Vector3 move = position - goal;
+                    Vector2 goal = DefinedPosition + new Vector2(UnityEngine.Random.Range(-30, 31), UnityEngine.Random.Range(-30, 31));
+                    Vector3 move = DefinedPosition - goal;
                     World.Current.OnCreateProjectile(
-                        new Projectile(new World.WorldDamage(200), position, null, goal, move.normalized, move.magnitude, false, 4, true)
+                        new Projectile(new World.WorldDamage(15), DefinedPosition, null, goal, move.normalized, move.magnitude, false, 4, true)
                         );
                 }
             }
             triggerEffectCooldown = UnityEngine.Random.Range(0.1f, 1f);
-            //create projectiles flying from it
-            //  -at random times
-            //  -to random tiles (how far?)
-            //  -make them only "hit" the destination tiles
-            //World.Current.OnC
-            //create sounds
             //change music (only if it is a player island?)
-            //
         }
 
         private void StopVolcanicEruption() {

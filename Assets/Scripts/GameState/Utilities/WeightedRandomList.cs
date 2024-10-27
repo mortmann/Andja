@@ -10,14 +10,13 @@ namespace Andja.Utility {
             public T item;
         }
 
-        private List<Entry> entries = new List<Entry>();
+        private readonly List<Entry>  _entries = new List<Entry>();
         private float accumulatedWeight;
-        private System.Random rand = new System.Random();
-        private List<T> mustRandoms;
-        public bool hasNoMustLeft => mustRandoms.Count == 0;
+        private readonly List<T> _mustRandoms;
+        public bool HasNoMustLeft => _mustRandoms.Count == 0;
 
         public WeightedRandomList(List<T> list) {
-            mustRandoms = new List<T>(list);
+            _mustRandoms = new List<T>(list);
             foreach (T w in list) {
                 AddEntry(w);
             }
@@ -25,18 +24,18 @@ namespace Andja.Utility {
 
         public void AddEntry(T item) {
             accumulatedWeight += item.GetStartWeight();
-            entries.Add(new Entry { item = item, accumulatedWeight = accumulatedWeight });
+            _entries.Add(new Entry { item = item, accumulatedWeight = accumulatedWeight });
         }
 
         public T GetRandom(ThreadRandom random, List<T> excluded, int maximumSelect) {
-            List<T> exluded = mustRandoms.Except(excluded).ToList();
-            if (mustRandoms != null && exluded.Count > 0) {
+            List<T> exluded = _mustRandoms.Except(excluded).ToList();
+            if (_mustRandoms != null && exluded.Count > 0) {
                 T t = exluded[random.Next(exluded.Count)];
-                mustRandoms.Remove(t);
+                _mustRandoms.Remove(t);
                 return t;
             }
             double r = random.Float() * accumulatedWeight;
-            foreach (Entry entry in entries) {
+            foreach (Entry entry in _entries) {
                 if (excluded.Contains(entry.item))
                     continue;
                 if (entry.accumulatedWeight >= r) {
@@ -46,7 +45,7 @@ namespace Andja.Utility {
                     return entry.item;
                 }
             }
-            return default(T);
+            return default;
         }
     }
 

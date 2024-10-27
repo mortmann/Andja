@@ -27,19 +27,13 @@ namespace Andja.Model.Generator {
         public Climate climate;
         public Dictionary<Tile, Structure> tileToStructure;
 
-        // Use this for initialization
         public IslandGenerator(int Width, int Height, int seed, Climate climate) {
             this.climate = climate;
             this.Width = Width;
             this.Height = Height;
             this.seed = seed;
-            //Debug.Log("IslandGenerator Seed " + seed);
             if (EditorController.IsEditor)
                 this.seed = 1643854473;
-            //this.seed = 1828479444;
-            //this.seed = 100;
-            //this.seed = 10;
-            //this.seed = 444448387;
             random = new ThreadRandom(this.seed);
             tileToStructure = new Dictionary<Tile, Structure>();
             Progress = 0.01f;
@@ -83,24 +77,11 @@ namespace Andja.Model.Generator {
                     else if (t.Elevation >= dirtElevation) {
                         t.Type = TileType.Dirt;
                     }
-                    //				else if(t.Elevation > cliffElevation){
-                    //					t.Type = TileType.Dirt;
-                    //					foreach(Tile nt in GetNeighbours(t)){
-                    //						if(nt == null){
-                    //							continue;
-                    //						}
-                    //						if(nt.Elevation<islandThreshold){
-                    ////							t.Type = TileType.Cliff;
-                    //							break;
-                    //						}
-                    //					}
-                    //				}
                     else if (t.Elevation >= shoreElevation && HasNeighbourOcean(t, true)) {
                         t.Type = TileType.Shore;
                     }
                     else
                     if (t.Elevation < shoreElevation && t.Elevation > 0) {
-                        Debug.Log(t.Elevation);
                         t = new LandTile(x, y, t);
                         SetTileAt(x, y, t);
                         t.Type = TileType.Water;
@@ -123,12 +104,11 @@ namespace Andja.Model.Generator {
                     f += t.Moisture;
                 }
             }
-            //Debug.Log(f / (Height * Width));
             Progress += 0.1f;
             PlaceStructures();
             Progress += 0.1f;
             sw.Stop();
-            Debug.Log("Generated island " + seed + " with size " + Width + ":" + Height + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! \n" + debug_string);
+            Log.GENERATION_INFO("Generated island " + seed + " with size " + Width + ":" + Height + " in " + sw.ElapsedMilliseconds + "ms (" + sw.Elapsed.TotalSeconds + "s)! \n" + debug_string);
         }
 
         private void RandomFeatures() {
@@ -142,7 +122,7 @@ namespace Andja.Model.Generator {
                 for (int x = 0; x < Width; x++) {
                     foreach (IslandFeaturePrototypeData proto in allFeatures) {
                         IslandFeature feature = new IslandFeature(proto.ID);
-                        if (feature.RequiredTile == PreTileValues[x, y].Type) {
+                        if (feature.RequiredTile == PreTileValues[x, y]?.Type) {
                             bool fits = false;
                             switch (feature.fitType) {
                                 case FitType.Exact:
@@ -568,7 +548,7 @@ namespace Andja.Model.Generator {
             //    }
             //}
             if (borderPoints.Count == 0) {
-                Debug.LogError("NOT FOUND A SINGLE ISLAND BORDER!");
+                Log.GENERATION_ERROR("NOT FOUND A SINGLE ISLAND BORDER!");
                 return false;
             }
             List<ShoreGen> shores = new List<ShoreGen>();
@@ -726,7 +706,6 @@ namespace Andja.Model.Generator {
             if (land < 2) {
                 return false;
             }
-            Debug.Log(land);
             return true;
         }
 

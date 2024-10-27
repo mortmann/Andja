@@ -14,6 +14,8 @@ namespace Andja.Model {
         public const float TRADE_TIME = 1.5f; //TODO: make it a setable value
 
         private int NumberOfStops { get { return Goals.Count; } }
+        private Action<Stop> _cbGoalAdded;
+        private Action<Stop> _cbGoalRemoved;
         [JsonPropertyAttribute] public List<Stop> Goals { get; set; }
         [JsonPropertyAttribute] public string Name = "Temporary";
         /// <summary>
@@ -37,7 +39,7 @@ namespace Andja.Model {
 
         public bool Valid {
             get {
-                return _Trades.Count > 1;
+                return Trades.Count > 1;
             }
         }
         public int TradeCount => _Trades.Count;
@@ -50,36 +52,33 @@ namespace Andja.Model {
             this.Goals = tr.Goals;
         }
 
-        public void AddCity(City c) {
+        public void AddCity(ICity c) {
             Trade t = new Trade(c);
             Trades.Add(t);
             Goals.Add(t);
+            _cbGoalAdded?.Invoke(t);
         }
 
-        public void SetCityTrade(City city, List<Item> getting, List<Item> giving) {
+        public void SetCityTrade(ICity city, List<Item> getting, List<Item> giving) {
             Trade t = Trades.Find(x => x.city == city);
-            if (t != null) {
-                t.load = getting;
-                t.unload = giving;
-            }
+            if (t == null) return;
+            t.load = getting;
+            t.unload = giving;
         }
 
         internal void RemoveStop(Stop stop) {
             Goals.Remove(stop);
+            _cbGoalRemoved?.Invoke(stop);
         }
 
         public void SetName(string name) {
             Name = name;
         }
-        public Trade GetCurrentGoal(Ship ship) {
-            Stop s = Goals[ship.nextTradeRouteStop];
-            if (s is Trade t)
-                return t;
-            else
-                return null;
+        public Stop GetCurrentGoal(Ship ship) {
+            return Goals[ship.nextTradeRouteStop];
         }
 
-        public void RemoveCity(City city) {
+        public void RemoveCity(ICity city) {
             Trade t = GetTradeFor(city);
             if (t == null) {
                 return; 
@@ -92,20 +91,20 @@ namespace Andja.Model {
                 else
                 if (Goals.IndexOf(t) == currentDestination) {
                     //if its behind the otherone so decrease the destination pointer
-                    currentDestination--;
-                    currentDestination = Mathf.Clamp(currentDestination, 0, NumberOfStops - 1);
+                    currentDestination = (currentDestination - 1).ClampZero(NumberOfStops - 1);
                 }
                 ship.nextTradeRouteStop = currentDestination;
             }
             Goals.Remove(t);
             Trades.Remove(t);
+            _cbGoalRemoved?.Invoke(t);
         }
 
         public int GetLastNumber() {
             return Trades.Count;
         }
 
-        public int GetNumberFor(City city) {
+        public int GetNumberFor(ICity city) {
             for (int i = 0; i < Goals.Count; i++) {
                 if (Trades[i].city == city) {
                     return i + 1;
@@ -118,7 +117,7 @@ namespace Andja.Model {
             if (Goals.Count == 0) {
                 return null;
             }
-            if (Goals[ship.nextTradeRouteStop].Destination == null) {
+            if (Goals[ship.nextTradeRouteStop].IsValid) {
                 return null;
             }
             return Goals[ship.nextTradeRouteStop].Destination;
@@ -131,7 +130,7 @@ namespace Andja.Model {
             //Go through the Route until it finds a valid target.
             for (int i = 0; i < NumberOfStops; i++) {
                 IncreaseDestination(ship);
-                if (Goals[ship.nextTradeRouteStop].Destination != null) {
+                if (Goals[ship.nextTradeRouteStop].IsValid) {
                     return Goals[ship.nextTradeRouteStop].Destination;
                 }
             }
@@ -142,7 +141,7 @@ namespace Andja.Model {
             ship.nextTradeRouteStop = (ship.nextTradeRouteStop + 1) % Goals.Count;
         }
 
-        public bool Contains(City c) {
+        public bool Contains(ICity c) {
             return GetTradeFor(c) != null;
         }
 
@@ -152,23 +151,23 @@ namespace Andja.Model {
             return Trades[number];
         }
 
-        public Trade GetTradeFor(City c) {
+        public Trade GetTradeFor(ICity c) {
             return Trades.Find(x => x.city == c);
         }
 
         public void DoCurrentTrade(Ship ship) {
-            Trade t = GetCurrentGoal(ship);
-            City c = t.city;
-            Inventory inv = ship.inventory;
+            Trade trade = GetCurrentGoal(ship) as Trade;
+            ICity c = trade.city;
+            Inventory inv = ship.Inventory;
             //FIRST unload THEN load !
 
             //give as much as possible but max the choosen one
-            foreach (Item item in t.unload) {
+            foreach (Item item in trade.unload) {
                 c.TradeFromShip(ship, item, item.count);
             }
             //only get some if its needed
-            foreach (Item item in t.load) {
-                int needed = item.count - inv.GetTotalAmountFor(item);
+            foreach (Item item in trade.load) {
+                int needed = item.count - inv.GetAmountFor(item);
                 if (needed <= 0) {
                     continue;
                 }
@@ -176,31 +175,25 @@ namespace Andja.Model {
             }
         }
 
-        public bool AddItemToTrade(City city, Item item, TradeTyp typ) {
+        public bool AddItemToTrade(ICity city, Item item, TradeTyp typ) {
             Trade t = GetTradeFor(city);
-            switch (typ) {
-                case TradeTyp.Load:
-                    return t.AddLoadItem(item);
-
-                case TradeTyp.Unload:
-                    return t.AddUnloadItem(item);
-            }
-            return false;
+            return typ switch {
+                TradeTyp.Load => t.AddLoadItem(item),
+                TradeTyp.Unload => t.AddUnloadItem(item),
+                _ => false
+            };
         }
 
-        public bool RemoveItemToTrade(City city, Item item, TradeTyp typ) {
+        public bool RemoveItemToTrade(ICity city, Item item, TradeTyp typ) {
             Trade t = GetTradeFor(city);
-            switch (typ) {
-                case TradeTyp.Load:
-                    return t.RemoveLoadItem(item);
-
-                case TradeTyp.Unload:
-                    return t.RemoveUnloadItem(item);
-            }
-            return false;
+            return typ switch {
+                TradeTyp.Load => t.RemoveLoadItem(item),
+                TradeTyp.Unload => t.RemoveUnloadItem(item),
+                _ => false
+            };
         }
 
-        public bool RemoveItemFromTrade(City city, Item currentlySelectedItem) {
+        public bool RemoveItemFromTrade(ICity city, Item currentlySelectedItem) {
             Trade t = GetTradeFor(city);
             return t.RemoveItem(currentlySelectedItem);
         }
@@ -211,29 +204,46 @@ namespace Andja.Model {
             }
         }
 
+        public void RegisterGoalAdded(Action<Stop> onGoalAdded) {
+            _cbGoalAdded += onGoalAdded;
+        }
+
+        public void UnregisterGoalAdded(Action<Stop> onGoalAdded) {
+            _cbGoalAdded -= onGoalAdded;
+        }
+        public void RegisterGoalRemoved(Action<Stop> onGoalAdded) {
+            _cbGoalRemoved += onGoalAdded;
+        }
+
+        public void UnregisterGoalRemoved(Action<Stop> onGoalRemoved) {
+            _cbGoalRemoved -= onGoalRemoved;
+        }
+
         [JsonObject(MemberSerialization.OptIn)]
         public class Stop {
-            [JsonPropertyAttribute] private SeriaziableVector2 Position;
-
+            [JsonPropertyAttribute] private SeriaziableVector2 _position;
+            public virtual bool IsValid => true;
             public Stop() {
             }
 
             public Stop(Vector2 position) {
-                Position = position;
+                _position = position;
             }
             public void SetPosition(Vector2 position) {
-                this.Position = position;
+                this._position = position;
             }
-            public virtual Vector2 Destination => Position;
+            public virtual Vector2 Destination => _position;
         }
 
         [JsonObject(MemberSerialization.OptIn)]
         public class Trade : Stop {
-            [JsonPropertyAttribute] public City city;
+            [JsonPropertyAttribute] public ICity city;
             [JsonPropertyAttribute] public List<Item> load;
             [JsonPropertyAttribute] public List<Item> unload;
-            public override Vector2 Destination => (city.warehouse?.GetTradeTile().Vector2).Value;
-            public Trade(City c) {
+            public override bool IsValid => city.Warehouse != null;
+
+            public override Vector2 Destination => (city.Warehouse?.TradeTile.Vector2).GetValueOrDefault();
+            public Trade(ICity c) {
                 city = c;
                 load = new List<Item>();
                 unload = new List<Item>();
@@ -249,11 +259,7 @@ namespace Andja.Model {
             }
 
             public bool RemoveItem(Item item) {
-                if (RemoveLoadItem(item))
-                    return true;
-                if (RemoveUnloadItem(item))
-                    return true;
-                return false;
+                return RemoveLoadItem(item) || RemoveUnloadItem(item);
             }
 
             public bool AddLoadItem(Item item) {
@@ -271,23 +277,18 @@ namespace Andja.Model {
             }
 
             public bool RemoveLoadItem(Item item) {
-                if (load.Contains(item))
-                    return false;
-                load.Remove(item);
-                return true;
+                return load.Remove(item);
             }
 
             public bool RemoveUnloadItem(Item item) {
-                if (unload.Contains(item))
-                    return false;
-                unload.Remove(item);
-                return true;
+                return unload.Remove(item);
             }
         }
 
         internal Stop AddStop(Stop addAfter, Vector2 stopPos) {
             Stop stop = new Stop(stopPos);
             Goals.Insert(Goals.IndexOf(addAfter)+1, stop);
+            _cbGoalAdded?.Invoke(stop);
             return stop;
         }
 
@@ -305,11 +306,10 @@ namespace Andja.Model {
         }
 
         internal float AtDestination(Ship ship) {
-            if(GetCurrentGoal(ship) is Trade t) {
+            if(GetCurrentGoal(ship) is Trade) {
                 return TRADE_TIME;
-            } else {
-                return 0;
             }
+            return 0;
         }
 
         internal void LoadShip(Ship ship) {

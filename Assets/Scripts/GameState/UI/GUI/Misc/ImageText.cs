@@ -14,19 +14,21 @@ namespace Andja.UI {
         public Func<string> updateText;
         LayoutElement element;
         RectTransform imageRect;
-
+        Func<bool> UpdateWarningColor;
         private void Start() {
             imageRect = image.GetComponent<RectTransform>();
             element = GetComponent<LayoutElement>();
         }
-        public void Set(Sprite sprite, LanguageVariables variables, string showText) {
+        public void Set(Sprite sprite, LanguageVariables variables, string showText, Func<bool> updateWarningColor = null) {
             gameObject.SetActive(true);
             name = variables.Name;
             image.sprite = sprite;
             SetText(showText);
             showHoverOver.SetVariable(variables, true);
+            UpdateWarningColor = updateWarningColor;
         }
         public void Set(Sprite sprite, LanguageVariables variable, Func<string> update) {
+            updateText = update;
             Set(sprite, variable, update.Invoke());
         }
         public void Set(Sprite sprite, StaticLanguageVariables variable, string showText) {
@@ -37,10 +39,12 @@ namespace Andja.UI {
             showHoverOver.SetVariable(variable, true);
         }
         public void Set(Sprite sprite, StaticLanguageVariables variable, Func<string> update) {
+            updateText = update;
             Set(sprite, variable, update.Invoke());
         }
-        internal void SetText(string showText) {
+        internal void SetText(string showText, Func<bool> updateWarningColor = null) {
             text.text = showText + addon;
+            UpdateWarningColor = updateWarningColor;
         }
 
         internal void SetBrightColorText() {
@@ -64,7 +68,7 @@ namespace Andja.UI {
         }
 
         internal void Set(Sprite sprite, LanguageVariables variables) {
-            Set(sprite, variables, variables.Name);
+            Set(sprite, variables, variables.Name, null);
             UILanguageController.Instance.RegisterLanguageChange(()=> { SetText(variables.Name); });
         }
         private void Update() {
@@ -73,7 +77,12 @@ namespace Andja.UI {
             }
             if(element != null)
                 element.preferredWidth = imageRect.sizeDelta.x + text.preferredWidth;
-
+            if(UpdateWarningColor?.Invoke() == true) {
+                SetColorText(Color.red);
+            } else {
+                SetBrightColorText();
+            }
         }
+
     }
 }

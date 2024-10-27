@@ -11,24 +11,31 @@ using Andja.Controller;
 using System.Text.RegularExpressions;
 
 public class YouTrackHandler {
-    private static readonly string key = "Bearer perm:QWpld2FvZQ==.NDYtMQ==.LIUrr5A9iYBrvbQEdiL8deY6YSKpiQ";//"sadasdads";//
-    private static readonly string apiURL = "https://andja.myjetbrains.com/youtrack/api/issues";//"ptsv2.com/t/6uve1-1623018807/post";//
-    private static readonly string attachmentURL = "https://andja.myjetbrains.com/youtrack/api/issues/{0}/attachments";
+    private static readonly string key = "Bearer perm:YWRtaW4=.NDUtMA==.hYwH9u5UM53KeffI1HIV8ukXoT6XUQ";//"sadasdads";//
+    private static readonly string apiURL = "https://andja.youtrack.cloud/api/issues";
+    private static readonly string attachmentURL = "https://andja.youtrack.cloud/api/issues/{0}/attachments";
     public static IEnumerator SendReport(string title, string desc, string[] labels, Texture2D[] images,
             string logFile, string metaData, string saveFile, string priority, Action OnSuccess, Action<string> OnFailure) {
         string json = JsonConvert.SerializeObject(new Issue() {
             summary = title,
             description = desc,
             tags = Convert(labels),
-            customFields = new CustomField[] { new SingleEnumIssueCustomField() { name = "Priority", value = new Value(priority) } },
+            customFields = new CustomField[] { 
+                new SingleEnumIssueCustomField() { name = "Priority", value = new SingleEnumIssueCustomField.Value(priority) }, 
+                new TextIssueCustomField() { name = "Reported Version", value = new TextIssueCustomField.Value(Application.version) },
+                new TextIssueCustomField() { name = "PCID", value = new TextIssueCustomField.Value(SystemInfo.deviceUniqueIdentifier) } 
+            },
     }, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
-        json = json.Replace("YouTrackHandler+SingleEnumIssueCustomField, Assembly-CSharp", "SingleEnumIssueCustomField");
+        json = json.Replace("YouTrackHandler+SingleEnumIssueCustomField, Andja", "SingleEnumIssueCustomField");
+        json = json.Replace("YouTrackHandler+TextIssueCustomField, Andja", "TextIssueCustomField");
+        json = json.Replace("YouTrackHandler+MultiVersionIssueCustomField, Andja", "MultiVersionIssueCustomField");
         byte[] array = Encoding.ASCII.GetBytes(json);
         UnityWebRequest www = UnityWebRequest.Put(apiURL, array);
         www.method = "POST";
         www.SetRequestHeader("Accept", "application/json");
         www.SetRequestHeader("Authorization", key);
         www.SetRequestHeader("Content-Type", "application/json");
+        Debug.Log(json);
         yield return www.SendWebRequest();
         if (www.error != null) {
             // Error 
@@ -103,31 +110,31 @@ public class YouTrackHandler {
         for (int i = 0; i < labels.Length; i++) {
             switch (labels[i]) {
                 case "Game":
-                    convert[i] = new Label() { id = "6-3" };
+                    convert[i] = new Label() { id = "8-3" };
                     break;
 
                 case "UI":
-                    convert[i] = new Label() { id = "6-4" };
+                    convert[i] = new Label() { id = "8-4" };
                     break;
 
                 case "AI":
-                    convert[i] = new Label() { id = "6-5" };
+                    convert[i] = new Label() { id = "8-5" };
                     break;
 
                 case "Balance":
-                    convert[i] = new Label() { id = "6-6" };
+                    convert[i] = new Label() { id = "8-6" };
                     break;
 
                 case "Request":
-                    convert[i] = new Label() { id = "6-7" };
+                    convert[i] = new Label() { id = "8-7" };
                     break;
 
                 case "Other":
-                    convert[i] = new Label() { id = "6-8" };
+                    convert[i] = new Label() { id = "8-8" };
                     break;
 
                 case "Pathfinding":
-                    convert[i] = new Label() { id = "6-9" };
+                    convert[i] = new Label() { id = "8-9" };
                     break;
 
                 default:
@@ -147,8 +154,6 @@ public class YouTrackHandler {
         public Project project = new Project();
         public string summary = "";
         public string description = "";
-        public string GameVersion = Application.version;
-        public string PCID = SystemInfo.deviceUniqueIdentifier;
         public Label[] tags;
         public CustomField[] customFields;
 }
@@ -167,12 +172,22 @@ public class YouTrackHandler {
     }
     class SingleEnumIssueCustomField : CustomField {
         public Value value;
-    }
-    class Value {
-        public string name;
+        public class Value {
+            public string name;
 
-        public Value(string name) {
-            this.name = name;
+            public Value(string name) {
+                this.name = name;
+            }
+        }
+    }
+    class TextIssueCustomField : CustomField {
+        public Value value;
+        public class Value {
+            public string text;
+
+            public Value(string text) {
+                this.text = text;
+            }
         }
     }
 }

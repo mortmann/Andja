@@ -3,6 +3,7 @@ using Andja.Model.Data;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -10,7 +11,7 @@ namespace Andja.Model {
     public class NeedPrototypeData : LanguageVariables {
         public Item item;
         public NeedStructure[] structures;
-        public NeedGroupPrototypData group; // only for the typ of the group needed!
+        public NeedGroupPrototypeData group; // only for the typ of the group needed!
         public float[] UsageAmounts;
         public int startLevel;
         public int startPopulationCount;
@@ -21,60 +22,39 @@ namespace Andja.Model {
     /// <summary>
     /// each need needs to be in a group with similar needs
     /// those group have a priority level and each member has a "priority in its group"
-    /// how important it is for its owngroup fullfillment
+    /// how important it is for its owngroup fulfillment
     /// </summary>
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Need {
+    public class Need : INeed {
         protected NeedPrototypeData _prototypData;
 
-        public NeedPrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetNeedPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
-        }
+        public NeedPrototypeData Data => _prototypData ??= PrototypController.Instance.GetNeedPrototypDataForID(ID);
 
-        public NeedGroupPrototypData Group {
-            get { return Data.group; }
-        }
+        public NeedGroupPrototypeData Group => Data.group;
 
-        public string Name {
-            get { return Data.Name; }
-        }
+        public string Name => Data.Name;
 
-        public Item Item {
-            get { return Data.item; }
-        }
+        public Item Item => Data.item;
 
-        public NeedStructure[] Structures {
-            get { return Data.structures; }
-        }
+        public NeedStructure[] Structures => Data.structures;
 
-        public float[] Uses {
-            get { return Data.UsageAmounts; }
-        }
+        public float[] Uses => Data.UsageAmounts;
 
-        public int StartLevel {
-            get { return Data.startLevel; }
-        }
+        public int StartLevel => Data.startLevel;
 
         public bool HasToReachPerRoad => Data.hasToReachPerRoad;
 
-        public int StartPopulationCount {
-            get { return Data.startPopulationCount; }
-        }
+        public int StartPopulationCount => Data.startPopulationCount;
 
         [JsonPropertyAttribute]
-        public string ID;
+        public string ID { get; set; }
 
         [JsonPropertyAttribute]
         public float[] lastNeededNotConsumed;
 
         [JsonPropertyAttribute]
-        public float[] percantageAvailability;
+        public float[] PercentageAvailability;
 
         [JsonPropertyAttribute]
         public float notUsedOfTon = 0;
@@ -88,12 +68,12 @@ namespace Andja.Model {
         public Need() {
             if (lastNeededNotConsumed == null) {
                 lastNeededNotConsumed = new float[PrototypController.Instance.NumberOfPopulationLevels];
-                percantageAvailability = new float[PrototypController.Instance.NumberOfPopulationLevels];
+                PercentageAvailability = new float[PrototypController.Instance.NumberOfPopulationLevels];
             }
             else {
                 if (lastNeededNotConsumed.Length < PrototypController.Instance.NumberOfPopulationLevels) {
                     Array.Resize(ref lastNeededNotConsumed, PrototypController.Instance.NumberOfPopulationLevels);
-                    Array.Resize(ref percantageAvailability, PrototypController.Instance.NumberOfPopulationLevels);
+                    Array.Resize(ref PercentageAvailability, PrototypController.Instance.NumberOfPopulationLevels);
                 }
             }
         }
@@ -110,87 +90,71 @@ namespace Andja.Model {
             this.ID = id;
         }
 
-        public void CalculateFullfillment(City city, PopulationLevel level) {
-            TryToConsumThisIn(city, level.populationCount, level.Level);
+        public void CalculateFulfillment(ICity city, IPopulationLevel level) {
+            TryToConsumeThisIn(city, level.PopulationCount, level.Level);
         }
 
-        public void TryToConsumThisIn(City city, int people, int level) {
+        protected void TryToConsumeThisIn(ICity city, int people, int level) {
             if (people == 0) {
+                PercentageAvailability[level] = 1;
                 return;
             }
             if (Item == null) {
                 //this does not require any item -> it needs a structure
-                percantageAvailability[level] = 0;
+                PercentageAvailability[level] = 0;
                 return;
             }
             float neededConsumAmount = 0;
             // how much do we need to consum?
-            neededConsumAmount += Uses[level] * ((float)people);
+            neededConsumAmount += Uses[level] * people;
             if (neededConsumAmount <= 0) {
                 //we dont need anything to consum so no need to go anyfurther
-                percantageAvailability[level] = 0;
+                PercentageAvailability[level] = 0;
                 return;
             }
             //IF it has still enough no need to calculate more
             if (notUsedOfTon >= neededConsumAmount) {
                 notUsedOfTon -= neededConsumAmount;
-                percantageAvailability[level] = 1;
+                PercentageAvailability[level] = 1;
                 return;
             }
             //so just remove from needed what we have
             neededConsumAmount -= notUsedOfTon;
             notUsedOfTon = 0;
-            //now we have a amount that still needs to be fullfilled by the cities inventory
+            //now we have a amount that still needs to be Fulfilled by the cities Inventory
 
             float availableAmount = city.GetAmountForThis(Item);
             //either we need to get 1 ton or as much as we need
-            neededConsumAmount = Mathf.CeilToInt(neededConsumAmount);
+            int neededTonsOfItem = Mathf.CeilToInt(neededConsumAmount);
             //now how much do we have in the city
             //if we have none?
             if (availableAmount == 0) {
                 //we can just set the lastneeded to current needed
                 lastNeededNotConsumed[level] = neededConsumAmount;
-                percantageAvailability[level] = 0;
+                PercentageAvailability[level] = 0;
                 return;
             }
 
             // how much to we consum of the avaible?
-            float usedAmount = Mathf.Clamp(availableAmount, 0, neededConsumAmount);
+            float usedAmount = Mathf.Clamp(availableAmount, 0, neededTonsOfItem);
             //now remove that amount of items
             if (usedAmount > neededConsumAmount)
                 notUsedOfTon = usedAmount - neededConsumAmount;
 
-            city.RemoveResource(Item, Mathf.CeilToInt(usedAmount));
-            //minimum is 1 because if 0 -> ERROR due dividing through 0
-            //calculate the percantage of availability
-            percantageAvailability[level] = (usedAmount / neededConsumAmount);
+            city.RemoveItem(Item, Mathf.CeilToInt(usedAmount));
+            PercentageAvailability[level] = Mathf.Clamp01(usedAmount / neededConsumAmount);
         }
 
-        internal bool IsSatisifiedThroughStructure(List<NeedStructure> strs) {
+        public bool IsSatisfiedThroughStructure(List<NeedStructure> strs) {
             return Array.Exists(Structures, x => strs.Exists(y => y.ID == x.ID));
         }
 
-        internal void SetStructureFullfilled(bool fullfilled) {
-            if (IsItemNeed())
-                return;
-            if (fullfilled) {
-                Array.ForEach(percantageAvailability, x => x = 1);
-            }
-            else {
-                Array.ForEach(percantageAvailability, x => x = 0);
-            }
+        public float GetFulfillment(int populationLevel) {
+            return PercentageAvailability[populationLevel];
         }
 
-        internal float GetFullfiment(int populationLevel) {
-            return percantageAvailability[populationLevel];
-        }
-
-        internal float GetCombinedFullfillment() {
-            float combined = 0f;
-            foreach (float ff in percantageAvailability)
-                combined += ff;
-            combined /= percantageAvailability.Length;
-            return combined;
+        public float GetCombinedFulfillment() {
+            return PercentageAvailability.Sum() / PercentageAvailability.Length;
         }
 
         public bool IsItemNeed() {
@@ -206,15 +170,14 @@ namespace Andja.Model {
         }
 
         public override bool Equals(object obj) {
-            Need item = obj as Need;
-            if (item == null) {
+            if (!(obj is Need item)) {
                 return false;
             }
-            return this.ID.Equals(item.ID);
+            return ID.Equals(item.ID);
         }
 
         public override int GetHashCode() {
-            return this.ID.GetHashCode();
+            return ID.GetHashCode();
         }
     }
 }

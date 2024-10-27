@@ -12,7 +12,7 @@ namespace Andja.UI.Model {
             if (currentStructure == Info) {
                 return;
             }
-            currentStructure = Info as Structure;
+            currentStructure = Info;
             if (currentStructure == null)
                 return;
             TileDeciderFuncs.Structure = currentStructure;
@@ -22,7 +22,7 @@ namespace Andja.UI.Model {
             }
         }
         private void Update() {
-            InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaxHealth);
+            InfoUI.Instance.UpdateHealth(currentStructure.CurrentHealth, currentStructure.MaximumHealth);
             InfoUI.Instance.UpdateUpkeep(currentStructure.UpkeepCost);
             isActiveText.gameObject.SetActive(currentStructure.IsActive);
             if (currentStructure.IsActiveAndWorking) {

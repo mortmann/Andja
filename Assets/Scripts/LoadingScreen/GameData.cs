@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Andja.Model.Generator;
+using Range = Andja.Utility.Range;
 
 namespace Andja {
     public enum GameType { Endless, Campaign, Szenario, Island, Editor }
@@ -37,6 +38,11 @@ namespace Andja {
         //only load the set value if not using ingame loading method
         public string LoadSaveGame => Application.isEditor && (loadSaveGameName == null || loadSaveGameName.Length == 0) ?
                                                 editorloadsavegame : loadSaveGameName;
+
+        public static bool StartGameWithBuildWarehouseDirectly = false;
+
+        public static float PirateCheckRespawnShipCount = 60f;
+
         public string editorloadsavegame; // set through editor to make testing in editor faster & easier
         public static string loadSaveGameName; // set the to load save game through code
 
@@ -58,16 +64,16 @@ namespace Andja {
         public static float PirateAggroRange = 22.5f;
         public static float UnitAggroRange = 10f;
         public static float EffectTickTime = 1f;
-        public static float nonCityTilesPercantage = 0.5f;
+        public static float nonCityTilesPercentage = 0.5f;
 
 
         //Pirate Data -- get set by difficulty
-        public static float PirateCooldown = 5f;
+        public static float PirateCooldown = 5f*60f;
         public static int PirateShipCount = 2;
 
         public static FogOfWarStyle FogOfWarStyle = FogOfWarStyle.Off;
         public static int bots; // this is far from being in anykind relevant so
-        public static int playerCount = 1;
+        public static int playerCount = 2;
         public static bool flyingTraders = true;
         public static bool pirates = true;
 

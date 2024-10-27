@@ -21,8 +21,8 @@ namespace Andja.UI.Model {
         private Dictionary<string, ImageText> itemToText = new Dictionary<string, ImageText>();
         private Dictionary<int, GameObject> populationLevelToGO = new Dictionary<int, GameObject>();
         public int maxItemsPerRow = 5;
-        private Island currentIsland = null;
-        private City CurrentCity;
+        private IIsland currentIsland = null;
+        private ICity CurrentCity;
 
         private void Start() {
             Instance = this;
@@ -37,7 +37,7 @@ namespace Andja.UI.Model {
                 return;
             switch (state) {
                 case BuildStateModes.None:
-                    foreach (Item item in PrototypController.BuildItems) {
+                    foreach (Item item in PrototypController.Instance.BuildItems) {
                         itemToText[item.ID].RemoveAddon();
                     }
                     break;
@@ -48,7 +48,7 @@ namespace Andja.UI.Model {
             }
         }
         public void ResetAddons() {
-            foreach (Item item in PrototypController.BuildItems) {
+            foreach (Item item in PrototypController.Instance.BuildItems) {
                 itemToText[item.ID].RemoveAddon();
             }
         }
@@ -71,18 +71,18 @@ namespace Andja.UI.Model {
             CityInfo.gameObject.SetActive(true);
             Item[] items = CurrentCity.Inventory.GetBuildMaterial();
             for (int i = 0; i < items.Length; i++) {
-                itemToText[items[i].ID].SetText(items[i].countString);
+                itemToText[items[i].ID].SetText(items[i].CountString);
             }
             if(MouseController.Instance.NeededItemsToBuild != null) {
                 foreach (Item item in MouseController.Instance.NeededItemsToBuild) {
                     TextColor t = CurrentCity.HasEnoughOfItem(item)? TextColor.Positive : TextColor.Negative;
-                    itemToText[item.ID].ShowAddon(item.countString, t);
+                    itemToText[item.ID].ShowAddon(item.CountString, t);
                 }
             } 
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 PopulationLevel pl = CurrentCity.GetPopulationLevel(i);
-                if (pl.populationCount > 0) {
-                    itemToText[pl.Level + ""].SetText("" + pl.populationCount);
+                if (pl.PopulationCount > 0) {
+                    itemToText[pl.Level + ""].SetText("" + pl.PopulationCount);
                     populationLevelToGO[pl.Level].SetActive(true);
                 }
                 else {
@@ -96,7 +96,7 @@ namespace Andja.UI.Model {
                 Destroy(t.gameObject);
             foreach (Transform t in CityInfo)
                 Destroy(t.gameObject);
-            Item[] items = PrototypController.BuildItems;
+            Item[] items = PrototypController.Instance.BuildItems;
             int lastRowNumber = items.Length % maxItemsPerRow;
             for (int i = 0; i < items.Length; i++) {
                 if (items[i] == null) {

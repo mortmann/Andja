@@ -48,13 +48,13 @@ namespace Andja.UI {
             string name = showPlayer.Number == PlayerController.currentPlayerNumber ? "You" : showPlayer.Name;
             center.GetComponentInChildren<Text>().text = name;
             int number = 0;
-            int playerAmount = PlayerController.PlayerCount;
+            int playerAmount = PlayerController.Instance.PlayerCount;
             float degreeBetweenPlayer = Mathf.Min(90, 360f / playerAmount);
             float startDegree = 270;
             float y = (playerContent.GetComponent<RectTransform>().sizeDelta.y - 1.7f * center.GetComponent<RectTransform>().sizeDelta.y) / 2;
             Vector2 distance = new Vector2(0, -y);
             playerToLine = new Dictionary<Player, UILineRenderer>();
-            foreach (Player other in PlayerController.Players) {
+            foreach (Player other in PlayerController.Instance.Players) {
                 if (other == showPlayer)
                     continue;
                 float degree = Mathf.Deg2Rad * (startDegree + number * degreeBetweenPlayer) % 360;

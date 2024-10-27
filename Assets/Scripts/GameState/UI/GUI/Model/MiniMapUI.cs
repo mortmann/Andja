@@ -42,5 +42,8 @@ namespace Andja.UI.Model {
                     ((float)World.Current.Height) / (CanvasScale.Height * rectTransform.sizeDelta.y * rectTransform.localScale.y)
                 );
         }
+        private void OnDestroy() {
+            CanvasScale.UnregisterOnResolutionChange(OnResolutionChange);
+        }
     }
 }

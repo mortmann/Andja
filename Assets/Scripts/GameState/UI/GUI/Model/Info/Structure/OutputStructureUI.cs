@@ -32,6 +32,7 @@ namespace Andja.UI.Model {
             TileSpriteController.Instance.RemoveDecider(TileDeciderFuncs.StructureTileDecider);
             if (currentStructure.StructureRange > 0) {
                 TileSpriteController.Instance.AddDecider(TileDeciderFuncs.StructureTileDecider);
+                TileSpriteController.Instance.AddDecider(BuildController.Instance.TileCityDecider);
             }
             efficiency = progressContent.GetComponentInChildren<Text>();
             progress = progressContent.GetComponentInChildren<Slider>();
@@ -61,7 +62,7 @@ namespace Andja.UI.Model {
                 if (pstr.InputTyp == InputTyp.AND) {
                     for (int i = 0; i < pstr.Intake.Length; i++) {
                         ItemUI go = GameObject.Instantiate(itemPrefab).GetComponent<ItemUI>();
-                        go.SetItem(pstr.Intake[i], pstr.GetMaxIntakeForIntakeIndex(i));
+                        go.SetItem(pstr.Intake[i], pstr.GetMaxIntakeForIndex(i));
                         go.transform.SetParent(inputContent, false);
                         itemToGO.Add(pstr.Intake[i], go);
                     }
@@ -74,12 +75,12 @@ namespace Andja.UI.Model {
                             or.transform.SetParent(inputContent, false);
                         }
                         if (i == pstr.OrItemIndex) {
-                            go.SetItem(pstr.Intake[0], pstr.GetMaxIntakeForIntakeIndex(pstr.OrItemIndex));
+                            go.SetItem(pstr.Intake[0], pstr.GetMaxIntakeForIndex(pstr.OrItemIndex));
                             currORItem = pstr.Intake[0];
                             itemToGO.Add(pstr.Intake[0], go);
                         }
                         else {
-                            go.SetItem(pstr.ProductionData.intake[i], pstr.GetMaxIntakeForIntakeIndex(i));
+                            go.SetItem(pstr.ProductionData.intake[i], pstr.GetMaxIntakeForIndex(i));
                             int temp = i;
                             go.AddClickListener((s) => { OnItemClick(pstr.ProductionData.intake[temp]); });
                             go.SetInactive(true);

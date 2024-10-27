@@ -59,9 +59,9 @@
    <Need ID="cutlery">
       <UsageAmounts>
          <entry Level="0">0.0</entry>
-         <entry Level="1">9.0E-4</entry>
-         <entry Level="2">7.0E-4</entry>
-         <entry Level="3">7.0E-4</entry>
+         <entry Level="1">7.0E-4</entry>
+         <entry Level="2">6.0E-4</entry>
+         <entry Level="3">6.0E-4</entry>
       </UsageAmounts>
       <Name>
          <entry lang="Deutsch">Besteck</entry>
@@ -307,8 +307,8 @@
    </Need>
    <Need ID="alcohol">
       <UsageAmounts>
-         <entry Level="0">0.002</entry>
-         <entry Level="1">2.5E-4</entry>
+         <entry Level="0">0.0023333</entry>
+         <entry Level="1">6.666E-4</entry>
          <entry Level="2">5.0E-4</entry>
          <entry Level="3">1.0E-4</entry>
       </UsageAmounts>
@@ -319,8 +319,8 @@
       <item ID="liquor">
          <count>0</count>
       </item>
-      <startLevel>1</startLevel>
-      <startPopulationCount>0</startPopulationCount>
+      <startLevel>0</startLevel>
+      <startPopulationCount>200</startPopulationCount>
       <group>beverages</group>
       <hasToReachPerRoad>false</hasToReachPerRoad>
    </Need>
@@ -479,9 +479,9 @@
    </Need>
    <Need ID="food">
       <UsageAmounts>
-         <entry Level="0">0.01</entry>
-         <entry Level="1">0.004</entry>
-         <entry Level="2">0.0022</entry>
+         <entry Level="0">0.006</entry>
+         <entry Level="1">0.003</entry>
+         <entry Level="2">0.002</entry>
          <entry Level="3">0.0016</entry>
       </UsageAmounts>
       <Name>
@@ -498,8 +498,8 @@
    </Need>
    <Need ID="clothes">
       <UsageAmounts>
-         <entry Level="0">0.005</entry>
-         <entry Level="1">0.0025</entry>
+         <entry Level="0">0.002</entry>
+         <entry Level="1">0.001</entry>
          <entry Level="2">3.5E-4</entry>
          <entry Level="3">2.5E-4</entry>
       </UsageAmounts>

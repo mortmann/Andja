@@ -60,8 +60,12 @@ namespace Andja.UI.Menu {
         }
 
         private void Update() {
-            if (IsMainMenu)
+            if (IsMainMenu) {
+                if (InputHandler.GetButtonDown(InputName.Cancel)) {
+                    GenericBackButton();
+                }
                 return;
+            }
             if (InputHandler.GetButtonDown(InputName.Cancel)) {
                 if (panelOpen) {
                     HideAllPanels();

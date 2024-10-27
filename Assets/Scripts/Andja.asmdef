@@ -1,0 +1,24 @@
+{
+    "name": "Andja",
+    "rootNamespace": "",
+    "references": [
+        "GUID:cf414061cae3a954baf92763590f3127",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:18e5109d897e1b244ab2dfeaf5482c7b",
+        "GUID:03e99fd4ddf73f64ebc59b4eae68bf95",
+        "GUID:b98930808f138034b99bb6f2ed2d36a9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "MoonSharp.Interpreter.dll",
+        "Ionic.Zip.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

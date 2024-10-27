@@ -30,7 +30,7 @@ namespace Andja.UI.Model {
 
 
         public void Update() {
-            HealthBar.SetHealth(structure.CurrentHealth, structure.MaxHealth);
+            HealthBar.SetHealth(structure.CurrentHealth, structure.MaximumHealth);
         }
     }
 }

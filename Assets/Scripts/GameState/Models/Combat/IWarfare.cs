@@ -13,5 +13,7 @@ namespace Andja {
         void GoIdle();
 
         float GetCurrentDamage(ArmorType armorType);
+        uint GetBuildID();
+
     }
 }

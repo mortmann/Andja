@@ -15,7 +15,7 @@ namespace Andja {
         int currentSong;
         AudioSourcePauseable audioSource;
         void Start() {
-            songs = SoundController.LoadMusicFiles(Path.Combine(ConstantPathHolder.StreamingAssets, "Audio", "Music", Type.ToString()));
+            songs = SoundLoader.LoadMusicFiles(Path.Combine(ConstantPathHolder.StreamingAssets, "Audio", "Music", Type.ToString()));
             foreach(SoundMetaData smd in ModLoader.LoadSoundMetaDatas()) {
                 if(smd.musicType == MusicType)
                     songs.Add(smd);
@@ -27,7 +27,7 @@ namespace Andja {
             if (songs.Count == 0)
                 return;
             if (audioSource.isPlaying == false && Application.isFocused) {
-                StartCoroutine(SoundController.StartFile(songs[currentSong], audioSource));
+                StartCoroutine(SoundLoader.StartFile(songs[currentSong], audioSource));
                 currentSong = (currentSong + 1) % songs.Count;
             }
         }

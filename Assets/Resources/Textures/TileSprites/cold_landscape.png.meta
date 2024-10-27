@@ -705,7 +705,7 @@ TextureImporter:
       213: 21300466
     second: cold_landscape_116
   externalObjects: {}
-  serializedVersion: 10
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 1
@@ -722,9 +722,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -734,8 +737,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: -1
-    mipBias: -100
+    aniso: 1
+    mipBias: 0
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -756,9 +759,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -770,6 +779,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   - serializedVersion: 3
@@ -782,6 +792,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 1
   spriteSheet:
@@ -3254,9 +3265,126 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 32
+    nameFileIdTable:
+      cold_dirt_dddd_0: 21300240
+      cold_dirt_dddd_1: 21300242
+      cold_dirt_dddd_2: 21300244
+      cold_grass_gggg_0: 21300234
+      cold_grass_gggg_1: 21300236
+      cold_grass_gggg_2: 21300238
+      cold_landscape_10: 21300254
+      cold_landscape_100: 21300434
+      cold_landscape_101: 21300436
+      cold_landscape_102: 21300438
+      cold_landscape_103: 21300440
+      cold_landscape_104: 21300442
+      cold_landscape_105: 21300444
+      cold_landscape_106: 21300446
+      cold_landscape_107: 21300448
+      cold_landscape_108: 21300450
+      cold_landscape_109: 21300452
+      cold_landscape_11: 21300256
+      cold_landscape_110: 21300454
+      cold_landscape_111: 21300456
+      cold_landscape_112: 21300458
+      cold_landscape_113: 21300460
+      cold_landscape_114: 21300462
+      cold_landscape_115: 21300464
+      cold_landscape_116: 21300466
+      cold_landscape_12: 21300258
+      cold_landscape_13: 21300260
+      cold_landscape_14: 21300262
+      cold_landscape_15: 21300264
+      cold_landscape_16: 21300266
+      cold_landscape_17: 21300268
+      cold_landscape_18: 21300270
+      cold_landscape_19: 21300272
+      cold_landscape_20: 21300274
+      cold_landscape_21: 21300276
+      cold_landscape_22: 21300278
+      cold_landscape_23: 21300280
+      cold_landscape_24: 21300282
+      cold_landscape_25: 21300284
+      cold_landscape_26: 21300286
+      cold_landscape_27: 21300288
+      cold_landscape_28: 21300290
+      cold_landscape_29: 21300292
+      cold_landscape_30: 21300294
+      cold_landscape_31: 21300296
+      cold_landscape_32: 21300298
+      cold_landscape_33: 21300300
+      cold_landscape_34: 21300302
+      cold_landscape_35: 21300304
+      cold_landscape_36: 21300306
+      cold_landscape_37: 21300308
+      cold_landscape_38: 21300310
+      cold_landscape_39: 21300312
+      cold_landscape_40: 21300314
+      cold_landscape_41: 21300316
+      cold_landscape_42: 21300318
+      cold_landscape_43: 21300320
+      cold_landscape_44: 21300322
+      cold_landscape_45: 21300324
+      cold_landscape_46: 21300326
+      cold_landscape_47: 21300328
+      cold_landscape_48: 21300330
+      cold_landscape_49: 21300332
+      cold_landscape_50: 21300334
+      cold_landscape_51: 21300336
+      cold_landscape_52: 21300338
+      cold_landscape_53: 21300340
+      cold_landscape_54: 21300342
+      cold_landscape_55: 21300344
+      cold_landscape_56: 21300346
+      cold_landscape_57: 21300348
+      cold_landscape_58: 21300350
+      cold_landscape_59: 21300352
+      cold_landscape_6: 21300246
+      cold_landscape_60: 21300354
+      cold_landscape_61: 21300356
+      cold_landscape_62: 21300358
+      cold_landscape_63: 21300360
+      cold_landscape_64: 21300362
+      cold_landscape_65: 21300364
+      cold_landscape_66: 21300366
+      cold_landscape_67: 21300368
+      cold_landscape_68: 21300370
+      cold_landscape_69: 21300372
+      cold_landscape_7: 21300248
+      cold_landscape_70: 21300374
+      cold_landscape_71: 21300376
+      cold_landscape_72: 21300378
+      cold_landscape_73: 21300380
+      cold_landscape_74: 21300382
+      cold_landscape_75: 21300384
+      cold_landscape_76: 21300386
+      cold_landscape_77: 21300388
+      cold_landscape_78: 21300390
+      cold_landscape_79: 21300392
+      cold_landscape_8: 21300250
+      cold_landscape_80: 21300394
+      cold_landscape_81: 21300396
+      cold_landscape_82: 21300398
+      cold_landscape_83: 21300400
+      cold_landscape_84: 21300402
+      cold_landscape_85: 21300404
+      cold_landscape_86: 21300406
+      cold_landscape_87: 21300408
+      cold_landscape_88: 21300410
+      cold_landscape_89: 21300412
+      cold_landscape_9: 21300252
+      cold_landscape_90: 21300414
+      cold_landscape_91: 21300416
+      cold_landscape_92: 21300418
+      cold_landscape_93: 21300420
+      cold_landscape_94: 21300422
+      cold_landscape_95: 21300424
+      cold_landscape_96: 21300426
+      cold_landscape_97: 21300428
+      cold_landscape_98: 21300430
+      cold_landscape_99: 21300432
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

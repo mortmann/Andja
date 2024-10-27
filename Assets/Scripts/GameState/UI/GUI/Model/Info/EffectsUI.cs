@@ -9,8 +9,8 @@ namespace Andja.UI.Model {
     public class EffectsUI : MonoBehaviour {
         public ShowToolTip SimpleImage;
         Dictionary<Effect, GameObject> effectToGO;
-        IGEventable eventable;
-        public void Show(IGEventable eventable) {
+        GEventable eventable;
+        public void Show(GEventable eventable) {
             foreach(Transform t in transform) {
                 Destroy(t.gameObject);
             }
@@ -27,12 +27,12 @@ namespace Andja.UI.Model {
         private void AddEffect(Effect effect) {
             ShowToolTip image = Instantiate(SimpleImage);
             image.GetComponent<Image>().sprite = UISpriteController.GetIcon(effect.ID);
-            image.SetVariable(effect.EffectPrototypData, true);
+            image.SetVariable(effect.EffectPrototypeData, true);
             image.transform.SetParent(transform, false);
             effectToGO[effect] = image.gameObject;
         }
 
-        private void OnEffectChange(IGEventable target, Effect effect, bool add) {
+        private void OnEffectChange(GEventable target, Effect effect, bool add) {
             if(add) {
                 AddEffect(effect);
             } else {

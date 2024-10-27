@@ -2,147 +2,160 @@
    <localizationData>
       <translationData id="AmbientSoundVolume">
          <translation>Umgebungslautstärke</translation>
-         <hoverOverTranslation>Z.B. Hintergrundsgeräusche.</hoverOverTranslation>
+         <toolTipTranslation>Z.B. Hintergrundsgeräusche.</toolTipTranslation>
       </translationData>
       <translationData id="AutoUpgradeHomes">
          <translation>Auto Ausbau Wohnhäuser</translation>
-         <hoverOverTranslation>Wenn aktiviert Wohnhäuser bauen von sich aus wenn
-alle Voraussetzungen erfüllt sind und Rohstoffe verfügbar sind.</hoverOverTranslation>
+         <toolTipTranslation>Wenn aktiviert Wohnhäuser bauen von sich aus wenn
+alle Voraussetzungen erfüllt sind und Rohstoffe verfügbar sind.</toolTipTranslation>
       </translationData>
       <translationData id="AutorotateBuildings">
          <translation>Autodrehung Gebäude</translation>
-         <hoverOverTranslation>Ob Gebäude sich automatisch drehen wenn möglich um an den Platz
-unter der Maus zu passen.</hoverOverTranslation>
+         <toolTipTranslation>Ob Gebäude sich automatisch drehen wenn möglich um an den Platz
+unter der Maus zu passen.</toolTipTranslation>
       </translationData>
       <translationData id="Back">
          <translation>Zurück</translation>
-         <hoverOverTranslation>Geh zum vorherrigen Menü zurück.</hoverOverTranslation>
+         <toolTipTranslation>Geh zum vorherrigen Menü zurück.</toolTipTranslation>
       </translationData>
       <translationData id="Balance">
          <translation>Bilanz</translation>
-         <hoverOverTranslation>Wieviel Profit oder Verluste diese Stadt macht.</hoverOverTranslation>
+         <toolTipTranslation>Wieviel Profit oder Verluste diese Stadt macht.</toolTipTranslation>
       </translationData>
       <translationData id="Brightness">
          <translation>Helligkeit</translation>
-         <hoverOverTranslation>Wie hell du... äh das Spiel ist.</hoverOverTranslation>
+         <toolTipTranslation>Wie hell du... äh das Spiel ist.</toolTipTranslation>
       </translationData>
       <translationData id="BuildProgress">
-         <hoverOverTranslation>Baufortschritt</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Baufortschritt</toolTipTranslation>
       </translationData>
       <translationData id="Buy">
-         <hoverOverTranslation>Kauf Gut</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Kauf Gut</toolTipTranslation>
       </translationData>
       <translationData id="ChangeName">
-         <hoverOverTranslation>Klicke hier um den Namen zu verändern.</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Klicke hier um den Namen zu verändern.</toolTipTranslation>
       </translationData>
       <translationData id="CityInformationToggle">
          <translation>Daten</translation>
-         <hoverOverTranslation>Zeigt mehr Daten zu der Stadt an.</hoverOverTranslation>
+         <toolTipTranslation>Zeigt mehr Daten zu der Stadt an.</toolTipTranslation>
       </translationData>
       <translationData id="Close">
-         <hoverOverTranslation>Schließe das Fenster</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Schließe das Fenster</toolTipTranslation>
       </translationData>
       <translationData id="Controls">
          <translation>Steuerung</translation>
-         <hoverOverTranslation>Ändere Mauseinstellungen und Tastaturkürzel.</hoverOverTranslation>
+         <toolTipTranslation>Ändere Mauseinstellungen und Tastaturkürzel.</toolTipTranslation>
       </translationData>
       <translationData id="CreationDate">
          <translation>Erstellungsdatum</translation>
-         <hoverOverTranslation>Wann die Datei erstellt wurde.</hoverOverTranslation>
+         <toolTipTranslation>Wann die Datei erstellt wurde.</toolTipTranslation>
       </translationData>
       <translationData id="Credits">
          <translation>Credits</translation>
-         <hoverOverTranslation>Sehe diese beeindruckenden Ehrungen an.
+         <toolTipTranslation>Sehe diese beeindruckenden Ehrungen an.
 Oder auch nicht. Ich bin nicht dein Vater.
-Ich bin ein Spiel.</hoverOverTranslation>
+Ich bin ein Spiel.</toolTipTranslation>
       </translationData>
       <translationData id="CurrentDamage">
          <translation>AD</translation>
-         <hoverOverTranslation>Wieviel Schaden das Schiff gerade machen kann.</hoverOverTranslation>
+         <toolTipTranslation>Wieviel Schaden das Schiff gerade machen kann.</toolTipTranslation>
       </translationData>
       <translationData id="Custom">
          <translation>Benutzerdefiniert</translation>
       </translationData>
       <translationData id="DecreaseDiplomaticStatus">
          <translation>Reduziere diplomatischen Stand</translation>
-         <hoverOverTranslation>Reduziert deinen diplomatischen Stand mit diesem Player
-zu dem nächst niedrigeren.</hoverOverTranslation>
+         <toolTipTranslation>Reduziert deinen diplomatischen Stand mit diesem Player
+zu dem nächst niedrigeren.</toolTipTranslation>
       </translationData>
       <translationData id="Delete">
          <translation>Löschen</translation>
-         <hoverOverTranslation>Löscht den zugehörigen Spielstand.</hoverOverTranslation>
+         <toolTipTranslation>Löscht den zugehörigen Spielstand.</toolTipTranslation>
       </translationData>
       <translationData id="DeleteSaves">
          <translation>Wollen Sie dieses Spielstand löschen?</translation>
       </translationData>
       <translationData id="DeleteTrade">
          <translation>Route löschen</translation>
-         <hoverOverTranslation>Löscht die ausgewählte Handelsroute</hoverOverTranslation>
+         <toolTipTranslation>Löscht die ausgewählte Handelsroute</toolTipTranslation>
       </translationData>
       <translationData id="DemandMoney">
          <translation>Verlange Geld</translation>
-         <hoverOverTranslation>Versuche Geld von diesem Spieler einzufordern.
-</hoverOverTranslation>
+         <toolTipTranslation>Versuche Geld von diesem Spieler einzufordern.
+</toolTipTranslation>
       </translationData>
       <translationData id="DenouncePlayer">
          <translation>Verurteile diesen Spieler</translation>
-         <hoverOverTranslation>Verachte diesen Spieler. Er wird dies nicht mögen.</hoverOverTranslation>
+         <toolTipTranslation>Verachte diesen Spieler. Er wird dies nicht mögen.</toolTipTranslation>
       </translationData>
       <translationData id="DestroyTool">
-         <hoverOverTranslation>Zerstörungswerkzeug</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Zerstörungswerkzeug</toolTipTranslation>
       </translationData>
       <translationData id="DiplomacyOptions">
          <translation>Diplomatische Optionen</translation>
-         <hoverOverTranslation>Die verschiedenen Interaktionen die mit den Spielern ausführen kannst.</hoverOverTranslation>
+         <toolTipTranslation>Die verschiedenen Interaktionen die mit den Spielern ausführen kannst.</toolTipTranslation>
       </translationData>
       <translationData id="DiplomacyTitle">
          <translation>Diplomatie</translation>
       </translationData>
       <translationData id="DiplomacyType/Alliance">
          <translation>Allianz</translation>
-         <hoverOverTranslation>Beide Seiten versprechen dem anderen zur Seite zustehen.</hoverOverTranslation>
+         <toolTipTranslation>Beide Seiten versprechen dem anderen zur Seite zustehen.</toolTipTranslation>
       </translationData>
       <translationData id="DiplomacyType/Neutral">
          <translation>Neutral</translation>
-         <hoverOverTranslation>Keinerlei Stand zu dieser Person.</hoverOverTranslation>
+         <toolTipTranslation>Keinerlei Stand zu dieser Person.</toolTipTranslation>
       </translationData>
       <translationData id="DiplomacyType/TradeAgreement">
          <translation>Handelsabkommen</translation>
-         <hoverOverTranslation>Beide können miteinander handeln.</hoverOverTranslation>
+         <toolTipTranslation>Beide können miteinander handeln.</toolTipTranslation>
       </translationData>
       <translationData id="DiplomacyType/War">
          <translation>Krieg</translation>
-         <hoverOverTranslation>Greife Gegner an und verteidige deine Städe.
-Vorsicht vor Allianzen deines Gegners.</hoverOverTranslation>
+         <toolTipTranslation>Greife Gegner an und verteidige deine Städe.
+Vorsicht vor Allianzen deines Gegners.</toolTipTranslation>
       </translationData>
       <translationData id="DiscardUnsaved">
          <translation>Wollen Sie jeglichen ungespeicherten Fortschritt verwerfen.</translation>
       </translationData>
       <translationData id="Editor">
          <translation>Insel-Editor</translation>
-         <hoverOverTranslation>Erstell und passe Inseln an.
-Speichere und spiel diese oder teile Sie mit anderen.</hoverOverTranslation>
+         <toolTipTranslation>Erstell und passe Inseln an.
+Speichere und spiel diese oder teile Sie mit anderen.</toolTipTranslation>
+      </translationData>
+      <translationData id="EditorLoading">
+         <translation>Lade Editor...</translation>
+         <toolTipTranslation>Viel Spaß beim kreieren.</toolTipTranslation>
       </translationData>
       <translationData id="Expanses">
          <translation>Ausgaben</translation>
-         <hoverOverTranslation>Wieviel alle Gebäude insgesamt kosten.</hoverOverTranslation>
+         <toolTipTranslation>Wieviel alle Gebäude insgesamt kosten.</toolTipTranslation>
       </translationData>
       <translationData id="Fast">
-         <hoverOverTranslation>Schnell Spielgeschwindigkeit</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Schnell Spielgeschwindigkeit</toolTipTranslation>
       </translationData>
       <translationData id="Fastest">
-         <hoverOverTranslation>Schnellste Spielgeschwindigkeit</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Schnellste Spielgeschwindigkeit</toolTipTranslation>
+      </translationData>
+      <translationData id="FogOfWar">
+         <translation>Nebel des Krieges</translation>
+         <toolTipTranslation>Versteckt Unbekanntes und/oder nicht in Sichtweite.</toolTipTranslation>
+      </translationData>
+      <translationData id="FogOfWarStyle/Always">
+         <translation>Immer</translation>
+         <toolTipTranslation>Versteckt alles was nicht in Sichtweite ist oder unerforscht ist.</toolTipTranslation>
+      </translationData>
+      <translationData id="FogOfWarStyle/Off">
+         <translation>Aus</translation>
+         <toolTipTranslation>Man sieht immer alles.</toolTipTranslation>
+      </translationData>
+      <translationData id="FogOfWarStyle/Unknown">
+         <translation>Unbekannt</translation>
+         <toolTipTranslation>Versteckt nur unerforschte Map.</toolTipTranslation>
       </translationData>
       <translationData id="Framelimiter">
          <translation>Bildrate</translation>
-         <hoverOverTranslation>Wieviele Bilder pro Sekunde erzeugt werden.</hoverOverTranslation>
+         <toolTipTranslation>Wieviele Bilder pro Sekunde erzeugt werden.</toolTipTranslation>
       </translationData>
       <translationData id="FullScreenMode/ExclusiveFullScreen">
          <translation>Exklusiven Vollbildmodus</translation>
@@ -158,15 +171,15 @@ Speichere und spiel diese oder teile Sie mit anderen.</hoverOverTranslation>
       </translationData>
       <translationData id="Fullscreen">
          <translation>Fenstermodus</translation>
-         <hoverOverTranslation>Wähle deine präferierte Art des Spielfenster.</hoverOverTranslation>
+         <toolTipTranslation>Wähle deine präferierte Art des Spielfenster.</toolTipTranslation>
       </translationData>
       <translationData id="Gameplay">
          <translation>Spieleinstellungen</translation>
-         <hoverOverTranslation>Einstellungen die des Spielverhalten betreffen.</hoverOverTranslation>
+         <toolTipTranslation>Einstellungen die des Spielverhalten betreffen.</toolTipTranslation>
       </translationData>
       <translationData id="Graphics">
          <translation>Grafik</translation>
-         <hoverOverTranslation>Ändere wie das Spiel aussieht oder läuft.</hoverOverTranslation>
+         <toolTipTranslation>Ändere wie das Spiel aussieht oder läuft.</toolTipTranslation>
       </translationData>
       <translationData id="GraphicsOptions/High">
          <translation>Hoch</translation>
@@ -184,109 +197,179 @@ Speichere und spiel diese oder teile Sie mit anderen.</hoverOverTranslation>
          <translation>Sehr Niedrig</translation>
       </translationData>
       <translationData id="HealthUI">
-         <hoverOverTranslation>Lebenspunkte</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Lebenspunkte</toolTipTranslation>
+      </translationData>
+      <translationData id="Height">
+         <translation>Höhe</translation>
+         <toolTipTranslation>Bestimmt die Größe der Karte.</toolTipTranslation>
       </translationData>
       <translationData id="High">
          <translation>Hoch</translation>
       </translationData>
+      <translationData id="Hint">
+         <translation>Tipp</translation>
+      </translationData>
       <translationData id="Hotkey">
          <translation>Hotkey</translation>
-         <hoverOverTranslation>Welche Aktion ausgeführt wird.</hoverOverTranslation>
+         <toolTipTranslation>Welche Aktion ausgeführt wird.</toolTipTranslation>
       </translationData>
       <translationData id="Income">
          <translation>Einnahmen</translation>
-         <hoverOverTranslation>Die aktuellen Einnahmen dieser Stadt.</hoverOverTranslation>
+         <toolTipTranslation>Die aktuellen Einnahmen dieser Stadt.</toolTipTranslation>
       </translationData>
       <translationData id="IncreaseDiplomaticStatus">
          <translation>Verbessere diplomatischen Stand</translation>
-         <hoverOverTranslation>Versuche deinen diplomatischen Stand mit diesem Spieler zu verbesseren.</hoverOverTranslation>
+         <toolTipTranslation>Versuche deinen diplomatischen Stand mit diesem Spieler zu verbesseren.</toolTipTranslation>
       </translationData>
       <translationData id="Information">
-         <hoverOverTranslation>Weitere Informationen</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Weitere Informationen</toolTipTranslation>
+      </translationData>
+      <translationData id="InformationType/DemandMoney">
+         <translation>$0 verlangt das du $1 zahlst</translation>
+         <toolTipTranslation>$0 will $1 sonst ist er nicht glücklich mit dir.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InformationType/Denounce">
+         <translation>$0 denunziert dich</translation>
+         <toolTipTranslation>$0 hat nicht nette Wörter über dicht gesagt.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="InformationType/DiplomacyChange">
          <translation>$0</translation>
-         <hoverOverTranslation>$0 und $1 sind jetzt auf dem Stand $2 zu einander.</hoverOverTranslation>
+         <toolTipTranslation>$0 und $1 sind jetzt auf dem Stand $2 zu einander.</toolTipTranslation>
+      </translationData>
+      <translationData id="InformationType/Praise">
+         <translation>$0 lobt deinen Namen</translation>
+         <toolTipTranslation>$0 hat nette Wörter über dich gesagt.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InformationType/ReceivedGift">
+         <translation>$0 hat dir $1 gesendet</translation>
+         <toolTipTranslation>$0 hat dir ein Geschenk in Höhe $1 gemacht</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="InformationType/StructureUnderAttack">
          <translation>$0 wird angegriffen</translation>
-         <hoverOverTranslation>Dein Gebäude $0 wird von $1 angegriffen.</hoverOverTranslation>
+         <toolTipTranslation>Dein Gebäude $0 wird von $1 angegriffen.</toolTipTranslation>
       </translationData>
       <translationData id="InformationType/UnitUnderAttack">
          <translation>$0 wird angegriffen</translation>
-         <hoverOverTranslation>Deine Einheit $0 ist unter Beschuss von $1.</hoverOverTranslation>
+         <toolTipTranslation>Deine Einheit $0 ist unter Beschuss von $1.</toolTipTranslation>
+      </translationData>
+      <translationData id="InvertedMouseButtons">
+         <translation>Invertiert Mausbutton</translation>
+         <toolTipTranslation>Vertauscht linke und rechte Mausbuttons.
+Vorsicht: Funktioniert nicht mit der UI.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="InvertedMouseButtons">
+         <translation>[**Missing**]</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="IslandClimate">
          <translation>Inselklima</translation>
-         <hoverOverTranslation>Welches Klima diese Insel hat.</hoverOverTranslation>
+         <toolTipTranslation>Welches Klima diese Insel hat.</toolTipTranslation>
       </translationData>
       <translationData id="IslandSize">
          <translation>Inselgröße</translation>
-         <hoverOverTranslation>Wie groß die Insel ist.</hoverOverTranslation>
+         <toolTipTranslation>Wie groß die Insel ist.</toolTipTranslation>
       </translationData>
       <translationData id="ItemAmount">
          <translation>Gutmenge</translation>
       </translationData>
       <translationData id="ItemPrice">
          <translation>Preis</translation>
-         <hoverOverTranslation>Wieviel das Gut kostet.</hoverOverTranslation>
+         <toolTipTranslation>Wieviel das Gut kostet.</toolTipTranslation>
       </translationData>
       <translationData id="ItemsToBuy">
          <translation>Kaufe diese Güter</translation>
-         <hoverOverTranslation>Ausgewählte Güte werden vom Schiff gekauft werden.</hoverOverTranslation>
+         <toolTipTranslation>Ausgewählte Güte werden vom Schiff gekauft werden.</toolTipTranslation>
       </translationData>
       <translationData id="ItemsToTrade">
          <translation>Kaufe diese Güter</translation>
-         <hoverOverTranslation>Welche Güter dieser Spieler hier verkauft.</hoverOverTranslation>
+         <toolTipTranslation>Welche Güter dieser Spieler hier verkauft.</toolTipTranslation>
       </translationData>
       <translationData id="Language">
          <translation>Sprache</translation>
-         <hoverOverTranslation>In welcher Sprache das Sprache angezeigt wird.</hoverOverTranslation>
+         <toolTipTranslation>In welcher Sprache das Sprache angezeigt wird.</toolTipTranslation>
       </translationData>
       <translationData id="Load">
          <translation>Laden</translation>
-         <hoverOverTranslation>Lade deine gespeicherten Spiele.</hoverOverTranslation>
+         <toolTipTranslation>Lade deine gespeicherten Spiele.</toolTipTranslation>
       </translationData>
       <translationData id="LoadToShip">
          <translation>Belade Güter</translation>
-         <hoverOverTranslation>Wähle welche Güter die Schiffe hier mit nehmen.</hoverOverTranslation>
+         <toolTipTranslation>Wähle welche Güter die Schiffe hier mit nehmen.</toolTipTranslation>
       </translationData>
       <translationData id="Loading">
          <translation>Lade</translation>
-         <hoverOverTranslation>Klicke hier um deinen Speicherfortschritt zu fortsetzen.</hoverOverTranslation>
+         <toolTipTranslation>Klicke hier um deinen Speicherfortschritt zu fortsetzen.</toolTipTranslation>
+      </translationData>
+      <translationData id="LoadingGameTitle">
+         <translation>Ladevorgang...</translation>
       </translationData>
       <translationData id="Low">
          <translation>Niedrig</translation>
       </translationData>
+      <translationData id="MapErrorMessage/CanNotBuildHere">
+         <translation>Kann nicht hier gebaut werden</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/CanNotDestroy">
+         <translation>Kann nicht zerstört werden</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/Missing">
+         <translation>Fehlende Sachen</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NoSpace">
+         <translation>Nicht genug Platz vorhanden</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotEnoughMoney">
+         <translation>Nicht genug Geld</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotEnoughResources">
+         <translation>Nicht genug Ressourcen </translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotInCity">
+         <translation>Nicht innerhalb der Stadt</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
+      <translationData id="MapErrorMessage/NotInRange">
+         <translation>Nicht in Reichweite</translation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="MasterSoundVolume">
          <translation>Gesamtlautstärke</translation>
-         <hoverOverTranslation>Betrifft alle Lautstärken.</hoverOverTranslation>
+         <toolTipTranslation>Betrifft alle Lautstärken.</toolTipTranslation>
       </translationData>
       <translationData id="MaximumDamage">
          <translation>MS</translation>
-         <hoverOverTranslation>Maximaler Schaden die diese Einheit machen kann.</hoverOverTranslation>
+         <toolTipTranslation>Maximaler Schaden die diese Einheit machen kann.</toolTipTranslation>
       </translationData>
       <translationData id="Medium">
          <translation>Mittel</translation>
       </translationData>
       <translationData id="Mods">
          <translation>Mods</translation>
-         <hoverOverTranslation>Modifikation erstellt bei Benutzer. 
-Pass auf welche du nutzt, denn Sie können</hoverOverTranslation>
+         <toolTipTranslation>Modifikation erstellt bei Benutzer. 
+Pass auf welche du nutzt, denn Sie können</toolTipTranslation>
       </translationData>
       <translationData id="Monitor">
          <translation>Bildschirm</translation>
-         <hoverOverTranslation>Auf welchem Bildschirm/Monitor das Spiel angezeigt wird.</hoverOverTranslation>
+         <toolTipTranslation>Auf welchem Bildschirm/Monitor das Spiel angezeigt wird.</toolTipTranslation>
       </translationData>
       <translationData id="MouseSensitivity">
          <translation>Maussensitivität</translation>
-         <hoverOverTranslation>Wie schnell die Maus sich im Spiel bewegt.</hoverOverTranslation>
+         <toolTipTranslation>Wie schnell die Maus sich im Spiel bewegt.</toolTipTranslation>
       </translationData>
       <translationData id="MusicVolume">
          <translation>Musiklautstärke</translation>
-         <hoverOverTranslation>Musik die im Hintergrund abläuft.</hoverOverTranslation>
+         <toolTipTranslation>Musik die im Hintergrund abläuft.</toolTipTranslation>
       </translationData>
       <translationData id="NeedInRange">
          <translation>In Reichweite</translation>
@@ -299,173 +382,182 @@ Pass auf welche du nutzt, denn Sie können</hoverOverTranslation>
       </translationData>
       <translationData id="NewGame">
          <translation>Neues Spiel</translation>
-         <hoverOverTranslation>Starte ein neues Spiel und passe dieses an.</hoverOverTranslation>
+         <toolTipTranslation>Starte ein neues Spiel und passe dieses an.</toolTipTranslation>
       </translationData>
       <translationData id="NewTradeRoute">
          <translation>Neue Handelsroute</translation>
-         <hoverOverTranslation>Erstelle eine neue Handelsroute.</hoverOverTranslation>
+         <toolTipTranslation>Erstelle eine neue Handelsroute.</toolTipTranslation>
       </translationData>
       <translationData id="No">
          <translation>Nein.</translation>
       </translationData>
       <translationData id="NormalSpeed">
-         <hoverOverTranslation>Normal Spielgeschwindigkeit</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Normal Spielgeschwindigkeit</toolTipTranslation>
       </translationData>
       <translationData id="Options">
          <translation>Einstellungen</translation>
-         <hoverOverTranslation>Ändere Optionen hier.</hoverOverTranslation>
+         <toolTipTranslation>Ändere Optionen hier.</toolTipTranslation>
       </translationData>
       <translationData id="OverwriteSave">
          <translation>Sind Sie, dass Sie diesen Spielstand überschreiten wollen?</translation>
       </translationData>
       <translationData id="Patrol">
          <translation>Patrouille</translation>
-         <hoverOverTranslation>Erstelle einen neue Rundgang für die Einheit. </hoverOverTranslation>
+         <toolTipTranslation>Erstelle einen neue Rundgang für die Einheit. </toolTipTranslation>
       </translationData>
       <translationData id="Pause">
-         <hoverOverTranslation>Pausiere das Spiel</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Pausiere das Spiel</toolTipTranslation>
       </translationData>
       <translationData id="PauseMenu">
-         <hoverOverTranslation>Öffene das Pausenmenü</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Öffene das Pausenmenü</toolTipTranslation>
       </translationData>
       <translationData id="People">
          <translation>Einwohner</translation>
-         <hoverOverTranslation>Wieviele Einwohner diese Stadt hat.</hoverOverTranslation>
+         <toolTipTranslation>Wieviele Einwohner diese Stadt hat.</toolTipTranslation>
+      </translationData>
+      <translationData id="Pirate">
+         <translation>Pirate</translation>
+         <toolTipTranslation>De/aktiviert den Pirate im Spiel.</toolTipTranslation>
       </translationData>
       <translationData id="PraisePlayer">
          <translation>Lobe diesen Spieler</translation>
-         <hoverOverTranslation>Versuche deine Gunst mit diesem Spieler zu verbessern.</hoverOverTranslation>
+         <toolTipTranslation>Versuche deine Gunst mit diesem Spieler zu verbessern.</toolTipTranslation>
       </translationData>
       <translationData id="Presets">
          <translation>Voreinstellungen</translation>
-         <hoverOverTranslation>Vordefinierte Einstellungen.</hoverOverTranslation>
+         <toolTipTranslation>Vordefinierte Einstellungen.</toolTipTranslation>
       </translationData>
       <translationData id="PrimaryKey">
          <translation>Primär</translation>
-         <hoverOverTranslation>Erster Taste die die Action ausführt.</hoverOverTranslation>
+         <toolTipTranslation>Erster Taste die die Action ausführt.</toolTipTranslation>
       </translationData>
       <translationData id="ProduceProgress">
-         <hoverOverTranslation>Herstellungsfortschritt</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Herstellungsfortschritt</toolTipTranslation>
       </translationData>
       <translationData id="QuickLoad">
-         <hoverOverTranslation>Lade den letzten gespeicherten Spielstand.</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Lade den letzten gespeicherten Spielstand.</toolTipTranslation>
       </translationData>
       <translationData id="QuickSave">
-         <hoverOverTranslation>Schnellspeicherung </hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Schnellspeicherung </toolTipTranslation>
       </translationData>
       <translationData id="QuitToMenu">
          <translation>Schließen zum Menü</translation>
-         <hoverOverTranslation>Beende das aktuelle Spiel und geh zum Hauptmenü.</hoverOverTranslation>
+         <toolTipTranslation>Beende das aktuelle Spiel und geh zum Hauptmenü.</toolTipTranslation>
       </translationData>
       <translationData id="QuitToOS">
          <translation>Beenden</translation>
-         <hoverOverTranslation>Kehre zum Desktop zurück.</hoverOverTranslation>
+         <toolTipTranslation>Kehre zum Desktop zurück.</toolTipTranslation>
       </translationData>
       <translationData id="Resolutions">
          <translation>Auflösung</translation>
-         <hoverOverTranslation>Wie viele Pixel hoch und breit das Spiel hat.</hoverOverTranslation>
+         <toolTipTranslation>Wie viele Pixel hoch und breit das Spiel hat.</toolTipTranslation>
       </translationData>
       <translationData id="RestartRequired">
          <translation>Neustart benötigt.</translation>
-         <hoverOverTranslation>Eine Einstellung wurde geändert die einen Neustart benötigt
-um diese anzuwenden.</hoverOverTranslation>
+         <toolTipTranslation>Eine Einstellung wurde geändert die einen Neustart benötigt
+um diese anzuwenden.</toolTipTranslation>
       </translationData>
       <translationData id="ResumeGame">
          <translation>Spiel fortsetzen</translation>
-         <hoverOverTranslation>Setze deinen letzten gespeicherten Fortschritt fort.</hoverOverTranslation>
+         <toolTipTranslation>Setze deinen letzten gespeicherten Fortschritt fort.</toolTipTranslation>
       </translationData>
       <translationData id="Save">
          <translation>Speichern</translation>
-         <hoverOverTranslation>Speichere deinen Fortschritt.</hoverOverTranslation>
+         <toolTipTranslation>Speichere deinen Fortschritt.</toolTipTranslation>
       </translationData>
       <translationData id="Saveing">
          <translation>Speichern</translation>
-         <hoverOverTranslation>Speicher den Fortschritt.</hoverOverTranslation>
+         <toolTipTranslation>Speicher den Fortschritt.</toolTipTranslation>
       </translationData>
       <translationData id="SecondaryKey">
          <translation>Sekundär</translation>
-         <hoverOverTranslation>Zweite Taste die die Aktion ausführt.</hoverOverTranslation>
+         <toolTipTranslation>Zweite Taste die die Aktion ausführt.</toolTipTranslation>
+      </translationData>
+      <translationData id="Seed">
+         <translation>Seed</translation>
+         <toolTipTranslation>Bestimmt wie die Karte generiert wird.
+Teile diese mit anderen, damit diese dieselbe
+Karte spielen können.
+Wichtig: alle müssen die selbe Konfiguration (mods) haben.</toolTipTranslation>
       </translationData>
       <translationData id="Sell">
-         <hoverOverTranslation>Verkaufe Gut</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Verkaufe Gut</toolTipTranslation>
       </translationData>
       <translationData id="SendMoney">
          <translation>Schenke Geld</translation>
-         <hoverOverTranslation>Schickt diesem Spieler den angegebe Menge an Geld.
-</hoverOverTranslation>
+         <toolTipTranslation>Schickt diesem Spieler den angegebe Menge an Geld.
+</toolTipTranslation>
       </translationData>
       <translationData id="SendShipOffworld">
          <translation>Sende zum Heimmarkt</translation>
-         <hoverOverTranslation>Ausgewählte Schiff wird zum Heimmarkt geschickt um
-die ausgewählten Handel auszuführen.</hoverOverTranslation>
+         <toolTipTranslation>Ausgewählte Schiff wird zum Heimmarkt geschickt um
+die ausgewählten Handel auszuführen.</toolTipTranslation>
       </translationData>
       <translationData id="SettleIsland">
          <translation>Besiedeln</translation>
-         <hoverOverTranslation>Erstelle eine neue von dir unbewohnte Insel wenn 
-diese in Reichweite ist.</hoverOverTranslation>
+         <toolTipTranslation>Erstelle eine neue von dir unbewohnte Insel wenn 
+diese in Reichweite ist.</toolTipTranslation>
       </translationData>
       <translationData id="ShipContentToSell">
          <translation>Inhalt zum Verkaufen</translation>
-         <hoverOverTranslation>Alle Güter die im Schiff sind werden verkauft.</hoverOverTranslation>
+         <toolTipTranslation>Alle Güter die im Schiff sind werden verkauft.</toolTipTranslation>
       </translationData>
       <translationData id="SleepStructure">
-         <hoverOverTranslation>Deaktiviere dieses Gebäude.</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Deaktiviere dieses Gebäude.</toolTipTranslation>
       </translationData>
       <translationData id="Slow">
-         <hoverOverTranslation>Langsam Spielgeschwindigkeit</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Langsam Spielgeschwindigkeit</toolTipTranslation>
       </translationData>
       <translationData id="Slowest">
-         <hoverOverTranslation>Langsamste Spielgeschwindigkeit</hoverOverTranslation>
-         <onlyHoverOver>true</onlyHoverOver>
+         <toolTipTranslation>Langsamste Spielgeschwindigkeit</toolTipTranslation>
       </translationData>
       <translationData id="Sound">
          <translation>Ton</translation>
-         <hoverOverTranslation>Stell die Lautstärker ein.</hoverOverTranslation>
+         <toolTipTranslation>Stell die Lautstärker ein.</toolTipTranslation>
       </translationData>
       <translationData id="SoundEffectsVolume">
          <translation>Effektlautstärke</translation>
-         <hoverOverTranslation>Z.B. Gebäude und Einheiten.</hoverOverTranslation>
+         <toolTipTranslation>Z.B. Gebäude und Einheiten.</toolTipTranslation>
       </translationData>
       <translationData id="SoundMenu">
          <translation>Sound</translation>
-         <hoverOverTranslation>Stell hier die Lautstärken ein.</hoverOverTranslation>
+         <toolTipTranslation>Stell hier die Lautstärken ein.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/And">
          <translation>Und</translation>
       </translationData>
       <translationData id="StaticLanguageVariables/Balance">
          <translation>Kontostand</translation>
-         <hoverOverTranslation>Wie viel Geld sich auf dem Konto befindet.</hoverOverTranslation>
+         <toolTipTranslation>Wie viel Geld sich auf dem Konto befindet.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/BalanceChange">
          <translation>Bilanzveränderung</translation>
-         <hoverOverTranslation>Wie sich die Bilanz verändert wird über die Zeit.</hoverOverTranslation>
+         <toolTipTranslation>Wie sich die Bilanz verändert wird über die Zeit.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/BuildCost">
          <translation>Baukosten</translation>
       </translationData>
       <translationData id="StaticLanguageVariables/CurrentDamage">
          <translation>Aktueller Schaden</translation>
-         <hoverOverTranslation>Wie viel Schaden dies kann gerade austeilen.</hoverOverTranslation>
+         <toolTipTranslation>Wie viel Schaden dies kann gerade austeilen.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/Empty">
          <translation>Leer</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/FlyingTrader">
+         <translation>Fliegender Händler</translation>
       </translationData>
       <translationData id="StaticLanguageVariables/Locked">
          <translation>Gesperrt</translation>
       </translationData>
       <translationData id="StaticLanguageVariables/MaximumDamage">
          <translation>Maximaler Schaden</translation>
-         <hoverOverTranslation>Wie viel Schaden dies maximal machen kann.</hoverOverTranslation>
+         <toolTipTranslation>Wie viel Schaden dies maximal machen kann.</toolTipTranslation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/No">
+         <translation>Nein</translation>
+         <toolTipTranslation>Ablehnen</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/Off">
          <translation>Aus</translation>
@@ -476,44 +568,64 @@ diese in Reichweite ist.</hoverOverTranslation>
       <translationData id="StaticLanguageVariables/Or">
          <translation>Oder</translation>
       </translationData>
+      <translationData id="StaticLanguageVariables/Pirate">
+         <translation>Pirate</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Price">
+         <translation>Kosten</translation>
+         <toolTipTranslation>Wieviel dies kostet.</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="StaticLanguageVariables/Speed">
          <translation>Geschwindigkeit</translation>
-         <hoverOverTranslation>Wie schnell diese Einheit sich fortbewegen kann.</hoverOverTranslation>
+         <toolTipTranslation>Wie schnell diese Einheit sich fortbewegen kann.</toolTipTranslation>
       </translationData>
       <translationData id="StaticLanguageVariables/Upkeep">
          <translation>Unterhaltskosten</translation>
       </translationData>
+      <translationData id="StaticLanguageVariables/World">
+         <translation>Welt</translation>
+      </translationData>
+      <translationData id="StaticLanguageVariables/Yes">
+         <translation>Ja</translation>
+         <toolTipTranslation>Akzeptiere</toolTipTranslation>
+         <valueIsMainTranslation>false</valueIsMainTranslation>
+      </translationData>
       <translationData id="TextureQuality">
          <translation>Texture Qualität</translation>
-         <hoverOverTranslation>Wie gut die Texturen (Bilder) aussehen.</hoverOverTranslation>
+         <toolTipTranslation>Wie gut die Texturen (Bilder) aussehen.</toolTipTranslation>
       </translationData>
       <translationData id="TradeMenu">
          <translation>Handelsmenü</translation>
       </translationData>
       <translationData id="UISoundVolume">
          <translation>UI Lautstärke</translation>
-         <hoverOverTranslation>Z.B. Schaltflächen.</hoverOverTranslation>
+         <toolTipTranslation>Z.B. Schaltflächen.</toolTipTranslation>
       </translationData>
       <translationData id="Ultra">
          <translation>Ultra</translation>
       </translationData>
       <translationData id="UnitSpeed">
          <translation>Geschwindigkeit</translation>
-         <hoverOverTranslation>Wie schnell diese Einheit sich bewegen kann.</hoverOverTranslation>
+         <toolTipTranslation>Wie schnell diese Einheit sich bewegen kann.</toolTipTranslation>
       </translationData>
       <translationData id="UnloadFromShip">
          <translation>Entlade Güter</translation>
-         <hoverOverTranslation>Welche Güter die Schiffe hier abladen.</hoverOverTranslation>
+         <toolTipTranslation>Welche Güter die Schiffe hier abladen.</toolTipTranslation>
       </translationData>
       <translationData id="UpgradeHome">
-         <hoverOverTranslation>Ausbau des Wohnhauses zur nächsten Stufe.</hoverOverTranslation>
+         <toolTipTranslation>Ausbau des Wohnhauses zur nächsten Stufe.</toolTipTranslation>
       </translationData>
       <translationData id="Vsync">
          <translation>Vysnc</translation>
-         <hoverOverTranslation>Zwingt die Bildwiederholrate des Spiele zu der des Displays.</hoverOverTranslation>
+         <toolTipTranslation>Zwingt die Bildwiederholrate des Spiele zu der des Displays.</toolTipTranslation>
       </translationData>
       <translationData id="Warning">
          <translation>Warnung!</translation>
+      </translationData>
+      <translationData id="Width">
+         <translation>Breite</translation>
+         <toolTipTranslation>Bestimmt die Größe der Karte.</toolTipTranslation>
       </translationData>
       <translationData id="Yes">
          <translation>Ja.</translation>

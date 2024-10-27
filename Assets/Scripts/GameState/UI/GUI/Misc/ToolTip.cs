@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Andja.Model;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -21,35 +22,35 @@ namespace Andja.UI {
         public GameObject MoneyThings;
         public ImageText ImageTextPrefab;
         private Dictionary<string, ImageText> stringToImageText;
+        private ImageText BuildCostText;
         public Text Description;
         public RectTransform fitForm;
         private Vector2 Position = Vector2.negativeInfinity;
         private bool staticPosition = false;
         private bool truePosition = true;
         private bool instantShow = false;
+        private ImageText UpkeepCostText;
+        private ImageText LockedText;
 
-        private void Start() {
+        public void Start() {
             rect = GetComponent<RectTransform>();
             if (Loading.IsLoading)
                 return;
             stringToImageText = new Dictionary<string, ImageText>();
             
-            ImageText cost = Instantiate(ImageTextPrefab);
-            cost.Set(UISpriteController.GetIcon(CommonIcon.Money), StaticLanguageVariables.BuildCost, 0 + "");
-            cost.transform.SetParent(MoneyThings.transform, false);
-            cost.SetBrightColorText();
-            stringToImageText.Add(StaticLanguageVariables.BuildCost.ToString(), cost);
-            ImageText upkeep = Instantiate(ImageTextPrefab);
-            upkeep.Set(UISpriteController.GetIcon(CommonIcon.Upkeep), StaticLanguageVariables.Upkeep, 0 + "");
-            upkeep.SetBrightColorText();
-            upkeep.transform.SetParent(MoneyThings.transform, false);
-            stringToImageText.Add(StaticLanguageVariables.Upkeep.ToString(), upkeep);
+            BuildCostText = Instantiate(ImageTextPrefab);
+            BuildCostText.Set(UISpriteController.GetIcon(CommonIcon.Money), StaticLanguageVariables.BuildCost, 0 + "");
+            BuildCostText.transform.SetParent(MoneyThings.transform, false);
+            BuildCostText.SetBrightColorText();
+            UpkeepCostText = Instantiate(ImageTextPrefab);
+            UpkeepCostText.Set(UISpriteController.GetIcon(CommonIcon.Upkeep), StaticLanguageVariables.Upkeep, 0 + "");
+            UpkeepCostText.SetBrightColorText();
+            UpkeepCostText.transform.SetParent(MoneyThings.transform, false);
 
-            ImageText locked = Instantiate(ImageTextPrefab);
-            locked.Set(UISpriteController.GetIcon(CommonIcon.People), StaticLanguageVariables.Locked, 0 + "");
-            locked.SetColorText(Color.red);
-            locked.transform.SetParent(Locked.transform, false);
-            stringToImageText.Add(StaticLanguageVariables.Locked.ToString(), locked);
+            LockedText = Instantiate(ImageTextPrefab);
+            LockedText.Set(UISpriteController.GetIcon(CommonIcon.People), StaticLanguageVariables.Locked, 0 + "");
+            LockedText.SetColorText(Color.red);
+            LockedText.transform.SetParent(Locked.transform, false);
         }
 
         public void Show(string header) {
@@ -60,12 +61,8 @@ namespace Andja.UI {
             Header.text = header;
             if (descriptions != null) {
                 Description.gameObject.SetActive(true);
-                string description = "";
-                foreach (string s in descriptions) {
-                    if (s == null)
-                        continue;
-                    description += "\n" + s;
-                }
+                string description = descriptions.Where(s => s != null)
+                    .Aggregate("", (current, s) => current + ("\n" + s));
                 Description.text = description.Trim();
             }
             else {
@@ -100,18 +97,20 @@ namespace Andja.UI {
         }
 
         private void Update() {
-            if (show == false && hovertime == HoverDuration)
-                return;
-            if (show) {
-                if (EventSystem.current.IsPointerOverGameObject() == false && isDebug == false) {
+            switch (show) {
+                case false when hovertime == HoverDuration:
+                    return;
+                case true when EventSystem.current.IsPointerOverGameObject() == false && isDebug == false:
                     Unshow();
                     return;
-                }
-                hovertime -= Time.deltaTime;
+                case true:
+                    hovertime -= Time.deltaTime;
+                    break;
+                default:
+                    hovertime += Time.deltaTime;
+                    break;
             }
-            else {
-                hovertime += Time.deltaTime;
-            }
+
             hovertime = Mathf.Clamp(hovertime, 0, HoverDuration);
             if (hovertime > 0 && instantShow == false) {
                 return;
@@ -148,64 +147,68 @@ namespace Andja.UI {
                 this.Locked.SetActive(false);
             }
             else {
-                stringToImageText[StaticLanguageVariables.Locked.ToString()].SetText(structure.PopulationCount + "");
+                LockedText.SetText(structure.PopulationCount + "");
                 this.Locked.SetActive(true);
             }
             if (structure.BuildingItems != null) {
-                Items.SetActive(true);
-                foreach (Item item in structure.BuildingItems) {
-                    if (stringToImageText.ContainsKey(item.ID)) {
-                        stringToImageText[item.ID].SetText(item.countString);
-                    }
-                    else {
-                        ImageText imageText = Instantiate(ImageTextPrefab);
-                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.countString);
-                        imageText.transform.SetParent(Items.transform, false);
-                        imageText.SetBrightColorText();
-                        stringToImageText.Add(item.ID, imageText);
-                    }
-                }
+                SetItemTexts(structure.BuildingItems);
             }
             else {
                 Items.SetActive(false);
             }
-            stringToImageText[StaticLanguageVariables.Upkeep.ToString()].SetText(structure.UpkeepCost + "");
-            stringToImageText[StaticLanguageVariables.BuildCost.ToString()].SetText(structure.BuildCost + "");
-
-            MoneyThings.SetActive(true);
+            SetMoneyTexts(structure.UpkeepCost, structure.BuildCost);
         }
+
+        private void SetItemTexts(Item[] items) {
+            Items.SetActive(true);
+            foreach(ImageText text in stringToImageText.Values) {
+                text.gameObject.SetActive(false);
+            }
+            foreach (Item item in items) {
+                if (stringToImageText.ContainsKey(item.ID)) {
+                    stringToImageText[item.ID].SetText(item.CountString, () => {
+                        return CameraController.Instance.nearestIsland.GetCurrentPlayerCity().HasEnoughOfItem(item) == false;
+                    });
+                    stringToImageText[item.ID].gameObject.SetActive(true);
+                }
+                else {
+                    ImageText imageText = Instantiate(ImageTextPrefab);
+                    imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.CountString, () => {
+                        return CameraController.Instance.nearestIsland.GetCurrentPlayerCity().HasEnoughOfItem(item) == false;
+                    });
+                    imageText.transform.SetParent(Items.transform, false);
+                    imageText.SetBrightColorText();
+                    stringToImageText.Add(item.ID, imageText);
+                }
+            }
+        }
+
         internal void Show(Unit unit, bool unlocked) {
             Show(unit.Name, unit.Description);
             if (unlocked) {
                 this.Locked.SetActive(false);
             }
             else {
-                stringToImageText[StaticLanguageVariables.Locked.ToString()].SetText(unit.PopulationCount + "");
+                LockedText.SetText(unit.PopulationCount + "");
                 this.Locked.SetActive(true);
             }
             if (unit.BuildingItems != null) {
-                Items.SetActive(true);
-                foreach (Item item in unit.BuildingItems) {
-                    if (stringToImageText.ContainsKey(item.ID)) {
-                        stringToImageText[item.ID].SetText(item.countString);
-                    }
-                    else {
-                        ImageText imageText = Instantiate(ImageTextPrefab);
-                        imageText.Set(UISpriteController.GetItemImageForID(item.ID), item.Data, item.countString);
-                        imageText.transform.SetParent(Items.transform, false);
-                        imageText.SetBrightColorText();
-                        stringToImageText.Add(item.ID, imageText);
-                    }
-                }
+                SetItemTexts(unit.BuildingItems);
             }
             else {
                 Items.SetActive(false);
             }
-            stringToImageText[StaticLanguageVariables.Upkeep.ToString()].SetText(unit.UpkeepCost + "");
-            stringToImageText[StaticLanguageVariables.BuildCost.ToString()].SetText(unit.BuildCost + "");
+            SetMoneyTexts(unit.UpkeepCost, unit.BuildCost);
+        }
 
+        private void SetMoneyTexts(int UpkeepCost, int BuildCost) {
+            UpkeepCostText.SetText(UpkeepCost + "");
+            BuildCostText.SetText(BuildCost + "", () => { 
+                return PlayerController.CurrentPlayer.HasEnoughMoney(BuildCost) == false; 
+            });
             MoneyThings.SetActive(true);
         }
+
         internal void DebugTileInfo(Tile tile) {
             isDebug = true;
             hovertime = 0;

@@ -1,5 +1,6 @@
 using Andja.FogOfWar;
 using Andja.Model;
+using Andja.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,23 +22,23 @@ namespace Andja.Controller {
         public Camera SecondaryCamera;
         public Canvas FogOfWarCanvas;
         public RawImage FogImage;
-        private SpriteRenderer visibleTilesRenderer;
+        private SpriteRenderer _visibleTilesRenderer;
         public static FogOfWarController Instance;
         public GameObject UnitFogModulePrefab;
         public GameObject StructureFogModulePrefab;
-        private bool visibleTilesApply;
-        Dictionary<uint, FogOfWarStructureData> fogStructures;
+        private bool _visibleTilesApply;
+        private Dictionary<uint, FogOfWarStructureData> _fogStructures;
         public static bool FogOfWarOn => GameData.FogOfWarStyle != FogOfWarStyle.Off;
 
         public static bool IsFogOfWarAlways => GameData.FogOfWarStyle == FogOfWarStyle.Always;
 
-        static FogOfWarSave FogOfWarSaveData;
+        private static FogOfWarSave _fogOfWarSaveData;
 
-        private void Awake() {
+        public void Awake() {
             Instance = this;
         }
 
-        private void Start() {
+        public void Start() {
             switch (GameData.FogOfWarStyle) {
                 case FogOfWarStyle.Off:
                     gameObject.SetActive(false);
@@ -53,22 +54,24 @@ namespace Andja.Controller {
                     FogImage.material.SetFloat("_BlueWeight", 0.5f);
                     Texture2D visibleTiles = new Texture2D(GameData.Width, GameData.Height);
                     visibleTiles.filterMode = FilterMode.Point;
-                    fogStructures = new Dictionary<uint, FogOfWarStructureData>();
+                    _fogStructures = new Dictionary<uint, FogOfWarStructureData>();
                     GameObject go = new GameObject();
                     go.name = "VisibleTiles";
                     go.transform.SetParent(transform);
                     //go.transform.position = new Vector3(World.Current.Width, World.Current.Height) / 2;
                     go.layer = LayerMask.NameToLayer("FogOfWar Secondary");
-                    visibleTilesRenderer = go.AddComponent<SpriteRenderer>();
-                    visibleTilesRenderer.sprite = Sprite.Create(visibleTiles, new Rect(0, 0, visibleTiles.width, visibleTiles.height), new Vector2(0.5f, 0.5f), 1);
+                    _visibleTilesRenderer = go.AddComponent<SpriteRenderer>();
+                    _visibleTilesRenderer.sprite = Sprite.Create(visibleTiles, new Rect(0, 0, visibleTiles.width, visibleTiles.height), new Vector2(0.5f, 0.5f), 1);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             transform.position = new Vector2(GameData.Width, GameData.Height) / 2;
-            if (FogOfWarSaveData != null) {
+            if (_fogOfWarSaveData != null) {
                 LoadSave();
             } 
-            MainCamera.orthographicSize = (Mathf.Max(GameData.Width, GameData.Height)) / 2;
-            SecondaryCamera.orthographicSize = (Mathf.Max(GameData.Width, GameData.Height)) / 2;
+            MainCamera.orthographicSize = (Mathf.Max(GameData.Width, GameData.Height)) / 2f;
+            SecondaryCamera.orthographicSize = (Mathf.Max(GameData.Width, GameData.Height)) / 2f;
             FogImage.GetComponent<RectTransform>().sizeDelta = new Vector2(GameData.Width, GameData.Height);
             foreach (Island isl in PlayerController.CurrentPlayer.GetIslandList()) {
                 AddIslandFogModule(isl);
@@ -81,28 +84,27 @@ namespace Andja.Controller {
         }
 
         internal void RemoveFogOfWarStructure(uint buildID) {
-            fogStructures.Remove(buildID);
+            _fogStructures.Remove(buildID);
         }
 
         private void OnTileChanged(Tile tile) {
             if (IsFogOfWarAlways == false)
                 return;
             Color color = new Color(0, 0, 0, 0);
-            if (tile.City?.IsCurrPlayerCity() == true) {
+            if (tile.City?.IsCurrentPlayerCity() == true) {
                 color = new Color(0, 0, 1, 1);
             }
-            visibleTilesRenderer.sprite.texture.SetPixel(tile.X, tile.Y, color);
-            visibleTilesApply = true;
+            _visibleTilesRenderer.sprite.texture.SetPixel(tile.X, tile.Y, color);
+            _visibleTilesApply = true;
         }
 
-        private void LateUpdate() {
-            if (visibleTilesApply) {
-                visibleTilesRenderer.sprite.texture.Apply();
-                visibleTilesApply = false;
-            }
+        public void LateUpdate() {
+            if (_visibleTilesApply == false) return;
+            _visibleTilesRenderer.sprite.texture.Apply();
+            _visibleTilesApply = false;
         }
 
-        private void OnCityCreated(City obj) {
+        private void OnCityCreated(ICity obj) {
             AddIslandFogModule(obj.Island);
         }
 
@@ -111,7 +113,7 @@ namespace Andja.Controller {
         /// </summary>
         /// <param name="gameObject"></param>
         public void AddUnitFogModule(GameObject gameObject, Unit unit) {
-            if (unit.IsPlayer() == false)
+            if (unit.IsOwnedByCurrentPlayer() == false)
                 return;
             GameObject module = Instantiate(UnitFogModulePrefab);
             module.transform.localScale = new Vector3(unit.AttackRange * 2, unit.AttackRange * 2);
@@ -120,13 +122,13 @@ namespace Andja.Controller {
         }
         public void AddStructureFogModule(GameObject gameObject, Structure structure) {
             FogOfWarStructure fws = gameObject.AddComponent<FogOfWarStructure>();
-            if (fogStructures.ContainsKey(structure.buildID)) {
-                fws.Set(fogStructures[structure.buildID]);
+            if (_fogStructures.ContainsKey(structure.BuildID)) {
+                fws.Set(_fogStructures[structure.BuildID]);
             } else {
                 fws.Link(structure);
             }
             AddBoxCollider(gameObject, structure.HasHitbox == false);
-            fogStructures[structure.buildID] = fws.Data;
+            _fogStructures[structure.BuildID] = fws.Data;
         }
 
         private void AddBoxCollider(GameObject gameObject, bool isTrigger) {
@@ -136,7 +138,7 @@ namespace Andja.Controller {
             col.isTrigger = isTrigger;
         }
 
-        private void AddIslandFogModule(Island island) {
+        private void AddIslandFogModule(IIsland island) {
             GameObject go = new GameObject("IslandFogReveal");
             BoxCollider2D col = go.AddComponent<BoxCollider2D>();
             col.size = new Vector2(island.Width + 10, island.Height + 10);
@@ -159,26 +161,26 @@ namespace Andja.Controller {
             }
         }
 
-        private void OnDisable() {
+        public void OnDisable() {
             Instance = null;
         }
 
         public FogOfWarSave GetFogOfWarSave() {
-            if(fogStructures != null) {
+            if(_fogStructures != null) {
                 return new FogOfWarSave() {
-                    image = Convert.ToBase64String(SaveController.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
-                    fogOfWarStructures = new List<FogOfWarStructureData>(fogStructures.Values),
+                    image = Convert.ToBase64String(FileUtil.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
+                    fogOfWarStructures = new List<FogOfWarStructureData>(_fogStructures.Values),
                 };
             }
             return new FogOfWarSave() {
-                image = Convert.ToBase64String(SaveController.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
+                image = Convert.ToBase64String(FileUtil.Zip(Convert.ToBase64String(GetFogOfWarImageBytes()))),
             };
         }
 
         public void LoadSave() {
-            if(FogOfWarSaveData.fogOfWarStructures != null) {
-                foreach (var item in FogOfWarSaveData.fogOfWarStructures) {
-                    if (BuildController.Instance.buildIdToStructure.ContainsKey(item.buildID)) {
+            if(_fogOfWarSaveData.fogOfWarStructures != null) {
+                foreach (var item in _fogOfWarSaveData.fogOfWarStructures) {
+                    if (BuildController.Instance.BuildIdToStructure.ContainsKey(item.buildID)) {
                         continue;
                     }
                     GameObject go = new GameObject();
@@ -195,7 +197,7 @@ namespace Andja.Controller {
                     }
                 }
             }
-            SetFogOfWarImageBytes(Convert.FromBase64String(SaveController.Unzip(Convert.FromBase64String(FogOfWarSaveData.image))));
+            SetFogOfWarImageBytes(Convert.FromBase64String(FileUtil.Unzip(Convert.FromBase64String(_fogOfWarSaveData.image))));
         }
 
         private byte[] GetFogOfWarImageBytes() {
@@ -238,12 +240,8 @@ namespace Andja.Controller {
         internal static void SetSaveFogData(FogOfWarSave fws) {
             if (fws == null)
                 return;
-            FogOfWarSaveData = fws;
-            if (fws.fogOfWarStructures != null) {
-                GameData.FogOfWarStyle = FogOfWarStyle.Always;
-            } else {
-                GameData.FogOfWarStyle = FogOfWarStyle.Unknown;
-            }
+            _fogOfWarSaveData = fws;
+            GameData.FogOfWarStyle = fws.fogOfWarStructures != null ? FogOfWarStyle.Always : FogOfWarStyle.Unknown;
         }
 
     }

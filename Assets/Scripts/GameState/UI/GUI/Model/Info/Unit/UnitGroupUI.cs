@@ -29,7 +29,7 @@ namespace Andja.UI.Model {
             UIController.Instance.HighlightUnits(show.ToArray());
             
             foreach (Unit unit in show) {
-                if (unit.IsPlayer() == false)
+                if (unit.IsOwnedByCurrentPlayer() == false)
                     continue;
                 if(unitToUI.ContainsKey(unit) == false) 
                     AddUnit(unit);

@@ -1,4 +1,5 @@
 using Andja.Model;
+using Andja.UI;
 using Andja.UI.Model;
 using System;
 using System.Collections.Generic;
@@ -14,73 +15,65 @@ namespace Andja.Controller {
     /// This is mostly for the currentplayer,
     /// but it updates the money and interactions for all
     /// </summary>
-    public class PlayerController : MonoBehaviour {
+    public class PlayerController : MonoBehaviour, IPlayerController {
         public static int currentPlayerNumber;
-        private List<DiplomaticStatus> playerDiplomaticStandings;
-        PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
+        private List<DiplomaticStatus> _playerDiplomaticStandings;
+        public PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
+        public float BalanceFullTime => PlayerPrototypeData.BalanceFullTime;
+        public float BalanceTicksTime => PlayerPrototypeData.BalanceTicksTime;
+        private float _balanceTickTimer;
 
-        float BalanceFullTime => PlayerPrototypeData.BalanceFullTime;
-        float BalanceTicksTime => PlayerPrototypeData.BalanceTicksTime;
-        private float balanceTickTimer;
-
-        public static PlayerController Instance { get; protected set; }
-        public static List<Player> Players { get; protected set; }
-        public static int PlayerCount => Players.Count;
-        public static bool GameOver => CurrentPlayer.HasLost;
+        public static IPlayerController Instance { get; set; }
+        public List<Player> Players { get; protected set; }
+        public int PlayerCount => Players.Count;
+        public bool GameOver => CurrentPlayer.HasLost;
 
         public static Player CurrentPlayer;
 
-        public Action<Player, Player> cbPlayerChange;
-
-        private EventUIManager euim;
+        public Action<Player, Player> cbPlayerChange { get; set; }
 
         /// <summary>
         /// FIRST&SECOND Player OldType -> NewType
         /// </summary>
-        private Action<Player, Player, DiplomacyType, DiplomacyType> cbDiplomaticChangePlayer;
+        private Action<Player, Player, DiplomacyType, DiplomacyType> _cbDiplomaticChangePlayer;
 
-        // Use this for initialization
-        private void Awake() {
+        public void Awake() {
             if (Instance != null) {
                 Debug.LogError("There should never be two player controllers.");
             }
             Instance = this;
         }
 
-        private void Start() {
+        public void Start() {
             BuildController.Instance.RegisterCityCreated(OnCityCreated);
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
             EventController.Instance.RegisterOnEvent(OnEventCreated, OnEventEnded);
             WorldController.Instance.RegisterWorldUnitCreated(OnUnitCreated);
-            SceneManager.sceneLoaded += OnLevelLoad;
             if (SaveController.IsLoadingSave == false)
                 NewGameSetup();
-            Debug.Log("NewGameSetup");
         }
 
-        internal DiplomacyType GetDiplomaticStatusType(Player firstPlayer, Player secondPlayer) {
-            if (firstPlayer == secondPlayer) // ONLY BE ALLIED TO ONESELF :)
-                return DiplomacyType.Alliance;
-            return GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).currentStatus;
+        public DiplomacyType GetDiplomaticStatusType(Player firstPlayer, Player secondPlayer) {
+            return firstPlayer == secondPlayer ? DiplomacyType.Alliance : GetDiplomaticStatus(firstPlayer.Number, secondPlayer.Number).CurrentStatus;
         }
 
-        internal static string GetPlayerName(int playerNumber) {
-            if (playerNumber < 0 || Players.Count <= playerNumber) {
-                if(playerNumber == GameData.PirateNumber) {
-                    return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Pirate);
-                }
-                if (playerNumber == GameData.FlyingTraderNumber) {
-                    return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.FlyingTrader);
-                }
-                if (playerNumber == GameData.WorldNumber) {
-                    return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.World);
-                }
-                return null;
+        public string GetPlayerName(int playerNumber) {
+            if (playerNumber >= 0 && Players.Count > playerNumber) 
+                return GetPlayer(playerNumber).Name;
+            if (playerNumber == GameData.PirateNumber) {
+                return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Pirate);
             }
-            return GetPlayer(playerNumber).Name;
+            if (playerNumber == GameData.FlyingTraderNumber) {
+                return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.FlyingTrader);
+            }
+            if (playerNumber == GameData.WorldNumber) {
+                return UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.World);
+            }
+            return null;
         }
 
         public void NewGameSetup() {
+            Debug.Log("NewGameSetup");
             Players = new List<Player>();
             currentPlayerNumber = 0;
             Player p = new Player(currentPlayerNumber, true, GameData.Instance.Loadout.Money);
@@ -88,17 +81,14 @@ namespace Andja.Controller {
             p.RegisterHasLost(OnPlayerLost);
             Players.Add(new Player(1, false, GameData.Instance.Loadout.Money));
             Players.Add(new Player(2, false, GameData.Instance.Loadout.Money));
-            playerDiplomaticStandings = new List<DiplomaticStatus>();
+            _playerDiplomaticStandings = new List<DiplomaticStatus>();
             for (int i = 0; i < PlayerCount; i++) {
                 for (int s = i + 1; s < PlayerCount; s++) {
-                    playerDiplomaticStandings.Add(new DiplomaticStatus(i, s));
+                    _playerDiplomaticStandings.Add(new DiplomaticStatus(i, s));
                 }
             }
-            //ChangeDiplomaticStanding(0, 1, DiplomacyType.War);
-            //ChangeDiplomaticStanding(0, 2, DiplomacyType.TradeAggrement);
             CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
-
-            balanceTickTimer = BalanceTicksTime;
+            _balanceTickTimer = BalanceTicksTime;
         }
 
         private void OnPlayerLost(Player player) {
@@ -107,7 +97,7 @@ namespace Andja.Controller {
                 Debug.Log("HUMAN YOU HAVE LOST THE GAME -- WE WILL DOMINATE ");
                 UIController.Instance.ShowEndScoreScreen(); //TODO: show endscore
             }
-            playerDiplomaticStandings.RemoveAll(x => x.PlayerOne == player.Number || x.PlayerTwo == player.Number);
+            _playerDiplomaticStandings.RemoveAll(x => x.PlayerNumberOne == player.Number || x.PlayerNumberTwo == player.Number);
             List<Unit> units = new List<Unit>(player.Units);
             for (int i = units.Count - 1; i >= 0; i--) {
                 units[i].Destroy(null);
@@ -118,80 +108,72 @@ namespace Andja.Controller {
             }
         }
 
-        internal bool IsAtWar(Player player) {
-            return playerDiplomaticStandings.Exists(
-                x => (x.PlayerOne == player.Number || x.PlayerTwo == player.Number) && x.currentStatus == DiplomacyType.War
+        public bool IsAtWar(Player player) {
+            return _playerDiplomaticStandings.Exists(
+                x => (x.PlayerNumberOne == player.Number || x.PlayerNumberTwo == player.Number) && x.AreAtWar()
             );
         }
 
-        internal bool HasEnoughMoney(int playerNumber, int buildCost) {
-            if (playerNumber < 0 || playerNumber >= Players.Count) {
-                Debug.LogError("The given number was too large or negative! No such player! " + playerNumber);
-                return false;
-            }
-            return Players[playerNumber].HasEnoughMoney(buildCost);
+        public bool HasEnoughMoney(int playerNumber, int buildCost) {
+            if (playerNumber >= 0 && playerNumber < Players.Count)
+                return Players[playerNumber].HasEnoughMoney(buildCost);
+            Debug.LogError("The given number was too large or negative! No such player! " + playerNumber);
+            return false;
         }
 
         /// <summary>
         /// Update the balance for all players.
         /// </summary>
-        private void Update() {
+        public void Update() {
             if (WorldController.Instance.IsPaused)
                 return;
-            balanceTickTimer -= WorldController.Instance.DeltaTime;
-            if (balanceTickTimer <= 0) {
-                foreach (Player p in Players) {
-                    if (p == null) {
-                        continue;
-                    }
-                    p.UpdateBalance((BalanceFullTime / BalanceTicksTime));
-                }
-                balanceTickTimer = BalanceTicksTime;
+            _balanceTickTimer -= WorldController.Instance.DeltaTime;
+            if (_balanceTickTimer <= 0) {
+                Players.ForEach(p => p.UpdateBalance(BalanceFullTime / BalanceTicksTime));
+                _balanceTickTimer = BalanceTicksTime;
             }
-            if (Application.isEditor) {
-                //ALLOW SWITCH OF playernumber in editor
-                if (Input.GetKey(KeyCode.LeftShift)) {
-                    if (Input.GetKeyDown(KeyCode.Alpha0)) {
-                        ChangeCurrentPlayer(0);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha1)) {
-                        ChangeCurrentPlayer(1);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha2)) {
-                        ChangeCurrentPlayer(2);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha3)) {
-                        ChangeCurrentPlayer(3);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha4)) {
-                        ChangeCurrentPlayer(4);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha5)) {
-                        ChangeCurrentPlayer(5);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha6)) {
-                        ChangeCurrentPlayer(6);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha7)) {
-                        ChangeCurrentPlayer(7);
-                    }
-                    if (Input.GetKeyDown(KeyCode.Alpha9)) {
-                        ChangeCurrentPlayer(8);
-                    }
-                }
+            //ALLOW SWITCH OF playernumber in editor
+            if (Application.isEditor == false) return;
+            if (Input.GetKey(KeyCode.LeftShift) == false) return;
+            if (Input.GetKeyDown(KeyCode.Alpha0)) {
+                ChangeCurrentPlayer(0);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha1)) {
+                ChangeCurrentPlayer(1);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2)) {
+                ChangeCurrentPlayer(2);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3)) {
+                ChangeCurrentPlayer(3);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4)) {
+                ChangeCurrentPlayer(4);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha5)) {
+                ChangeCurrentPlayer(5);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha6)) {
+                ChangeCurrentPlayer(6);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha7)) {
+                ChangeCurrentPlayer(7);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha9)) {
+                ChangeCurrentPlayer(8);
             }
         }
 
-        internal void PraisePlayer(Player from, Player to) {
-            if(to.Number == PlayerController.currentPlayerNumber) {
+        public void PraisePlayer(Player from, Player to) {
+            if (to.Number == PlayerController.currentPlayerNumber) {
                 EventUIManager.Instance.Show(BasicInformation.CreatePraiseReceived(from));
-            } 
-            if(to.IsHuman == false) {
+            }
+            if (to.IsHuman == false) {
                 to.AI.ReceivePraise(from);
             }
         }
 
-        internal void DenouncePlayer(Player from, Player to) {
+        public void DenouncePlayer(Player from, Player to) {
             if (to.Number == PlayerController.currentPlayerNumber) {
                 EventUIManager.Instance.Show(BasicInformation.CreateDenounceReceived(from));
             }
@@ -200,11 +182,9 @@ namespace Andja.Controller {
             }
         }
 
-        internal void TryToDemandMoney(Player demands, Player target, int amount) {
+        public void TryToDemandMoney(Player demands, Player target, int amount) {
             if (target.Number == PlayerController.currentPlayerNumber) {
-                EventUIManager.Instance.Show(ChoiceInformation.CreateMoneyDemand(demands, amount, () => {
-                    SendMoneyFromTo(target, demands, amount);
-                }, null));
+                EventUIManager.Instance.Show(ChoiceInformation.CreateMoneyDemand(demands, amount));
             }
             if (target.IsHuman == false) {
                 target.AI.ReceiveDemandMoney(demands, amount);
@@ -217,25 +197,11 @@ namespace Andja.Controller {
         /// </summary>
         /// <param name="playerOne"></param>
         /// <param name="playerTwo"></param>
-        internal void IncreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds.currentStatus == DiplomacyType.Alliance) 
-                return;
-            if (playerTwo.Number == PlayerController.currentPlayerNumber) {
-                EventUIManager.Instance.Show(ChoiceInformation.CreateAskDiplomaticIncrease(playerOne,
-                    (GetDiplomaticStatusType(playerOne, playerTwo) + 1),
-                () => {
-                    ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
-                }, null));
-            }
-            else {
-                if(playerTwo.AI.AskDiplomaticIncrease(playerOne, ds)) {
-                    ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus + 1));
-                }
-            }
+        public void IncreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
+            GetDiplomaticStatus(playerOne, playerTwo)?.TryIncrease();
         }
 
-        internal List<Player> GetPlayers() {
+        public List<Player> GetPlayers() {
             return new List<Player>(Players);
         }
         /// <summary>
@@ -245,32 +211,8 @@ namespace Andja.Controller {
         /// </summary>
         /// <param name="playerOne"></param>
         /// <param name="playerTwo"></param>
-        internal void DecreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds.currentStatus == DiplomacyType.War)
-                return;
-            ChangeDiplomaticStanding(playerOne.Number, playerTwo.Number, (DiplomacyType)((int)ds.currentStatus - 1));
-            if (ds.currentStatus == DiplomacyType.War) {
-                List<DiplomaticStatus> allies = GetAlliesFor(playerOne.Number);
-                foreach (DiplomaticStatus ads in allies) {
-                    if (ads.PlayerOne == playerOne.Number) {
-                        ChangeDiplomaticStanding(ads.PlayerTwo, playerTwo.Number, DiplomacyType.War);
-                    }
-                    if (ads.PlayerTwo == playerOne.Number) {
-                        ChangeDiplomaticStanding(ads.PlayerOne, playerTwo.Number, DiplomacyType.War);
-                    }
-                }
-                allies = GetAlliesFor(playerTwo.Number);
-                foreach (DiplomaticStatus ads in allies) {
-                    if (ads.PlayerOne == playerTwo.Number) {
-                        ChangeDiplomaticStanding(playerOne.Number, ads.PlayerTwo, DiplomacyType.War);
-                    }
-                    if (ads.PlayerTwo == playerTwo.Number) {
-                        ChangeDiplomaticStanding(playerOne.Number, ads.PlayerOne, DiplomacyType.War);
-                    }
-                }
-            }
-
+        public void DecreaseDiplomaticStanding(Player playerOne, Player playerTwo) {
+            GetDiplomaticStatus(playerOne, playerTwo)?.DecreaseDiplomaticStanding(playerOne, playerTwo);
         }
         /// <summary>
         /// sendPlayer sends money. receivingPlayer cannot decline.
@@ -278,7 +220,7 @@ namespace Andja.Controller {
         /// <param name="sendPlayer"></param>
         /// <param name="receivingPlayer"></param>
         /// <param name="amount"></param>
-        internal void SendMoneyFromTo(Player sendPlayer, Player receivingPlayer, int amount) {
+        public void SendMoneyFromTo(Player sendPlayer, Player receivingPlayer, int amount) {
             if (CurrentPlayer.HasEnoughMoney(amount) == false)
                 return;
             receivingPlayer.AddToTreasure(amount);
@@ -292,41 +234,47 @@ namespace Andja.Controller {
         }
 
         public void OnEventCreated(GameEvent ge) {
-            if (ge.target == null) {
-                euim.AddEvent(ge);
-                InformAIaboutEvent(ge, true);
-                return;
-            }
-            //if its a island check if the player needs to know about it
-            //eg. if he has a city on it
-            if (ge.target is Island) {
-                foreach (City item in ((Island)ge.target).Cities) {
-                    if (item.PlayerNumber == currentPlayerNumber) {
-                        euim.AddEvent(ge);
+            switch (ge.target) {
+                case null:
+                    EventUIManager.Instance.AddEvent(ge);
+                    InformAIaboutEvent(ge, true);
+                    return;
+                //if its a island check if the player needs to know about it
+                //eg. if he has a city on it
+                case Island island: {
+                    foreach (City item in island.Cities) {
+                        if (item.PlayerNumber == currentPlayerNumber) {
+                            EventUIManager.Instance.AddEvent(ge);
+                        }
+                        else {
+                            InformAIaboutEvent(ge, true);
+                        }
                     }
-                    else {
-                        InformAIaboutEvent(ge, true);
-                    }
+                    return;
                 }
-                return;
-            }
-            //is the target not owned by anyone and it is a structure
-            //then inform all... it could be global effect on type of structure
-            //should be pretty rare
-            if (ge.target.GetPlayerNumber() < 0 && ge.target is Structure) {
-                euim.AddEvent(ge);
-                InformAIaboutEvent(ge, true);
+                case Structure _: {
+                    //is the target not owned by anyone and it is a structure
+                    //then inform all... it could be global effect on type of structure
+                    //should be pretty rare
+                    if (ge.target.GetPlayerNumber() >= 0) return;
+                    EventUIManager.Instance.AddEvent(ge);
+                    InformAIaboutEvent(ge, true);
+                    return;
+                }
+                default:
+                    Debug.LogWarning("Not implemented yet.");
+                    break;
             }
             //just check if the target is owned by the player
             if (ge.target.GetPlayerNumber() == currentPlayerNumber) {
-                euim.AddEvent(ge);
+                EventUIManager.Instance.AddEvent(ge);
             }
             else {
                 InformAIaboutEvent(ge, true);
             }
         }
 
-        internal void AfterWorldLoad() {
+        public void AfterWorldLoad() {
             foreach (Player p in Players) {
                 p.Cities.ForEach(c => {
                     c.CalculateExpanses();
@@ -342,26 +290,18 @@ namespace Andja.Controller {
             Players[unit.PlayerNumber].OnUnitCreated(unit);
         }
 
-        private void OnLevelLoad(Scene scene, LoadSceneMode arg1) {
-            SceneManager.sceneLoaded -= OnLevelLoad;
-            if (scene.name != "GameState") {
-                return;
-            }
-            euim = GameObject.FindObjectOfType<EventUIManager>();
-        }
-
-        internal Player GetRandomPlayer() {
+        public Player GetRandomPlayer() {
             List<Player> players = new List<Player>(Players);
             players.RemoveAll(p => p.HasLost);
             return players[UnityEngine.Random.Range(0, players.Count)];
         }
 
-        internal void SetPlayerData(PlayerControllerSave pcs) {
+        public void SetPlayerData(PlayerControllerSave pcs) {
             Players = pcs.players;
             foreach (Player p in Players)
                 p.Load();
-            playerDiplomaticStandings = pcs.playerDiplomaticStandings;
-            balanceTickTimer = pcs.tickTimer;
+            _playerDiplomaticStandings = pcs.playerDiplomaticStandings;
+            _balanceTickTimer = pcs.tickTimer;
             currentPlayerNumber = pcs.currentPlayerNumber;
             CurrentPlayer = Players.Find(x => x.Number == currentPlayerNumber);
         }
@@ -396,7 +336,7 @@ namespace Andja.Controller {
             Players[playerNr].AddTreasureChange(amount);
         }
 
-        public void OnCityCreated(City city) {
+        public void OnCityCreated(ICity city) {
             Players[city.PlayerNumber].OnCityCreated(city);
         }
 
@@ -419,22 +359,19 @@ namespace Andja.Controller {
             if (playerOne == GameData.WorldNumber || playerTwo == GameData.WorldNumber) {
                 return false;//No war with world stuff
             }
-            DiplomaticStatus ds = GetDiplomaticStatus(playerOne, playerTwo);
-            if (ds == null)
-                Debug.LogError("Missing DiplomaticStatus for " + playerOne + " " + playerTwo);
-            return ds.currentStatus == DiplomacyType.War;
+            return GetDiplomaticStatus(playerOne, playerTwo)?.AreAtWar() == true;
         }
 
-        private List<DiplomaticStatus> GetAlliesFor(int player) {
-            return playerDiplomaticStandings.FindAll(x => x.currentStatus == DiplomacyType.Alliance && (x.PlayerOne == player || x.PlayerTwo == player)).ToList();
+        public List<DiplomaticStatus> GetAlliesFor(int player) {
+            return _playerDiplomaticStandings.FindAll(x => x.CurrentStatus == DiplomacyType.Alliance && (x.PlayerNumberOne == player || x.PlayerNumberTwo == player)).ToList();
         }
 
         public List<int> GetPlayersWithRelationTypeFor(int player, params DiplomacyType[] type) {
             //First find all where this player is in && has the status
             //then select only the int that isnt the player
-            return playerDiplomaticStandings
-                .FindAll(x =>(x.PlayerOne == player || x.PlayerTwo == player) && type.Contains(x.currentStatus))
-                .Select(x => player == x.PlayerOne ? x.PlayerTwo : x.PlayerOne).ToList();
+            return _playerDiplomaticStandings
+                .FindAll(x => (x.PlayerNumberOne == player || x.PlayerNumberTwo == player) && type.Contains(x.CurrentStatus))
+                .Select(x => player == x.PlayerNumberOne ? x.PlayerNumberTwo : x.PlayerNumberOne).ToList();
         }
 
         /// <summary>
@@ -444,28 +381,7 @@ namespace Andja.Controller {
         /// <param name="playerNRTwo"></param>
         /// <param name="changeTo"></param>
         public void ChangeDiplomaticStanding(int playerNROne, int playerNRTwo, DiplomacyType changeTo, bool force = false) {
-            if (playerNROne == playerNRTwo) {
-                return;
-            }
-            DiplomaticStatus ds = GetDiplomaticStatus(playerNROne, playerNRTwo);
-            if (ds.currentStatus == changeTo) {
-                return;
-            }
-            Player playerOne = GetPlayer(playerNROne);
-            Player playerTwo = GetPlayer(playerNRTwo);
-            if (ds.currentStatus > changeTo) {
-                //Should this before forced by the game -- ai needs to know
-                if(force) {
-                    playerOne.AI?.ForcedIncreasedDiplomaticStanding(playerTwo, changeTo);
-                    playerTwo.AI?.ForcedIncreasedDiplomaticStanding(playerOne, changeTo);
-                }
-            } else {
-                playerOne.AI?.DecreaseDiplomaticStanding(playerTwo, ds);
-                playerTwo.AI?.DecreaseDiplomaticStanding(playerOne, ds);
-            }
-            cbDiplomaticChangePlayer?.Invoke(GetPlayer(playerNROne), GetPlayer(playerNRTwo), ds.currentStatus, changeTo);
-            ds.currentStatus = changeTo;
-            EventUIManager.Instance.Show(BasicInformation.DiplomacyChanged(ds));
+            GetDiplomaticStatus(playerNROne, playerNRTwo)?.ChangeDiplomaticStanding(changeTo, force);
         }
 
         public DiplomaticStatus GetDiplomaticStatus(Player playerOne, Player playerTwo) {
@@ -473,10 +389,10 @@ namespace Andja.Controller {
         }
 
         public DiplomaticStatus GetDiplomaticStatus(int playerOne, int playerTwo) {
-            return playerDiplomaticStandings.Find(x => x == new DiplomaticStatus(playerOne, playerTwo));
+            return _playerDiplomaticStandings.Find(x => x == new DiplomaticStatus(playerOne, playerTwo));
         }
 
-        public static Player GetPlayer(int i) {
+        public Player GetPlayer(int i) {
             if (i < 0 || Players.Count <= i) {
                 //Debug.LogError("PlayerNumber " + i + " does not exist!");
                 return null;
@@ -485,14 +401,14 @@ namespace Andja.Controller {
         }
 
         public PlayerControllerSave GetSavePlayerData() {
-            return new PlayerControllerSave(currentPlayerNumber, balanceTickTimer, Players, playerDiplomaticStandings);
+            return new PlayerControllerSave(currentPlayerNumber, _balanceTickTimer, Players, _playerDiplomaticStandings);
         }
 
-        private void OnDestroy() {
+        public void OnDestroy() {
             Instance = null;
         }
 
-        internal bool ChangeCurrentPlayer(int player) {
+        public bool ChangeCurrentPlayer(int player) {
             if (PlayerCount <= player || player < 0)
                 return false;
             currentPlayerNumber = player;
@@ -503,11 +419,15 @@ namespace Andja.Controller {
         }
 
         public void RegisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc) {
-            cbDiplomaticChangePlayer += callbackfunc;
+            _cbDiplomaticChangePlayer += callbackfunc;
         }
 
         public void UnregisterPlayersDiplomacyStatusChange(Action<Player, Player, DiplomacyType, DiplomacyType> callbackfunc) {
-            cbDiplomaticChangePlayer -= callbackfunc;
+            _cbDiplomaticChangePlayer -= callbackfunc;
+        }
+
+        public void TriggerDiplomaticChangeCb(Player playerOne, Player playerTwo, DiplomacyType currentStatus, DiplomacyType changeTo) {
+            _cbDiplomaticChangePlayer?.Invoke(playerOne, playerTwo, currentStatus, changeTo);
         }
     }
 
@@ -526,82 +446,6 @@ namespace Andja.Controller {
         }
 
         public PlayerControllerSave() {
-        }
-    }
-
-    [Serializable]
-    public class DiplomaticStatus {
-        /// <summary>
-        /// One is always smaller than two
-        /// </summary>
-        public int PlayerOne;
-        /// <summary>
-        /// Two is always bigger than one
-        /// </summary>
-        public int PlayerTwo;
-        public DiplomacyType currentStatus;
-
-        public DiplomaticStatus() {
-        }
-
-        public DiplomaticStatus(int one, int two) {
-            if (one > two) {
-                PlayerOne = two;
-                PlayerTwo = one;
-            }
-            else {
-                PlayerOne = one;
-                PlayerTwo = two;
-            }
-            currentStatus = DiplomacyType.Neutral;
-        }
-
-        public override bool Equals(object obj) {
-            // If parameter cannot be cast to War return false:
-            DiplomaticStatus p = obj as DiplomaticStatus;
-            if ((object)p == null) {
-                return false;
-            }
-            // Return true if the fields match:
-            return p == this;
-        }
-
-        public override int GetHashCode() {
-            var hashCode = 971533886;
-            hashCode = hashCode * -1521134295 + PlayerOne.GetHashCode();
-            hashCode = hashCode * -1521134295 + PlayerTwo.GetHashCode();
-            return hashCode;
-        }
-
-        public static bool operator ==(DiplomaticStatus a, DiplomaticStatus b) {
-            // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b)) {
-                return true;
-            }
-
-            // If one is null, but not both, return false.
-            if (((object)a == null) || ((object)b == null)) {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return a.PlayerOne == b.PlayerOne && a.PlayerTwo == b.PlayerTwo
-                || a.PlayerTwo == b.PlayerOne && a.PlayerOne == b.PlayerTwo;
-        }
-
-        public static bool operator !=(DiplomaticStatus a, DiplomaticStatus b) {
-            // If both are null, or both are same instance, return false.
-            if (System.Object.ReferenceEquals(a, b)) {
-                return false;
-            }
-
-            // If one is null, but not both, return true.
-            if (((object)a == null) || ((object)b == null)) {
-                return true;
-            }
-
-            // Return true if the fields not match:
-            return a.PlayerOne != b.PlayerOne || a.PlayerTwo != b.PlayerTwo;
         }
     }
 }

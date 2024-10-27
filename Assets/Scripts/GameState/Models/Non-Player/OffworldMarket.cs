@@ -23,7 +23,7 @@ namespace Andja.Model {
             itemIDtoPrice = new Dictionary<string, Price>();
             //_____TEMPORARY?_____________
             //get all the diffrent
-            Dictionary<string, Item> temp = BuildController.Instance.GetCopieOfAllItems();
+            Dictionary<string, Item> temp = PrototypController.Instance.GetCopieOfAllItems();
             foreach (string id in temp.Keys) {
                 itemIDtoPrice.Add(id, new Price(50, 50)); //eg Random.Range (10,20)
                                                           //itemIDtoPrice[id].DemandChange += Random.Range(-10, 10);

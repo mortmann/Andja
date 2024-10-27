@@ -11,7 +11,7 @@ namespace Andja.UI.Model {
         public Text percentageText;
         public Image image;
 
-        protected Need need;
+        protected INeed need;
         protected HomeStructure home;
         private bool locked;
         private TranslationData notInRange;
@@ -52,7 +52,7 @@ namespace Andja.UI.Model {
                 return;
             }
             home = homeStructure;
-            Need n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?
+            INeed n = home.GetNeedGroups()?.Find(x => need.Group != null && x.ID == need.Group.ID)?
                                           .Needs.Find(x => x.ID == need.ID);
             slider.value = 0;
             if (n == null) {
@@ -72,12 +72,12 @@ namespace Andja.UI.Model {
             if (locked || need == null)
                 return;
             if (need.IsItemNeed()) {
-                float percantage = Mathf.RoundToInt(need.GetFullfiment(home.PopulationLevel) * 100);
-                percentageText.text = percantage + "%";
-                slider.value = percantage;
+                float Percentage = Mathf.RoundToInt(need.GetFulfillment(home.PopulationLevel) * 100);
+                percentageText.text = Percentage + "%";
+                slider.value = Percentage;
             }
             else {
-                if (home.IsStructureNeedFullfilled(need)) {
+                if (home.IsStructureNeedFulfilled(need)) {
                     percentageText.text = inRange?.translation;
                     slider.value = 100;
                 }

@@ -12,30 +12,29 @@ namespace Andja.UI.Model {
         public TradeItemUI TradeItemPrefab;
 
         private TradeItemUI tradeItemUICurrentlySelected;
-        private City city;
+        private ICity city;
         private void Start() {
             amountSlider.onValueChanged.AddListener(OnAmountSliderChange);
             priceSlider.onValueChanged.AddListener(OnPriceSliderChange);
+            amountSlider.value = 25f;
         }
-        // Use this for initialization
-        public void Show(City c) {
+        public void Show(ICity c) {
             city = c;
             amountSlider.maxValue = city.Inventory.MaxStackSize;
+            
             foreach (Transform t in TradeCanvas.transform) {
                 Destroy(t.gameObject);
             }
 
-            List<string> items = new List<string>(c.itemIDtoTradeItem.Keys);
+            List<string> items = new List<string>(c.ItemIDtoTradeItem.Keys);
             for (int i = 0; i < city.TradeItemCount; i++) {
-                TradeItemUI tradeItemUI = GameObject.Instantiate(TradeItemPrefab);
+                TradeItemUI tradeItemUI = Instantiate(TradeItemPrefab);
                 tradeItemUI.transform.SetParent(TradeCanvas.transform, false);
-                if (c.itemIDtoTradeItem.Count <= i) {
+                if (c.ItemIDtoTradeItem.Count <= i) {
                     tradeItemUI.Show(null, c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 else {
-                    Item item = c.Inventory.GetItemClone(items[i]);
-                    tradeItemUI.Show(c.itemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
-                    tradeItemUI.ChangeItemCount(c.itemIDtoTradeItem[items[i]].count);
+                    tradeItemUI.Show(c.ItemIDtoTradeItem[items[i]], c.Inventory.MaxStackSize, OnSellBuyClick);
                 }
                 tradeItemUI.AddListener((data) => { OnTradeItemClick(tradeItemUI); });
             }
@@ -44,7 +43,7 @@ namespace Andja.UI.Model {
         public void OnItemSelected(Item item) {
             if (tradeItemUICurrentlySelected == null)
                 return;
-            if (city.itemIDtoTradeItem.ContainsKey(item.ID)) {
+            if (city.ItemIDtoTradeItem.ContainsKey(item.ID)) {
                 Debug.Log("already in it");
                 return;
             }
@@ -55,19 +54,19 @@ namespace Andja.UI.Model {
                             ((int)priceSlider.value), tradeItemUICurrentlySelected.Trade);
             city.AddTradeItem(ti);
             tradeItemUICurrentlySelected.Show(city.Inventory.MaxStackSize, ti);
-            amountSlider.value = city.Inventory.MaxStackSize / 2;
+            amountSlider.SetValueWithoutNotify(ti.count);
             item.count = Mathf.RoundToInt(amountSlider.value);
-            OnPriceSliderChange(50);
+            OnPriceSliderChange(ti.price);
         }
 
         public void OnSellBuyClick(string itemID, bool sell) {
             if (itemID == null) {
                 return;
             }
-            if (city.itemIDtoTradeItem.ContainsKey(itemID) == false) {
+            if (city.ItemIDtoTradeItem.ContainsKey(itemID) == false) {
                 return;
             }
-            city.itemIDtoTradeItem[itemID].IsSelling = sell;
+            city.ItemIDtoTradeItem[itemID].IsSelling = sell;
         }
 
         public void OnTradeItemClick(TradeItemUI ui) {
@@ -82,7 +81,7 @@ namespace Andja.UI.Model {
             if (tradeItemUICurrentlySelected.tradeItem == null)
                 return;
             tradeItemUICurrentlySelected.ChangeItemCount(Mathf.RoundToInt(f));
-            city.ChangeTradeItemAmount(tradeItemUICurrentlySelected.Item);
+            city.ChangeTradeItemAmount(tradeItemUICurrentlySelected.tradeItem);
         }
 
         public void OnPriceSliderChange(float f) {
@@ -90,7 +89,7 @@ namespace Andja.UI.Model {
                 return;
             if (tradeItemUICurrentlySelected.tradeItem == null)
                 return;
-            if (city.itemIDtoTradeItem.ContainsKey(tradeItemUICurrentlySelected.tradeItem.ItemId) == false) {
+            if (city.ItemIDtoTradeItem.ContainsKey(tradeItemUICurrentlySelected.tradeItem.ItemId) == false) {
                 Debug.Log("OnPriceChange - item not found in tradeitems");
                 return;
             }
@@ -109,11 +108,11 @@ namespace Andja.UI.Model {
         private void RemoveCurrentTradeItem() {
             if (tradeItemUICurrentlySelected.tradeItem == null)
                 return;
-            city.RemoveTradeItem(tradeItemUICurrentlySelected.Item);
+            city.RemoveTradeItem(tradeItemUICurrentlySelected.tradeItem.ItemId);
             tradeItemUICurrentlySelected.RefreshItem(null);
         }
 
-        private void OnDestroy() {
+        private void OnDisable() {
             tradeItemUICurrentlySelected?.OnUnselect();
             tradeItemUICurrentlySelected = null;
         }

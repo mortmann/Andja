@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using UnityEngine;
@@ -100,8 +101,7 @@ namespace Andja.Utility {
         public static Item[] CloneArrayWithCounts(this Item[] items, int multipleCount = 1) {
             Item[] newItems = new Item[items.Length];
             for (int i = 0; i < items.Length; i++) {
-                newItems[i] = items[i].CloneWithCount();
-                newItems[i].count *= multipleCount;
+                newItems[i] = items[i].CloneWithCount(multipleCount);
             }
             return newItems;
         }
@@ -214,6 +214,24 @@ namespace Andja.Utility {
                 }
                 return max;
             }
+        }
+
+        public static int ClampZero(this int i) {
+            return Mathf.Clamp(i, 0, int.MaxValue);
+        }
+        public static int ClampZero(this int i, int max) {
+            return Mathf.Clamp(i, 0, max);
+        }
+
+        public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) {
+            return !source.Any(predicate);
+        }
+
+        public static T RandomElement<T>(this List<T> source) {
+            if(source.Count == 0) {
+                return default;
+            }
+            return source[UnityEngine.Random.Range(0, source.Count)];
         }
     }
 }

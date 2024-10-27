@@ -1,14 +1,16 @@
+using System;
+using System.Collections.Generic;
 using Andja.Controller;
 using Andja.Model.Components;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.ObjectChangeEventStream;
+using Random = UnityEngine.Random;
 
 namespace Andja.Model {
 
-    public class UnitPrototypeData : BaseThing {
+    public class UnitPrototypeData : BaseThingData {
         public int inventoryPlaces;
         public int inventorySize;
 
@@ -19,7 +21,6 @@ namespace Andja.Model {
         public string[] mainAttackSoundName;
 
         public float buildTime = 1f;
-        public float maximumHealth;
         public float attackRange = 1f;
         public float damage = 10;
         public float attackRate = 1;
@@ -38,51 +39,42 @@ namespace Andja.Model {
     public enum UnitMainModes { Idle, Moving, Aggroing, Attack, Patrol, Capture, TradeRoute, OffWorldMarket, Escort, PickUpCrate }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class Unit : IGEventable, IWarfare, IPathfindAgent {
+    public class Unit : BaseThing, IWarfare, IPathfindAgent {
         public readonly float EscortDistance = 2f;
 
         //save these Variables
 
         #region Serialize
 
-        [JsonPropertyAttribute] public string ID;
+        [JsonPropertyAttribute] public uint BuildID { get; protected set; }
         [JsonPropertyAttribute] public int playerNumber;
-        [JsonPropertyAttribute] protected string _playerSetName;
-        [JsonPropertyAttribute] protected float _currHealth;
+        [JsonPropertyAttribute] protected string playerSetName;
 
         [JsonPropertyAttribute] private float aggroCooldownTimer = 1f;
 
         [JsonPropertyAttribute] private Queue<Command> queuedCommands;
-        [JsonPropertyAttribute] public PatrolCommand patrolCommand;
+        [JsonPropertyAttribute] public PatrolCommand PatrolCommand;
 
-        [JsonPropertyAttribute] public float tradeTime = 1.5f;
-        [JsonPropertyAttribute] public float attackCooldownTimer = 1;
-        [JsonPropertyAttribute] public BasePathfinding pathfinding;
-        [JsonPropertyAttribute] public Inventory inventory;
-        [JsonPropertyAttribute] protected UnitDoModes _CurrentDoingMode = UnitDoModes.Idle;
-        [JsonPropertyAttribute] protected UnitMainModes _CurrentMainMode = UnitMainModes.Idle;
+        [JsonPropertyAttribute] public float TradeTime = 1.5f;
+        [JsonPropertyAttribute] public float AttackCooldownTimer = 1;
+        [JsonPropertyAttribute] public BasePathfinding Pathfinding;
+        [JsonPropertyAttribute] public UnitInventory Inventory;
+        [JsonPropertyAttribute] protected UnitDoModes currentDoingMode = UnitDoModes.Idle;
+        [JsonPropertyAttribute] protected UnitMainModes currentMainMode = UnitMainModes.Idle;
 
         public bool ShouldStartAggroPosition() {
-            return _CurrentMainMode == UnitMainModes.Aggroing;
+            return currentMainMode == UnitMainModes.Aggroing;
         }
         public virtual bool CanAttack => CurrentDamage > 0;
 
         public UnitDoModes CurrentDoingMode {
-            get {
-                return _CurrentDoingMode;
-            }
-            set {
-                _CurrentDoingMode = value;
-            }
+            get => currentDoingMode;
+            set => currentDoingMode = value;
         }
 
         public UnitMainModes CurrentMainMode {
-            get {
-                return _CurrentMainMode;
-            }
-            set {
-                _CurrentMainMode = value;
-            }
+            get => currentMainMode;
+            set => currentMainMode = value;
         }
 
         #endregion Serialize
@@ -107,60 +99,31 @@ namespace Andja.Model {
         public Command CurrentCommand => queuedCommands.Count == 0 ? null : queuedCommands.Peek();
 
         public ITargetable CurrentTarget {
-            get {
-                if (CurrentCommand is AttackCommand)
-                    return ((AttackCommand)CurrentCommand).target;
-                if (CurrentCommand is AggroCommand)
-                    return ((AggroCommand)CurrentCommand).target;
-                return null;
+            get
+            {
+                return CurrentCommand switch
+                {
+                    AttackCommand command => command.target,
+                    AggroCommand command => command.target,
+                    _ => null
+                };
             }
         }
 
         public string PlayerSetName {
-            get {
-                return _playerSetName;
-            }
-            protected set {
-                _playerSetName = value;
-            }
+            get => playerSetName;
+            protected set => playerSetName = value;
         }
 
-        public float CurrentHealth {
-            get { return _currHealth; }
-            protected set {
-                _currHealth = value;
-            }
-        }
+        public float X => Pathfinding.X;
 
-        public float X {
-            get {
-                return pathfinding.X;
-            }
-        }
+        public float Y => Pathfinding.Y;
 
-        public float Y {
-            get {
-                return pathfinding.Y;
-            }
-        }
+        public float Rotation => Pathfinding.rotation;
 
-        public float Rotation {
-            get {
-                return pathfinding.rotation;
-            }
-        }
+        public Vector3 PositionVector => new Vector3(X, Y);
 
-        public Vector3 PositionVector {
-            get { return new Vector3(X, Y); }
-        }
-
-        public Vector2 PositionVector2 {
-            get { return new Vector2(X, Y); }
-        }
-
-        public bool IsDead {
-            get { return _currHealth <= 0; }
-        }
+        public Vector2 PositionVector2 => new Vector2(X, Y);
 
         #endregion calculated
 
@@ -168,13 +131,12 @@ namespace Andja.Model {
 
         #region prototype
 
-        public float CaptureSpeed => Data.captureSpeed;
+        public float CaptureSpeed => CalculateRealValue(nameof(Data.captureSpeed), Data.captureSpeed);
 
         public float AttackRange => CalculateRealValue(nameof(Data.attackRange), Data.attackRange);
         public float Damage => CalculateRealValue(nameof(Data.damage), Data.damage);
-        public float MaxHealth => CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth);
         public float AttackRate => CalculateRealValue(nameof(Data.attackRate), Data.attackRate);
-        public float Speed => CalculateRealValue(nameof(Data.attackRange), Data.speed) * SpeedModifier;
+        public float Speed => CalculateRealValue(nameof(Data.speed), Data.speed) * SpeedModifier;
 
         public virtual float SpeedModifier => 1f;
 
@@ -182,102 +144,84 @@ namespace Andja.Model {
         public int InventoryPlaces => CalculateRealValue(nameof(Data.inventoryPlaces), Data.inventoryPlaces); //UNTESTED HOW THIS WILL WORK
         public int InventorySize => CalculateRealValue(nameof(Data.inventorySize), Data.inventorySize); //UNTESTED HOW THIS WILL WORK
         public float AggroTime => CalculateRealValue(nameof(Data.aggroTime), Data.aggroTime); //UNTESTED HOW THIS WILL WORK
-        public int UpkeepCost => CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost); //UNTESTED HOW THIS WILL WORK
 
         public float BuildRange => CalculateRealValue(nameof(Data.buildRange), Data.buildRange);
         public virtual bool IsShip => false;
 
         public float BuildTime => Data.buildTime;
-        public int BuildCost => Data.buildCost;
-
-        public virtual Unit Clone(int playerNumber, Tile startTile) {
-            return new Unit(this, playerNumber, startTile);
-        }
 
         public float Width => Data.width;
         public float Height => Data.height;
-        public Item[] BuildingItems => Data.buildingItems;
 
         #endregion prototype
 
-        protected UnitPrototypeData _prototypData;
-
-        public UnitPrototypeData Data {
-            get {
-                if (_prototypData == null) {
-                    _prototypData = PrototypController.Instance.GetUnitPrototypDataForID(ID);
-                }
-                return _prototypData;
-            }
+        public virtual Unit Clone(int playerNumber, Tile startTile, uint buildID) {
+            return new Unit(this, playerNumber, startTile, buildID);
         }
+
+        protected UnitPrototypeData prototypeData;
+
+        public UnitPrototypeData Data => 
+            prototypeData ??= PrototypController.Instance.GetUnitPrototypDataForID(ID);
 
         public bool IsNonPlayer => PlayerNumber == Pirate.Number || PlayerNumber == FlyingTrader.Number;
         public Vector2 CurrentPosition => PositionVector;
-        public Vector2 NextDestinationPosition => pathfinding.NextDestination.Value;
-        public Vector2 LastMovement => pathfinding.LastMove;
+        public Vector2 NextDestinationPosition => Pathfinding.NextDestination.Value;
+        public Vector2 LastMovement => Pathfinding.LastMove;
 
         public int PlayerNumber => playerNumber;
 
-        public float MaximumHealth => CalculateRealValue(nameof(Data.maximumHealth), Data.maximumHealth); 
         public virtual float CurrentDamage => CalculateRealValue(nameof(CurrentDamage), Data.damage);
         public virtual float MaximumDamage => CalculateRealValue(nameof(MaximumDamage), Data.damage);
         public DamageType DamageType => Data.damageType;
         public ArmorType ArmorType => Data.armorType;
-        public bool IsDestroyed => IsDead;
 
         public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
-
-        public int PopulationLevel => Data.populationLevel;
-        public int PopulationCount => Data.populationCount;
-
-        public bool IsUnit => IsShip == false;
 
         public virtual TurningType TurnType => TurningType.OnPoint;
         public virtual PathDestination PathDestination => PathDestination.Exact;
         public virtual PathingMode PathingMode => PathingMode.IslandSinglePoint;
-        public virtual bool CanEndInUnwakable => false;
+        public virtual bool CanEndInUnwalkable => false;
         public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
         public virtual PathDiagonal DiagonalType => PathDiagonal.OnlyNoObstacle;
 
-        public IReadOnlyList<int> CanEnterCities => PlayerController.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
+        public IReadOnlyList<int> CanEnterCities => PlayerController.Instance.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
 
-        public bool IsAlive => IsDead == false;
+        public bool IsAlive => IsDestroyed == false;
 
         public override string GetID() {
             return ID;
-        } // only needs to get changed WHEN there is diffrent ids
+        } 
 
         [JsonConstructor]
         public Unit() {
-            if (queuedCommands == null)
-                queuedCommands = new Queue<Command>();
-            if (patrolCommand == null)
-                patrolCommand = new PatrolCommand();
+            queuedCommands ??= new Queue<Command>();
+            PatrolCommand ??= new PatrolCommand();
         }
 
         public Unit(string id, UnitPrototypeData upd) {
-            this.ID = id;
-            this._prototypData = upd;
-            patrolCommand = new PatrolCommand();
+            ID = id;
+            prototypeData = upd;
         }
 
-        public Unit(Unit unit, int playerNumber, Tile t) {
-            this.ID = unit.ID;
-            patrolCommand = new PatrolCommand();
-            this._prototypData = unit.Data;
-            this.CurrentHealth = MaxHealth;
+        public Unit(Unit unit, int playerNumber, Tile t, uint buildID) {
+            ID = unit.ID;
+            PatrolCommand = new PatrolCommand();
+            prototypeData = unit.Data;
+            CurrentHealth = MaximumHealth;
             this.playerNumber = playerNumber;
-            PlayerSetName = Name + " " + UnityEngine.Random.Range(0, 1000000000);
-            pathfinding = new IslandPathfinding(this, t);
+            PlayerSetName = Name + " " + Random.Range(0, 1000000000);
+            Pathfinding = new IslandPathfinding(this, t);
             queuedCommands = new Queue<Command>();
+            this.BuildID = buildID;
             Setup();
         }
-        internal void ReduceHealth(float damage, IWarfare warfare) {
+        protected override void OnReduceHealth(float damage, IWarfare warfare) {
             if (damage < 0) {
-                damage = -damage;
-                Debug.LogWarning("Damage should be never smaller than 0 - Fixed it!");
+                Debug.LogWarning("Damage should be never smaller than 0 - Fix it!");
+                return;
             }
-            CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaxHealth);
+            CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaximumHealth);
             if (CurrentHealth <= 0) {
                 Destroy(warfare);
             }
@@ -287,46 +231,26 @@ namespace Andja.Model {
             cbTakesDamageFrom?.Invoke(this, warfare);
         }
 
-        public void RepairHealth(float heal) {
-            if (heal < 0) {
-                heal = -heal;
-                Debug.LogWarning("Healing should be never smaller than 0 - Fixed it!");
-            }
-            CurrentHealth += heal;
-            CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
-        }
-
-        internal void ChangeHealth(float change, IWarfare warfare = null) {
-            if (change < 0)
-                ReduceHealth(-change, warfare); //damage should not be negativ
-            if (change > 0)
-                RepairHealth(change);
-        }
-        internal virtual void Load() {
+        public virtual void Load() {
             Setup();
-            inventory.Load();
-            pathfinding.Load(this);
-            if (pathfinding.IsAtDestination == false) {
-                pathfinding.SetDestination(pathfinding.dest_X, pathfinding.dest_Y);
-                pathfinding.cbIsAtDestination += OnArriveDestination;
-            }
+            Inventory.Load();
+            Pathfinding.Load(this);
+            if (Pathfinding.IsAtDestination) return;
+            Pathfinding.SetDestination(Pathfinding.dest_X, Pathfinding.dest_Y);
+            Pathfinding.cbIsAtDestination += OnArriveDestination;
         }
 
         private void Setup() {
-            World.Current.RegisterOnEvent(OnEventCreate, OnEventEnded);
-            pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
-            inventory?.OnChanged(inventory);
+            ((World)World.Current).RegisterOnEvent(OnEventCreate, OnEventEnded);
+            Pathfinding.cbIsAtDestination += OnPathfindingAtDestination;
+            Inventory?.OnChanged(Inventory);
         }
         protected void OnPathfindingAtDestination(bool atDestination) {
             cbUnitArrivedDestination?.Invoke(this, atDestination);
         }
 
-        public virtual void Update(float deltaTime) {
-            if (CurrentHealth > MaxHealth) {
-                //Values got changed or maybe upgrade lost? we need to reduce it slowly
-                CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaxHealth, CurrentHealth);
-            }
-            if (CurrentCommand != null && CurrentCommand.IsFinished) {
+        protected override void OnUpdate(float deltaTime) {
+            if (CurrentCommand is { IsFinished: true }) {
                 queuedCommands.Dequeue();
                 if (CurrentCommand == null)
                     CurrentMainMode = UnitMainModes.Idle; // no commands so be lazy
@@ -342,7 +266,7 @@ namespace Andja.Model {
 
                 case UnitMainModes.Moving:
                     if (CurrentDoingMode != UnitDoModes.Move) {
-                        pathfinding.cbIsAtDestination += OnArriveDestination;
+                        Pathfinding.cbIsAtDestination += OnArriveDestination;
                         Vector2 dest = CurrentCommand.Position;
                         SetDestinationIfPossible(dest.x, dest.y);
                         CurrentDoingMode = UnitDoModes.Move;
@@ -382,7 +306,7 @@ namespace Andja.Model {
                 case UnitMainModes.Attack:
                     if (CanAttack && IsInRange() == false) {
                         if (CurrentDoingMode != UnitDoModes.Move) {
-                            pathfinding.cbIsAtDestination += OnArriveDestination;
+                            Pathfinding.cbIsAtDestination += OnArriveDestination;
                             Vector2 dest = CurrentTarget.CurrentPosition;
                             SetDestinationIfPossible(dest.x, dest.y);
                         }
@@ -399,16 +323,11 @@ namespace Andja.Model {
                     if (CurrentDoingMode != UnitDoModes.Move) {
                         CurrentDoingMode = UnitDoModes.Move;
                         SetDestinationIfPossible(CurrentCommand.Position);
-                        //pathfinding.cbIsAtDestination = null;
-                        //pathfinding.cbIsAtDestination += OnArriveDestination;
                     }
                     break;
 
                 case UnitMainModes.Capture:
-                    if (IsInRange() == false)
-                        CurrentDoingMode = UnitDoModes.Move;
-                    else
-                        CurrentDoingMode = UnitDoModes.Capture;
+                    CurrentDoingMode = IsInRange()? UnitDoModes.Capture : UnitDoModes.Move;
                     break;
 
                 case UnitMainModes.TradeRoute:
@@ -416,7 +335,7 @@ namespace Andja.Model {
                     break;
 
                 case UnitMainModes.OffWorldMarket:
-                    if (pathfinding.IsAtDestination)
+                    if (Pathfinding.IsAtDestination)
                         UpdateWorldMarket(deltaTime);
                     break;
 
@@ -427,6 +346,8 @@ namespace Andja.Model {
                 case UnitMainModes.Escort:
                     Debug.LogError("Not implemented yet!");
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             switch (CurrentDoingMode) {
                 case UnitDoModes.Idle:
@@ -443,12 +364,18 @@ namespace Andja.Model {
 
                 case UnitDoModes.Capture:
                     UpdateCapture(deltaTime);
-                    pathfinding.UpdateDoRotate(deltaTime);
+                    Pathfinding.UpdateDoRotate(deltaTime);
                     break;
 
                 case UnitDoModes.Trade:
                     UpdateDoingTrade(deltaTime);
                     break;
+
+                case UnitDoModes.OffWorld:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         protected virtual void UpdateTradeRouteAtDestination() {
@@ -470,12 +397,8 @@ namespace Andja.Model {
             CurrentMainMode = UnitMainModes.Idle;
         }
 
-        private void FollowTarget() {
-
-        }
-
         protected void UpdateMovement(float deltaTime) {
-            pathfinding.Update_DoMovement(deltaTime);
+            Pathfinding.Update_DoMovement(deltaTime);
             cbUnitChanged?.Invoke(this);
         }
 
@@ -499,15 +422,15 @@ namespace Andja.Model {
                 if (targetableHoldingScript == null || targetableHoldingScript.IsUnit == false) {
                     continue;
                 }
-                Unit u = targetableHoldingScript.Holding as Unit;
-                if (u == null || u.playerNumber == playerNumber) {
+                ITargetable target = targetableHoldingScript.Holding;
+                if (target == null || target.PlayerNumber == playerNumber) {
                     continue;
                 }
                 //see if players are at war
-                if (PlayerController.Instance.ArePlayersAtWar(playerNumber, u.playerNumber)) {
-                    GiveAggroCommand(u);
-                    return;
+                if (PlayerController.Instance.ArePlayersAtWar(playerNumber, target.PlayerNumber) == false) {
+                    continue;
                 }
+                GiveAggroCommand(target);
             }
             //CurrentMainMode = UnitMainModes.Idle;
         }
@@ -586,9 +509,9 @@ namespace Andja.Model {
                         continue;
                     }
                 }
-                float currDist = (item.Vector - pathfinding.CurrTile.Vector).magnitude;
+                float currDist = (item.Vector - Pathfinding.CurrTile.Vector).magnitude;
                 if (currDist < nearDist) {
-                    currDist = nearDist;
+                    nearDist = currDist;
                     nearstTile = item;
                 }
             }
@@ -640,21 +563,20 @@ namespace Andja.Model {
         }
 
         public virtual void DoAttack(float deltaTime) {
-            if (CurrentTarget != null) {
-                if (attackCooldownTimer > 0) {
-                    attackCooldownTimer -= deltaTime;
-                    return;
-                }
-                pathfinding.UpdateDoRotate(deltaTime);
-                attackCooldownTimer = AttackRate;
-                CurrentTarget.TakeDamageFrom(this);
+            if (CurrentTarget == null) return;
+            if (AttackCooldownTimer > 0) {
+                AttackCooldownTimer -= deltaTime;
+                return;
             }
+            Pathfinding.UpdateDoRotate(deltaTime);
+            AttackCooldownTimer = AttackRate;
+            CurrentTarget.TakeDamageFrom(this);
         }
 
         protected void UpdateOnArriveDestinationPatrol() {
             //PATROL
-            patrolCommand.ChangeToNextPosition();
-            SetDestinationIfPossible(patrolCommand.Position);
+            PatrolCommand.ChangeToNextPosition();
+            SetDestinationIfPossible(PatrolCommand.Position);
         }
 
         public void IsInRangeOfWarehouse(OutputStructure ware) {
@@ -665,17 +587,16 @@ namespace Andja.Model {
             TradeItemToNearbyWarehouse(clicked, rangeUStructure.City.PlayerTradeAmount);
         }
         public bool TradeItemToNearbyWarehouse(Item clicked, int amount) {
-            if (rangeUStructure != null && rangeUStructure is WarehouseStructure) {
-                if (rangeUStructure.PlayerNumber == playerNumber) {
-                    rangeUStructure.City.TradeFromShip(this, clicked, amount);
-                }
-                else {
-                    Player p = PlayerController.GetPlayer(playerNumber);
-                    rangeUStructure.City.BuyingTradeItem(clicked.ID, p, (Ship)this, amount);
-                }
-                return true;
+            if (rangeUStructure is WarehouseStructure == false) {
+                return false;
             }
-            return false;
+            if (rangeUStructure.PlayerNumber == playerNumber) {
+                rangeUStructure.City.TradeFromShip(this, clicked, amount);
+            }
+            else {
+                rangeUStructure.City.BuyingTradeItem(clicked.ID, (Ship)this, amount);
+            }
+            return true;
         }
 
         public void AddPatrolCommand(float targetX, float targetY) {
@@ -683,29 +604,21 @@ namespace Andja.Model {
             if (tile == null) {
                 return;
             }
-            if (tile.Type == TileType.Ocean && IsShip == false) {
+            if (CanReach(tile.Vector2) == false) {
                 return;
             }
-            if (tile.Type != TileType.Ocean && IsShip) {
-                return;
-            }
-            if (tile.Type == TileType.Mountain) {
-                return;
-            }
-            if (patrolCommand == null)
-                patrolCommand = new PatrolCommand();
-            patrolCommand.AddPosition(new Vector2(targetX, targetY));
-            if (patrolCommand.PositionCount > 1) {
-                AddCommand(patrolCommand, true);
-                CurrentMainMode = UnitMainModes.Patrol;
-            }
+            PatrolCommand ??= new PatrolCommand();
+            PatrolCommand.AddPosition(new Vector2(targetX, targetY));
+            if (PatrolCommand.PositionCount <= 1) return;
+            AddCommand(PatrolCommand, true);
+            CurrentMainMode = UnitMainModes.Patrol;
         }
 
         public void ResumePatrolCommand() {
             if (CurrentMainMode == UnitMainModes.Patrol) {
                 return;
             }
-            AddCommand(patrolCommand, true);
+            AddCommand(PatrolCommand, true);
         }
 
         public void StopPatrolCommand() {
@@ -716,7 +629,7 @@ namespace Andja.Model {
 
         public void ClearPatrolCommands() {
             StopPatrolCommand();
-            patrolCommand.ClearPositions();
+            PatrolCommand.ClearPositions();
         }
 
         public bool GiveMovementCommand(Vector2 vec2, bool overrideCurrent = false) {
@@ -724,19 +637,13 @@ namespace Andja.Model {
         }
 
         public bool GiveMovementCommand(Tile t, bool overrideCurrent = false) {
-            if (t == null) {
-                //not really an error it can happen
-                return false;
-            }
-            else {
-                return GiveMovementCommand(t.X, t.Y, overrideCurrent);
-            }
+            return t != null && GiveMovementCommand(t.X, t.Y, overrideCurrent);
         }
 
         public bool GiveMovementCommand(float x, float y, bool overrideCurrent = false) {
-            if (x == X && y == Y)
+            if (Math.Abs(x - X) < 0.1f && Math.Abs(y - Y) < 0.1f)
                 return true;
-            if (IsUnit && CanReach(x, y) == false)
+            if (IsShip == false && CanReach(x, y) == false)
                 return false;
             AddCommand(new MoveCommand(new Vector2(x, y)), overrideCurrent);
             return true;
@@ -772,6 +679,7 @@ namespace Andja.Model {
                 case UnitMainModes.Patrol:
                     UpdateOnArriveDestinationPatrol();
                     return;//dont unregister from arrivedestination
+
                 case UnitMainModes.Capture:
                     CurrentDoingMode = UnitDoModes.Capture;
                     break;
@@ -783,8 +691,14 @@ namespace Andja.Model {
                 case UnitMainModes.OffWorldMarket:
                     CurrentDoingMode = UnitDoModes.OffWorld;
                     break;
+                case UnitMainModes.Escort:
+                    break;
+                case UnitMainModes.PickUpCrate:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            pathfinding.cbIsAtDestination -= OnArriveDestination;
+            Pathfinding.cbIsAtDestination -= OnArriveDestination;
         }
 
         /// <summary>
@@ -798,12 +712,12 @@ namespace Andja.Model {
             if (CanReach(x, y) == false) {
                 return false;
             }
-            pathfinding.SetDestination(x, y);
+            Pathfinding.SetDestination(x, y);
             return true;
         }
 
         
-        internal void GivePickUpCrateCommand(Crate crate, bool overrideCurrent) {
+        public void GivePickUpCrateCommand(Crate crate, bool overrideCurrent) {
             if (crate.IsInRange(CurrentPosition) && overrideCurrent) {
                 TryToAddCrate(crate);
             }
@@ -811,9 +725,8 @@ namespace Andja.Model {
                 CurrentMainMode = UnitMainModes.PickUpCrate;
                 CurrentDoingMode = UnitDoModes.Move;
                 SetDestinationIfPossible(crate.position.x, crate.position.y);
-                //GiveMovementCommand(crate.position,overrideCurrent);
                 AddCommand(new PickUpCrateCommand(crate), false);
-                pathfinding.cbIsAtDestination += OnArriveDestination;
+                Pathfinding.cbIsAtDestination += OnArriveDestination;
             }
         }
         public bool CanReach(Vector2 vec) {
@@ -825,30 +738,43 @@ namespace Andja.Model {
             if (tile == null) {
                 return false;
             }
-            if (tile.Type == TileType.Ocean && IsShip == false) {
-                return false;
+            switch (tile.Type) {
+                case TileType.Ocean when IsShip == false:
+                case TileType.Mountain:
+                case TileType.Shore:
+                case TileType.Cliff:
+                case TileType.Water:
+                case TileType.Volcano:
+                    return false;
+
+                case TileType.Dirt:
+                case TileType.Grass:
+                case TileType.Stone:
+                case TileType.Desert:
+                case TileType.Steppe:
+                case TileType.Jungle:
+                    return Pathfinding.CurrTile.Island == tile.Island;
+
+                case TileType.Ocean when IsShip:
+                    return true;
+
+                default:
+                    throw new ArgumentOutOfRangeException("Unit CanReach for: " + tile.Type);
             }
-            if (tile.Type == TileType.Mountain) {
-                return false;
-            }
-            if (pathfinding.CurrTile.Island != tile.Island) {
-                return false;
-            }
-            return true;
         }
 
         public int TryToAddItem(Item item) {
-            return inventory.AddItem(item);
+            return Inventory.AddItem(item);
         }
 
         public int TryToAddItemMaxAmount(Item item, int amount) {
             Item t = item.Clone();
             t.count = amount;
-            return inventory.AddItem(t);
+            return Inventory.AddItem(t);
         }
 
-        internal bool TryToAddCrate(Crate thisCrate) {
-            if (inventory == null)
+        public bool TryToAddCrate(Crate thisCrate) {
+            if (Inventory == null)
                 return false;
             if (thisCrate.IsInRange(CurrentPosition) == false)
                 return false;
@@ -861,11 +787,12 @@ namespace Andja.Model {
             PlayerSetName = name;
         }
 
-        public virtual void Destroy(IWarfare warfare) {
+        protected override bool OnDestroy(IWarfare warfare, bool onLoad = false) {
             //Do stuff here when on destroyed
             cbUnitDestroyed?.Invoke(this, warfare);
-            _currHealth = 0;
-            pathfinding.CancelJob();
+            currentHealth = 0;
+            Pathfinding.CancelJob();
+            return true;
         }
         public void CallChangedCallback() {
             cbUnitChanged?.Invoke(this);
@@ -934,7 +861,7 @@ namespace Andja.Model {
             ReduceHealth(warfare.GetCurrentDamage(ArmorType), warfare);
         }
 
-        internal bool IsPlayer() {
+        public bool IsOwnedByCurrentPlayer() {
             return PlayerController.currentPlayerNumber == playerNumber;
         }
 
@@ -948,7 +875,7 @@ namespace Andja.Model {
             }
         }
 
-        internal bool IsTileInBuildRange(Tile tile) {
+        public bool IsTileInBuildRange(Tile tile) {
             return Vector2.Distance(tile.Vector2, PositionVector2) <= BuildRange; 
         }
 
@@ -960,6 +887,15 @@ namespace Andja.Model {
 
         public void PathInvalidated() {
 
+        }
+
+        public void ChangePlayer(int number) {
+            Debug.LogWarning("Unit changed Player Number -- Only with cheats possible -- If not used report.");
+            playerNumber = number;
+        }
+
+        public uint GetBuildID() {
+            return BuildID;
         }
     }
 }

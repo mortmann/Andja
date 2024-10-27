@@ -83,8 +83,8 @@ namespace Andja.UI.Model {
         }
         public void Show(Unit unit) {
             ActivateUI(true);
-            inputName.Set(unit.PlayerSetName ?? unit.Name, unit.SetName, unit.IsPlayer());
-            if(unit.IsPlayer()) {
+            inputName.Set(unit.PlayerSetName ?? unit.Name, unit.SetName, unit.IsOwnedByCurrentPlayer());
+            if(unit.IsOwnedByCurrentPlayer()) {
                 Effects.gameObject.SetActive(true);
                 Effects.Show(unit);
                 upkeepIText.gameObject.SetActive(true);

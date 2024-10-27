@@ -1,4 +1,5 @@
 using Andja.Controller;
+using System;
 using UnityEngine;
 
 namespace Andja.UI.Menu {
@@ -13,7 +14,7 @@ namespace Andja.UI.Menu {
             if (graphicsSettings.HasSavedGraphicsOption(setting))
                 SetFramelimiter(graphicsSettings.GetSavedGraphicsOptionInt(setting));
             else
-                SetFramelimiter(Screen.currentResolution.refreshRate);
+                SetFramelimiter(Convert.ToInt32(Screen.currentResolution.refreshRateRatio.value));
         }
 
         protected override void OnSliderValueChange() {

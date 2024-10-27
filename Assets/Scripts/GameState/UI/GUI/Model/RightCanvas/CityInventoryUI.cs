@@ -18,32 +18,36 @@ namespace Andja.UI {
         public GameObject tradePanel;
 
         private Dictionary<string, ItemUI> itemToGO;
-        public City city;
+        public ICity city;
 
         private Action<Item> onItemPressed;
 
         public CityUI CityInfo;
 
-        public void ShowInventory(City city, Action<Item> onItemPressed = null) {
+        public void ShowInventory(ICity city, Action<Item> onItemPressed = null) {
             if (city == null && this.city == city) {
                 return;
             }
-            city.RegisterCityDestroy(OnCityDestroy);
+            UnregisterOldCity(this.city);
+            RergisterOnCity(city);
             this.city = city;
             this.onItemPressed = onItemPressed;
             cityname.Set(city.Name, city.SetName);
 
             tradeAmount.Set(city.PlayerTradeAmount, city.SetPlayerTradeAmount, true,
-                ()=>{ return 0; }, () => { return city.Inventory.MaxStackSize; }
+                () => { return 0; }, () => { return city.Inventory.MaxStackSize; }
                 );
-            city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
 
             foreach (Transform child in contentCanvas.transform) {
                 Destroy(child.gameObject);
             }
             itemToGO = new Dictionary<string, ItemUI>();
-            List<Item> items = new List<Item>(city.Inventory.Items.Values);
-            items = items.OrderBy(x => x.Data.UnlockLevel).ThenBy(y => y.Data.UnlockPopulationCount).ToList();
+            List<Item> items = new List<Item>(city.Inventory.BaseItems);
+            items = items.OrderBy(x => x.Type)
+                            .ThenBy(x => x.Data.UnlockLevel)
+                            .ThenBy(y => y.Data.UnlockPopulationCount)
+                            .ThenBy(z => z.Name).ToList();
+
             foreach (Item item in items) {
                 GameObject go_i = GameObject.Instantiate(itemPrefab);
                 go_i.name = item.Name + " Item";
@@ -58,12 +62,22 @@ namespace Andja.UI {
             }
         }
 
+        private void RergisterOnCity(ICity city) {
+            city.RegisterCityDestroy(OnCityDestroy);
+            city.Inventory.RegisterOnChangedCallback(OnInventoryChange);
+        }
+
+        private void UnregisterOldCity(ICity city) {
+            city?.UnregisterCityDestroy(OnCityDestroy);
+            city?.Inventory.UnregisterOnChangedCallback(OnInventoryChange);
+        }
+
         public void OnCityUIToggle() {
             CityInfo.city = city;
             CityInfo.gameObject.SetActive(!CityInfo.gameObject.activeSelf);
         }
 
-        public void OnCityDestroy(City c) {
+        public void OnCityDestroy(ICity c) {
             if (city != c) {
                 return;
             }
@@ -78,24 +92,23 @@ namespace Andja.UI {
             if (!tradePanel.activeSelf)
                 tradePanel.GetComponent<TradePanel>().Show(city);
             tradePanel.SetActive(!tradePanel.activeSelf);
-            onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetItemInInventoryClone(item));
+            onItemPressed += (item) => tradePanel.GetComponent<TradePanel>().OnItemSelected(city.Inventory.GetItemClone(item));
         }
 
         public void OnInventoryChange(Inventory changedInv) {
-            foreach (string i in changedInv.Items.Keys) {
-                itemToGO[i].ChangeItemCount(city.Inventory.Items[i].count);
-                itemToGO[i].ChangeMaxValue(city.Inventory.MaxStackSize);
+            CityInventory cityInventory = (CityInventory)changedInv;
+            foreach (string i in cityInventory.Items.Keys) {
+                itemToGO[i].ChangeItemCount(cityInventory.Items[i].count);
+                itemToGO[i].ChangeMaxValue(cityInventory.MaxStackSize);
             }
         }
         public void ChangeCityPlayerTradeAmount(int change) {
             city.SetPlayerTradeAmount(Mathf.Clamp(city.PlayerTradeAmount + change, 0, city.Inventory.MaxStackSize));
             tradeAmount.Set(city.PlayerTradeAmount + "");
         }
-        private void OnDisable() {
+        public void OnDisable() {
             tradePanel.SetActive(false);
-            if (city != null) {
-                city.UnregisterCityDestroy(OnCityDestroy);
-            }
+            city?.UnregisterCityDestroy(OnCityDestroy);
         }
     }
 }

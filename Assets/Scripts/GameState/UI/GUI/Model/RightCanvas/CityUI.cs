@@ -6,7 +6,7 @@ namespace Andja.UI {
 
     public class CityUI : MonoBehaviour {
         public HiddenInputField NameField;
-        public City city;
+        public ICity city;
         public ValueNameSetter Income;
         public ValueNameSetter Expanses;
         public ValueNameSetter Balance;
@@ -27,8 +27,8 @@ namespace Andja.UI {
         }
 
         private void Update() {
-            Income.Show(city.income);
-            Expanses.Show(city.expanses);
+            Income.Show(city.Income);
+            Expanses.Show(city.Expanses);
             Balance.Show(city.Balance);
             PeopleCount.Show(city.PopulationCount);
         }

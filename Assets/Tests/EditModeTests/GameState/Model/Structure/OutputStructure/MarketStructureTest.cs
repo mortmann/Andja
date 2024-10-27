@@ -177,7 +177,7 @@ public class MarketStructureTest {
 
     [Test]
     public void OnBuild() {
-        Market.OnBuild();
+        Market.OnBaseThingBuild();
         HashSet<Tile> tiles = new HashSet<Tile>(Market.RangeTiles);
         tiles.UnionWith(Market.Tiles);
         AssertThat(mockutil.CityMock)
@@ -241,11 +241,12 @@ public class MarketStructureTest {
 
     }
     [Test]
-    public void OnDestroy() {
+
+    public void Destroy() {
         Market.Tiles.ForEach(t => t.City = mockutil.City);
         Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
 
-        Market.OnDestroy();
+        Market.Destroy();
         List<Tile> h = new List<Tile>(Market.Tiles);
         h.AddRange(Market.RangeTiles);
         Assert.IsTrue(h.All(x => x.City != City));

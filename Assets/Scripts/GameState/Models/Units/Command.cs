@@ -71,11 +71,11 @@ namespace Andja.Model {
     public class CaptureCommand : Command {
         public override bool IsFinished => target.Captured;
         public override UnitMainModes MainMode => UnitMainModes.Capture;
-        [JsonPropertyAttribute] public ICapturable target;
-        public override Vector2 Position => target.CurrentPosition;
+        [JsonPropertyAttribute] public Structure Target;
+        public override Vector2 Position => Target.Center;
 
-        public CaptureCommand(ICapturable target) {
-            this.target = target;
+        public CaptureCommand(Structure target) {
+            this.Target = target;
         }
 
         public CaptureCommand() {

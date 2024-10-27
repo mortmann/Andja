@@ -214,6 +214,7 @@ namespace Andja.Model {
             Pathfinding = new IslandPathfinding(this, t);
             queuedCommands = new Queue<Command>();
             this.BuildID = buildID;
+            OnBaseThingBuild();
             Setup();
         }
         protected override void OnReduceHealth(float damage, IWarfare warfare) {
@@ -443,13 +444,13 @@ namespace Andja.Model {
             return true;
         }
 
-        public bool GiveCaptureCommand(ICapturable warfare, bool overrideCurrent = false) {
-            if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, warfare.PlayerNumber) == false) {
+        public bool GiveCaptureCommand(Structure capturable, bool overrideCurrent = false) {
+            if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, capturable.PlayerNumber) == false) {
                 return false;
             }
-            if (IsInRange() == false && GiveMovementCommand(ClosestTargetPosition(warfare)) == false)
+            if (IsInRange() == false && GiveMovementCommand(ClosestTargetPosition(capturable as ITargetable)) == false)
                 return false;
-            AddCommand(new CaptureCommand(warfare), overrideCurrent);
+            AddCommand(new CaptureCommand(capturable), overrideCurrent);
             return true;
         }
 
@@ -896,6 +897,9 @@ namespace Andja.Model {
 
         public uint GetBuildID() {
             return BuildID;
+        }
+
+        public override void OnBuild(bool loading = false) {
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Andja.Model {
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class MarketStructure : OutputStructure, ICapturable {
+    public class MarketStructure : OutputStructure {
 
         #region Serialize
 
@@ -45,7 +45,7 @@ namespace Andja.Model {
 
         #endregion RuntimeOrOther
 
-        public MarketStructure(string id, MarketPrototypeData marketData) {
+        public MarketStructure(string id, MarketPrototypeData marketData) : this(){
             this.ID = id;
             _marketData = marketData;
         }
@@ -56,6 +56,7 @@ namespace Andja.Model {
         public MarketStructure() {
             RegisteredSturctures = new List<Structure>();
             OutputMarkedStructures = new List<OutputStructure>();
+            AddElement(new AddRangeTilesToCity(this));
         }
 
         protected MarketStructure(MarketStructure str) {
@@ -89,7 +90,6 @@ namespace Andja.Model {
             WorkerJobsToDo = new Dictionary<OutputStructure, Item[]>();
             // add all the tiles to the city it was build in
             //dostuff thats happen when build
-            City.AddTiles(RangeTiles.Concat(Tiles));
             foreach (var rangeTile in RangeTiles.Where(rangeTile => rangeTile.City == City)) {
                 OnStructureAdded(rangeTile.Structure);
             }
@@ -155,12 +155,6 @@ namespace Andja.Model {
         public override void RemoveRoute(Route route) {
             base.RemoveRoute(route);
             route.RemoveMarketStructure(this);
-        }
-
-        public override void OnDestroy() {
-            base.OnDestroy();
-            Tiles.ForEach(t => t.City = null);
-            RangeTiles.ToList().ForEach(t => t.City = null);
         }
 
         public void OnStructureAdded(Structure structure) {
@@ -232,7 +226,7 @@ namespace Andja.Model {
                 capturedProgress = 0;
                 OnDestroy();
                 City = c;
-                OnBuild();
+                OnBaseThingBuild();
             }
             else {
                 Destroy();

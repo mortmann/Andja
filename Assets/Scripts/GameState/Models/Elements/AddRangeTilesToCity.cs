@@ -11,7 +11,7 @@ namespace Andja.Model {
         public AddRangeTilesToCity(Structure structure) : base(structure) {
             Structure = structure;
         }
-        public override void OnStart() {
+        public override void OnStart(bool loading = false) {
             City.AddTiles(Structure.RangeTiles.Concat(Structure.Tiles));
         }
 

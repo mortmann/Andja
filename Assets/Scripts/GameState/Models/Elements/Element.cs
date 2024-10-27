@@ -11,7 +11,7 @@ namespace Andja.Model {
             Parent = baseThing;
         }
 
-        public abstract void OnStart();
+        public abstract void OnStart(bool loading = false);
 
         public abstract void OnDestroy();
 

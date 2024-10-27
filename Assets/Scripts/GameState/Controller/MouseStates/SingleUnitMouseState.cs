@@ -60,15 +60,14 @@ namespace Andja.Controller {
             }
             else {
                 Tile t = MouseController.Instance.GetTileUnderneathMouse();
-                switch (t.Structure) {
-                    case null:
-                        return;
-                    case ICapturable structure:
-                        SelectedUnit.GiveCaptureCommand(structure, OverrideCurrentSetting);
-                        break;
-                    case TargetStructure tStructure:
-                        SelectedUnit.GiveAttackCommand(tStructure, OverrideCurrentSetting);
-                        break;
+                if(t.Structure == null) {
+                    return;
+                }
+                if(t.Structure.HasElement<Capturable>()) {
+                    SelectedUnit.GiveCaptureCommand(t.Structure, OverrideCurrentSetting);
+                }
+                if (t.Structure is TargetStructure target) {
+                    SelectedUnit.GiveAttackCommand(target, OverrideCurrentSetting);
                 }
             }
         }

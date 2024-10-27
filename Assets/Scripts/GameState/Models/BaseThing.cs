@@ -56,6 +56,14 @@ public abstract class BaseThing : GEventable {
         }
     }
 
+    public void OnBaseThingBuild(bool loading = false) {
+        foreach (Element element in Elements.Values) {
+            element.OnStart(loading);
+        }
+        OnBuild(loading);
+    }
+    public abstract void OnBuild(bool loading = false);
+
     public void ReduceHealth(float damage, IWarfare warfare = null) {
         if (CanTakeDamage == false) {
             return;
@@ -120,8 +128,13 @@ public abstract class BaseThing : GEventable {
     public bool AddElement(Element element) {
         return Elements.TryAdd(element.GetType(), element);
     }
+    
     public Element GetElement<T>() {
         return Elements[typeof(T)];
+    }
+
+    public bool HasElement<T>() {
+        return Elements.ContainsKey(typeof(T));
     }
     
     protected virtual bool OnDestroy(IWarfare destroyer = null, bool onLoad = false) {

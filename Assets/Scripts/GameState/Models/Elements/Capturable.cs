@@ -15,7 +15,8 @@ namespace Andja.Model {
         private Structure Structure;
         private CapturablePrototypData Data;
         private float _currentCaptureSpeed = 0f;
-
+        public IWarfare Target => Structure as IWarfare;
+        public int PlayerNumber => Structure.PlayerNumber;
         public float MaximumCaptureSpeed => Structure.CalculateRealValue(nameof(Data.maximumCaptureSpeed), Data.maximumCaptureSpeed);
         public float DecreaseCaptureSpeed => Structure.CalculateRealValue(nameof(Data.decreaseCaptureSpeed), Data.decreaseCaptureSpeed);
 
@@ -34,7 +35,7 @@ namespace Andja.Model {
                 capturedProgress = 0;
                 Structure.OnDestroy();
                 Structure.City = c;
-                Structure.OnBuild();
+                Structure.OnBaseThingBuild();
             }
             else {
                 Structure.Destroy();
@@ -52,7 +53,7 @@ namespace Andja.Model {
         public override void OnLoad() {
         }
 
-        public override void OnStart() {
+        public override void OnStart(bool loading = false) {
         }
 
         public override void OnUpdate(float deltaTime) {

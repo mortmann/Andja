@@ -78,12 +78,12 @@ namespace Andja.Controller {
                 }
                 else if (targetableHoldingScript == null) {
                     Tile t = MouseController.Instance.GetTileUnderneathMouse();
+                    if(t.Structure?.HasElement<Capturable>() == true) {
+                        selectedUnitGroup.ForEach(x => x.GiveCaptureCommand(t.Structure, OverrideCurrentSetting));
+                    }
                     switch (t.Structure) {
                         case null:
                             return;
-                        case ICapturable ic:
-                            selectedUnitGroup.ForEach(x => x.GiveCaptureCommand(ic, OverrideCurrentSetting));
-                            break;
                         case TargetStructure ts:
                             selectedUnitGroup.ForEach(x => x.GiveAttackCommand(ts, OverrideCurrentSetting));
                             break;

@@ -129,11 +129,11 @@ public abstract class BaseThing : GEventable {
         return Elements.TryAdd(element.GetType(), element);
     }
     
-    public Element GetElement<T>() {
-        return Elements[typeof(T)];
+    public T GetElement<T> () where T : Element {
+        return (T) Elements[typeof(T)];
     }
 
-    public bool HasElement<T>() {
+    public bool HasElement<T>() where T : Element {
         return Elements.ContainsKey(typeof(T));
     }
     

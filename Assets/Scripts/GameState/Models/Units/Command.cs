@@ -10,6 +10,7 @@ namespace Andja.Model {
         public virtual Vector2 Position => Vector2.zero;
         public abstract bool IsFinished { get; }
         public abstract UnitMainModes MainMode { get; }
+
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -31,31 +32,30 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class AttackCommand : Command {
-        public override bool IsFinished => target.IsDestroyed;
+        public override bool IsFinished => Target.IsDestroyed;
         public override UnitMainModes MainMode => UnitMainModes.Attack;
-        public override Vector2 Position => target.CurrentPosition;
+        public override Vector2 Position => Target.CurrentPosition;
 
-        [JsonPropertyAttribute] public ITargetable target;
+        [JsonPropertyAttribute] public ITargetable Target;
+        [JsonPropertyAttribute] public int playerNumber;
 
         public AttackCommand(ITargetable target) {
-            this.target = target;
+            this.Target = target;
         }
 
         public AttackCommand() {
         }
     }
     [JsonObject(MemberSerialization.OptIn)]
-    public class AggroCommand : Command {
-        public override bool IsFinished => target.IsDestroyed || isDone;
+    public class AggroCommand : AttackCommand {
+        public override bool IsFinished => Target.IsDestroyed || isDone;
         public override UnitMainModes MainMode => UnitMainModes.Aggroing;
-        public override Vector2 Position => target.CurrentPosition;
 
-        [JsonPropertyAttribute] public ITargetable target;
         [JsonPropertyAttribute] public Vector2 StartPosition;
         [JsonPropertyAttribute] bool isDone;
 
         public AggroCommand(ITargetable target, Vector2 startPosition) {
-            this.target = target;
+            this.Target = target;
             StartPosition = startPosition;
         }
 
@@ -69,7 +69,7 @@ namespace Andja.Model {
     }
     [JsonObject(MemberSerialization.OptIn)]
     public class CaptureCommand : Command {
-        public override bool IsFinished => target.Captured;
+        public override bool IsFinished => Target.GetElement<Capturable>().Captured;
         public override UnitMainModes MainMode => UnitMainModes.Capture;
         [JsonPropertyAttribute] public Structure Target;
         public override Vector2 Position => Target.Center;

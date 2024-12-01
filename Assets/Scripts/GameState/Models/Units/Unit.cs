@@ -103,8 +103,7 @@ namespace Andja.Model {
             {
                 return CurrentCommand switch
                 {
-                    AttackCommand command => command.target,
-                    AggroCommand command => command.target,
+                    AttackCommand command => command.Target,
                     _ => null
                 };
             }

@@ -16,7 +16,7 @@
       <spriteBaseName>basicunit</spriteBaseName>
       <inventoryPlaces>0</inventoryPlaces>
       <inventorySize>0</inventorySize>
-      <maximumHealth>100.0</maximumHealth>
+      <maxHealth>100.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
@@ -60,7 +60,7 @@
       <spriteBaseName>tradingship</spriteBaseName>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>60</inventorySize>
-      <maximumHealth>1400.0</maximumHealth>
+      <maxHealth>1400.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
@@ -109,7 +109,7 @@
       <spriteBaseName>largebattleship</spriteBaseName>
       <inventoryPlaces>4</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maximumHealth>3000.0</maximumHealth>
+      <maxHealth>3000.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
@@ -158,7 +158,7 @@
       <spriteBaseName>smallbattleship</spriteBaseName>
       <inventoryPlaces>2</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maximumHealth>1200.0</maximumHealth>
+      <maxHealth>1200.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
@@ -207,7 +207,7 @@
       <spriteBaseName>battleship</spriteBaseName>
       <inventoryPlaces>2</inventoryPlaces>
       <inventorySize>30</inventorySize>
-      <maximumHealth>1600.0</maximumHealth>
+      <maxHealth>1600.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
@@ -256,7 +256,7 @@
       <spriteBaseName>ship</spriteBaseName>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maximumHealth>1250.0</maximumHealth>
+      <maxHealth>1250.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>10.0</attackRange>
       <damage>10.0</damage>
@@ -292,7 +292,7 @@
       <spriteBaseName>pirateship</spriteBaseName>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maximumHealth>1250.0</maximumHealth>
+      <maxHealth>1250.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>10.0</attackRange>
       <damage>10.0</damage>
@@ -328,7 +328,7 @@
       <spriteBaseName>ship</spriteBaseName>
       <inventoryPlaces>6</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maximumHealth>1250.0</maximumHealth>
+      <maxHealth>1250.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>10.0</attackRange>
       <damage>10.0</damage>
@@ -377,7 +377,7 @@
       <spriteBaseName>smalltradeship</spriteBaseName>
       <inventoryPlaces>4</inventoryPlaces>
       <inventorySize>50</inventorySize>
-      <maximumHealth>800.0</maximumHealth>
+      <maxHealth>800.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
@@ -426,7 +426,7 @@
       <spriteBaseName>largetradeship</spriteBaseName>
       <inventoryPlaces>10</inventoryPlaces>
       <inventorySize>60</inventorySize>
-      <maximumHealth>2000.0</maximumHealth>
+      <maxHealth>2000.0</maxHealth>
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>

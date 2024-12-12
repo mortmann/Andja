@@ -10,7 +10,7 @@ using UnityEngine;
 
 public abstract class BaseThing : GEventable {
 
-    private BaseThingData prototypeData;
+    protected BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
 
     private Dictionary<Type, Element> Elements = new Dictionary<Type, Element>();
@@ -37,7 +37,8 @@ public abstract class BaseThing : GEventable {
     public bool CanTakeDamage => Data.canTakeDamage;
     public int BuildCost => Data.buildCost;
     public Item[] BuildingItems => Data.buildingItems;
-    public string SpriteName => Data.spriteBaseName/*TODO: make multiple saved sprites possible*/;
+
+    public string SpriteName => Data.spriteBaseName; /*TODO: make multiple saved sprites possible*/
     public int PopulationLevel => Data.populationLevel;
     public int PopulationCount => Data.populationCount;
     public bool IsStructure => this is Structure;

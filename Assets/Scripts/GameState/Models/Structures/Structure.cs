@@ -156,9 +156,7 @@ namespace Andja.Model {
             }
         }
 
-        protected StructurePrototypeData prototypeData;
-
-        public StructurePrototypeData Data => prototypeData ??= PrototypController.Instance.GetStructurePrototypDataForID(ID);
+        public StructurePrototypeData Data => (StructurePrototypeData) (prototypeData ??= PrototypController.Instance.GetStructurePrototypDataForID(ID));
 
         private Vector2 _center;
 

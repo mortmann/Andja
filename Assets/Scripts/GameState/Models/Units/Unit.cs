@@ -5,7 +5,6 @@ using Andja.Model.Components;
 using Andja.Pathfinding;
 using Newtonsoft.Json;
 using UnityEngine;
-using static UnityEditor.ObjectChangeEventStream;
 using Random = UnityEngine.Random;
 
 namespace Andja.Model {

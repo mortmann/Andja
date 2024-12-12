@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEditor.Graphs.Styles;
 using Color = UnityEngine.Color;
 using Tile = Andja.Model.Tile;
 

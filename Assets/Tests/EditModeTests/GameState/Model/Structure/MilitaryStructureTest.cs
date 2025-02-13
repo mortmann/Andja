@@ -97,9 +97,9 @@ public class MilitaryStructureTest {
     [Test]
     public void OnBuild_NoFreeTiles() {
         var tile = mockutil.GetInCityTile(1, 1);
-        tile.Structure = new MarketStructure("BLA", new MarketPrototypeData());
+        tile.Structure = new HomeStructure("BLA", new HomePrototypeData());
         mockutil.PrototypControllerMock.Setup(p => p.GetStructurePrototypDataForID("BLA"))
-            .Returns(new MarketPrototypeData());
+            .Returns(new HomePrototypeData());
         Military.NeighbourTiles = new HashSet<Tile> { tile };
 
         Military.OnBuild();
@@ -111,7 +111,7 @@ public class MilitaryStructureTest {
         PrototypeData.canBuildShips = true;
         var tile = new Tile();
         mockutil.PrototypControllerMock.Setup(p => p.GetStructurePrototypDataForID("BLA"))
-            .Returns(new MarketPrototypeData());
+            .Returns(new OutputPrototypData());
         Military.NeighbourTiles = new HashSet<Tile> { tile };
 
         Military.OnBuild();

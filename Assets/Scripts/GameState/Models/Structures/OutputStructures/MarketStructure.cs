@@ -7,47 +7,20 @@ using UnityEngine;
 
 namespace Andja.Model {
 
-    public class MarketPrototypeData : OutputPrototypData {
-        public float takeOverStartGoal = 100;
-
-        public float decreaseCaptureSpeed = 0.01f;
-
-        public float maximumCaptureSpeed = 0.05f;
-    }
-
     [JsonObject(MemberSerialization.OptIn)]
     public class MarketStructure : OutputStructure {
-
-        #region Serialize
-
-        [JsonPropertyAttribute] public int level = 1;
-        [JsonPropertyAttribute] public float capturedProgress = 0;
-
-        #endregion Serialize
 
         #region RuntimeOrOther
 
         public List<Structure> RegisteredSturctures;
         public List<OutputStructure> OutputMarkedStructures;
-
-        public float TakeOverStartGoal => CalculateRealValue(nameof(MarketData.takeOverStartGoal), MarketData.takeOverStartGoal);
-
-        public float DecreaseCaptureSpeed => CalculateRealValue(nameof(MarketData.decreaseCaptureSpeed), MarketData.decreaseCaptureSpeed);
-        public float MaximumCaptureSpeed => CalculateRealValue(nameof(MarketData.maximumCaptureSpeed), MarketData.maximumCaptureSpeed);
-
-        private MarketPrototypeData _marketData;
-
-        public MarketPrototypeData MarketData {
-            get {
-                return _marketData ??= (MarketPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
-            }
-        }
-
         #endregion RuntimeOrOther
 
-        public MarketStructure(string id, MarketPrototypeData marketData) : this(){
+        public MarketStructure(string id, OutputPrototypData marketData) : this(){
             this.ID = id;
-            _marketData = marketData;
+            _outputData = marketData;
+            AddElement(new AddRangeTilesToCity(this));
+            AddElement(new Capturable(this));
         }
 
         /// <summary>
@@ -56,7 +29,6 @@ namespace Andja.Model {
         public MarketStructure() {
             RegisteredSturctures = new List<Structure>();
             OutputMarkedStructures = new List<OutputStructure>();
-            AddElement(new AddRangeTilesToCity(this));
         }
 
         protected MarketStructure(MarketStructure str) {
@@ -69,19 +41,6 @@ namespace Andja.Model {
 
         protected override void OnUpdate(float deltaTime) {
             base.UpdateWorker(deltaTime);
-            UpdateCaptureProgress(deltaTime);
-        }
-
-        public void UpdateCaptureProgress(float deltaTime) {
-            if (_currentCaptureSpeed > 0) {
-                capturedProgress += _currentCaptureSpeed * deltaTime;
-                //reset the speed so that units can again add their speed
-                _currentCaptureSpeed = 0;
-            }
-            else if (capturedProgress > 0) {
-                capturedProgress -= DecreaseCaptureSpeed * deltaTime;
-            }
-            capturedProgress = Mathf.Clamp01(capturedProgress);
         }
 
         public override void OnBuild(bool loading = false) {
@@ -203,38 +162,5 @@ namespace Andja.Model {
             }
             return temp;
         }
-        protected override void OnUpgrade() {
-            base.OnUpgrade();
-            _marketData = null;
-        }
-        #region ICapturableImplementation
-
-        private float _currentCaptureSpeed = 0f;
-
-        public void Capture(IWarfare warfare, float progress) {
-            if (Captured) {
-                DoneCapturing(warfare);
-                return;
-            }
-            _currentCaptureSpeed = Mathf.Clamp(_currentCaptureSpeed + progress, 0, MaximumCaptureSpeed);
-        }
-
-        private void DoneCapturing(IWarfare warfare) {
-            //either capture it or destroy based on if is a city of that player on that island
-            ICity c = BuildTile.Island.Cities.Find(x => x.PlayerNumber == warfare.PlayerNumber);
-            if (c != null) {
-                capturedProgress = 0;
-                OnDestroy();
-                City = c;
-                OnBaseThingBuild();
-            }
-            else {
-                Destroy();
-            }
-        }
-
-        public bool Captured => Mathf.Approximately(capturedProgress, 1);
-
-        #endregion ICapturableImplementation
     }
 }

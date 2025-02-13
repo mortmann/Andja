@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using GameState.Models.Elements;
 
 namespace Andja.Model {
     public class BaseThingData : LanguageVariables {
@@ -13,7 +15,8 @@ namespace Andja.Model {
         public Item[] buildingItems;
         public string spriteBaseName;
         public bool canTakeDamage = false;
-
+        
+        public Dictionary<Type, ElementData> elements = new Dictionary<Type, ElementData>();
     }
 }
 

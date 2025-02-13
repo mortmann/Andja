@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Xml;
 using UnityEngine;
 using System.Linq;
+using GameState.Controller.Prototype.Converter;
+using GameState.Models.Elements;
 using Range = Andja.Utility.Range;
 
 namespace Andja.Controller { 
@@ -223,7 +225,7 @@ namespace Andja.Controller {
                 if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
                     Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
                     foreach (XmlNode child in currentNode.ChildNodes) {
-                        Target target = Target.World;
+                        Target target;
                         if (child.Attributes[0] == null)
                             continue;
                         if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
@@ -266,6 +268,15 @@ namespace Andja.Controller {
                         climToString[climate] = child.InnerXml.Split(';');
                     }
                     fi.SetValue(data, climToString);
+                    continue;
+                }
+                if (fi.FieldType == typeof(Dictionary<Type, ElementData>)) {
+                    Dictionary<Type, ElementData> elementDatas = new Dictionary<Type, ElementData>();
+                    foreach (XmlNode child in currentNode.ChildNodes) {
+                        ElementData elementData = ElementConverter.ConvertToData(child);
+                        elementDatas[elementData.GetType()] = elementData;
+                    }
+                    fi.SetValue(data, elementDatas);
                     continue;
                 }
                 try {

@@ -6,7 +6,7 @@ using Andja.Utility;
 
 namespace Andja.Model {
 
-    public class WarehousePrototypData : MarketPrototypeData {
+    public class WarehousePrototypData : OutputPrototypData {
         public int tradeItemCount;
     }
 
@@ -25,8 +25,7 @@ namespace Andja.Model {
 
         #endregion RuntimeOrOther
 
-        public WarehouseStructure(string id, WarehousePrototypData wpd) {
-            this.ID = id;
+        public WarehouseStructure(string id, WarehousePrototypData wpd) : base(id, wpd){
             InRangeUnits = new List<Unit>();
             this._warehouseData = wpd;
         }
@@ -38,8 +37,7 @@ namespace Andja.Model {
             InRangeUnits = new List<Unit>();
         }
 
-        protected WarehouseStructure(WarehouseStructure str) {
-            this.ID = str.ID;
+        protected WarehouseStructure(WarehouseStructure str) : base(str) {
             InRangeUnits = new List<Unit>();
         }
 

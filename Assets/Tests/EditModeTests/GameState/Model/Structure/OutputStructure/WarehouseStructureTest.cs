@@ -18,10 +18,15 @@ public class WarehouseStructureTest {
 
     [SetUp]
     public void SetUp() {
-        Warehouse = new WarehouseStructure(ID, null);
         PrototypeData = new WarehousePrototypData() {
             ID = ID,
-            structureRange = 20
+            structureRange = 20,
+            elements = { {typeof(CapturablePrototypeData), new CapturablePrototypeData() {
+                    takeOverStartGoal = 100,
+                    decreaseCaptureSpeed = 0.01f,
+                    maximumCaptureSpeed = 0.05f
+                }}
+            }
         };
         mockutil = new MockUtil();
         PrototypeData.output = new Item[] { ItemProvider.Stone_1 };
@@ -40,6 +45,7 @@ public class WarehouseStructureTest {
         prototypeControllerMock.Setup(m => m.GetPopulationLevels(It.IsAny<City>())).Returns(
             () => new List<PopulationLevel>());
 
+        Warehouse = new WarehouseStructure(ID, null);
         CreateFourByFour();
     }
 

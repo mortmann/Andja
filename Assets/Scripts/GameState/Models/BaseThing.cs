@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using GameState.Models.Elements;
 using UnityEngine;
 
 public abstract class BaseThing : GEventable {
@@ -44,6 +45,7 @@ public abstract class BaseThing : GEventable {
     public bool IsStructure => this is Structure;
     public bool IsUnit => this is Unit; 
 
+    public abstract Vector2 Position { get; }
     public float CurrentHealth {
         get => currentHealth;
         set {
@@ -140,5 +142,9 @@ public abstract class BaseThing : GEventable {
     
     protected virtual bool OnDestroy(IWarfare destroyer = null, bool onLoad = false) {
         return true;
+    }
+
+    public T GetElementData<T>() where T : ElementData {
+        return (T) Data.elements[typeof(T)];
     }
 }

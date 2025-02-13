@@ -7,19 +7,27 @@ using NUnit.Framework;
 using Andja;
 using static AssertNet.Assertions;
 using static AssertNet.Moq.Assertions;
+using Capture = System.Text.RegularExpressions.Capture;
 
 public class MarketStructureTest {
     string ID = "MarketStructure";
     MarketStructure Market;
-    MarketPrototypeData PrototypeData;
+    OutputPrototypData PrototypeData;
     private MockUtil mockutil;
     private ICity City;
     [SetUp]
     public void SetUp() {
-        Market = new MarketStructure(ID, null);
-        PrototypeData = new MarketPrototypeData() {
+        PrototypeData = new OutputPrototypData() {
             ID = ID,
-            structureRange = 20
+            structureRange = 20,
+            tileWidth = 4,
+            tileHeight = 4,
+            elements = { {typeof(CapturablePrototypeData), new CapturablePrototypeData() {
+                takeOverStartGoal = 100,
+                decreaseCaptureSpeed = 0.01f,
+                maximumCaptureSpeed = 0.05f
+            }}
+            }
         };
         mockutil = new MockUtil();
         City = mockutil.City;
@@ -39,14 +47,13 @@ public class MarketStructureTest {
         });
         prototypeControllerMock.Setup(m => m.GetPopulationLevels(It.IsAny<City>()))
             .Returns(() => new List<PopulationLevel>());
-        
+
+        Market = new MarketStructure(ID, null);
         CreateFourByFour();
     }
     
     private void CreateFourByFour() {
         Market.City = mockutil.City;
-        PrototypeData.tileWidth = 4;
-        PrototypeData.tileHeight = 4;
         Market.OutputMarkedStructures = new List<OutputStructure>();
         Market.Tiles = Market.GetBuildingTiles(World.Current.GetTileAt(Market.StructureRange, Market.StructureRange));
         Market.RangeTiles = new HashSet<Tile>();
@@ -91,64 +98,66 @@ public class MarketStructureTest {
     public void Capture() {
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
-
+        Capturable capturable = Market.GetElement<Capturable>();
         for (int i = 0; i < 20; i++) {
-            Market.Capture(warfare.Object, 0.1f);
-            Market.UpdateCaptureProgress(1f);
-            Assert.AreEqual(Market.MaximumCaptureSpeed * 1f * (i+1), Market.capturedProgress, 0.0001);
+            capturable.Capture(warfare.Object, 0.1f);
+            capturable.OnUpdate(1f);
+            Assert.AreEqual(capturable.MaximumCaptureSpeed * 1f * (i+1), capturable.CapturedProgress, 0.0001);
         }
-        Assert.IsTrue(Market.Captured);
+        Assert.IsTrue(capturable.Captured);
     }
     [Test]
     public void Capture_Stops_ReturnsToFull() {
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
-        PrototypeData.decreaseCaptureSpeed = 0.01f;
+        Capturable capturable = Market.GetElement<Capturable>();
 
         for (int i = 0; i < 20; i++) {
-            Market.Capture(warfare.Object, 0.01f);
-            Market.UpdateCaptureProgress(1f);
+            capturable.Capture(warfare.Object, 0.01f);
+            capturable.OnUpdate(1f);
         }
         for (int i = 0; i < 10; i++) {
-            Market.Capture(warfare.Object, 0);
-            Market.UpdateCaptureProgress(1f);
+            capturable.Capture(warfare.Object, 0);
+            capturable.OnUpdate(1f);
         }
-        AssertThat(Market.capturedProgress).IsGreaterThan(0);
+        AssertThat(capturable.CapturedProgress).IsGreaterThan(0);
         for (int i = 0; i < 10; i++) {
-            Market.Capture(warfare.Object, 0);
-            Market.UpdateCaptureProgress(1f);
+            capturable.Capture(warfare.Object, 0);
+            capturable.OnUpdate(1f);
         }
-        AssertThat(Market.capturedProgress).IsEqualTo(0,0.0001f);
-        AssertThat(Market.Captured).IsFalse();
+        AssertThat(capturable.CapturedProgress).IsEqualTo(0,0.0001f);
+        AssertThat(capturable.Captured).IsFalse();
     }
     [Test]
     public void DoneCapturing_WithCity() {
         Market.Tiles.ForEach(t => t.City = mockutil.City);
         Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
+        Capturable capturable = Market.GetElement<Capturable>();
 
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
         mockutil.WorldIsland.Cities.Add(new City(1, mockutil.WorldIsland));
 
         Market.City = City;
-        Market.capturedProgress = 1;
-        Market.Capture(warfare.Object, 10010101);
+        capturable.CapturedProgress = 1;
+        capturable.Capture(warfare.Object, 10010101);
 
         Assert.AreEqual(1, Market.PlayerNumber);
-        Assert.IsFalse(Market.Captured);
+        Assert.IsFalse(capturable.Captured);
     }
 
     [Test]
     public void DoneCapturing_WithoutCity() {
         Market.Tiles.ForEach(t => t.City = mockutil.City);
         Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
+        Capturable capturable = Market.GetElement<Capturable>();
 
         Mock<IWarfare> warfare = new Mock<IWarfare>();
         warfare.Setup(w => w.PlayerNumber).Returns(1);
 
         Market.City = City;
-        Market.capturedProgress = 1;
-        Market.Capture(warfare.Object, 10010101);
+        capturable.CapturedProgress = 1;
+        capturable.Capture(warfare.Object, 10010101);
 
         Assert.IsTrue(Market.IsDestroyed);
     }

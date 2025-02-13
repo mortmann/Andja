@@ -14,7 +14,7 @@ namespace Andja.Controller {
         private readonly BaseConverter<NeedStructurePrototypeData> needStructureConverter;
         private readonly BaseConverter<MinePrototypeData> mineConverter;
         private readonly BaseConverter<HomePrototypeData> homeConverter;
-        private readonly BaseConverter<MarketPrototypeData> marketConverter;
+        private readonly BaseConverter<OutputPrototypData> marketConverter;
         private readonly BaseConverter<WarehousePrototypData> warehouseConverter;
         private readonly BaseConverter<MilitaryPrototypeData> militaryConverter;
         private readonly BaseConverter<ServiceStructurePrototypeData> serviceConverter;
@@ -82,8 +82,8 @@ namespace Andja.Controller {
                     idToPrototypData[id] = data;
                     PrototypController.Instance.PopulationLevelDatas[data.populationLevel].HomeStructure = home;
                 });
-            marketConverter = new BaseConverter<MarketPrototypeData>(
-                (_) => new MarketPrototypeData(),
+            marketConverter = new BaseConverter<OutputPrototypData>(
+                (_) => new OutputPrototypData(),
                 "structures/markets/market",
                 (id, data) => {
                     idToStructure[id] = new MarketStructure(id, data);

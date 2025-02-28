@@ -8,11 +8,12 @@ using UnityEngine;
 using static Andja.UI.EventMessage;
 
 namespace Andja.UI.Model {
-
     public class EventUIManager : MonoBehaviour {
         public static EventUIManager Instance;
         public float onScreenTimer = 30f;
+
         List<EventMessage> messages;
+
         //Mayber move this to EventManager
         public EventMessage EventMessagePrefab;
         public Transform contentTransform;
@@ -42,20 +43,32 @@ namespace Andja.UI.Model {
             Destroy(eventMessage.gameObject);
         }
 
-        internal void Show(Unit unit, IWarfare warfare) {
-            if (CheckShown(unit.BuildID, warfare))
-                return;
-            Show(BasicInformation.CreateUnitDamage(unit, warfare));
-        }
-        internal void Show(Structure str, IWarfare warfare) {
-            if (CheckShown(str.BuildID, warfare))
-                return;
-            Show(BasicInformation.CreateStructureDamage(str, warfare));
+        public void Show(BaseThing baseThing, IAttack attack) {
+            if (baseThing is Unit unit) {
+                Show(unit, attack);
+            }
+
+            if (baseThing is Structure structure) {
+                Show(structure, attack);
+            }
         }
 
-        private bool CheckShown(uint eventable, IWarfare warfare) {
-            return messages.Exists(m => m.Information is AttackInformation a && a.IsSame(eventable, warfare)
-                && DateTime.Now.Subtract(m.ShownTime).TotalSeconds <= onScreenTimer);
+        private void Show(Unit unit, IAttack attack) {
+            if (CheckShown(unit.BuildID, attack))
+                return;
+            Show(BasicInformation.CreateUnitDamage(unit, attack.Parent));
+        }
+
+        private void Show(Structure str, IAttack attack) {
+            if (CheckShown(str.BuildID, attack))
+                return;
+            Show(BasicInformation.CreateStructureDamage(str, attack.Parent));
+        }
+
+        private bool CheckShown(uint eventable, IAttack attack) {
+            return messages.Exists(m => m.Information is AttackInformation a && a.IsSame(eventable, attack)
+                                                                             && DateTime.Now.Subtract(m.ShownTime)
+                                                                                 .TotalSeconds <= onScreenTimer);
         }
 
         /// <summary>
@@ -89,16 +102,17 @@ namespace Andja.UI.Model {
 
         internal void Load(EventUISave save) {
             save.Messages?.OrderBy(m => m.ShownTime).ToList().ForEach(m => LoadMessage(m));
-            
         }
 
         private void LoadMessage(EventMessageSave load) {
             EventMessage loaded;
             if (load.Information != null) {
                 loaded = Show(load.Information.Load());
-            } else {
+            }
+            else {
                 loaded = AddEvent(EventController.Instance.GetEventByID(load.gameEventID.Value));
             }
+
             loaded.ShownTime = load.ShownTime;
         }
 

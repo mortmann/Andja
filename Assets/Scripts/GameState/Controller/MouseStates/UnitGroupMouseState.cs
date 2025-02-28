@@ -10,17 +10,20 @@ using UnityEngine.EventSystems;
 namespace Andja.Controller {
     public class UnitGroupMouseState : SingleUnitMouseState {
         public List<Unit> selectedUnitGroup => MouseController.Instance.selectedUnitGroup;
+
         public override void Activate() {
             base.Activate();
             selectedUnitGroup.ForEach(x => x.RegisterOnDestroyCallback(OnUnitDestroy));
             UIController.Instance.OpenUnitGroupUI(selectedUnitGroup);
         }
+
         public override void Update() {
             base.Update();
             // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
+
             if (InputHandler.GetMouseButtonDown(InputMouse.Primary)) {
                 switch (MouseUnitState) {
                     case MouseUnitState.None:
@@ -32,7 +35,8 @@ namespace Andja.Controller {
                         break;
 
                     case MouseUnitState.Patrol:
-                        selectedUnitGroup.ForEach(x => x.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y));
+                        selectedUnitGroup.ForEach(x =>
+                            x.AddPatrolCommand(MapClampedMousePosition.x, MapClampedMousePosition.y));
                         break;
 
                     case MouseUnitState.Build:
@@ -42,6 +46,7 @@ namespace Andja.Controller {
                         throw new ArgumentOutOfRangeException();
                 }
             }
+
             CheckUnitCursor();
             if (InputHandler.GetMouseButtonDown(InputMouse.Primary) == false) return;
             Transform hit = MouseController.Instance.MouseRayCast();
@@ -66,10 +71,10 @@ namespace Andja.Controller {
                 }
             }
             else {
-                ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
+                TargetHoldingScript targetableHoldingScript = hit.GetComponent<TargetHoldingScript>();
                 if (targetableHoldingScript != null) {
                     selectedUnitGroup.ForEach(x =>
-                        x.GiveAttackCommand(hit.gameObject.GetComponent<ITargetableHoldingScript>().Holding,
+                        x.GiveAttackCommand(hit.gameObject.GetComponent<TargetHoldingScript>().Holding,
                             OverrideCurrentSetting));
                 }
                 else if (hit.GetComponent<CrateHoldingScript>() != null) {
@@ -78,20 +83,24 @@ namespace Andja.Controller {
                 }
                 else if (targetableHoldingScript == null) {
                     Tile t = MouseController.Instance.GetTileUnderneathMouse();
-                    if(t.Structure?.HasElement<Capturable>() == true) {
-                        selectedUnitGroup.ForEach(x => x.GiveCaptureCommand(t.Structure, OverrideCurrentSetting));
+                    if (t.Structure?.HasElement<Capturable>() == true) {
+                        selectedUnitGroup.ForEach(x =>
+                            x.GiveCaptureCommand(t.Structure.GetElement<Capturable>(), OverrideCurrentSetting));
                     }
+
                     switch (t.Structure) {
                         case null:
                             return;
                         case TargetStructure ts:
-                            selectedUnitGroup.ForEach(x => x.GiveAttackCommand(ts, OverrideCurrentSetting));
+                            selectedUnitGroup.ForEach(x =>
+                                x.GiveAttackCommand(ts.GetElement<Target>(), OverrideCurrentSetting));
                             break;
                     }
                 }
             }
         }
-        private void OnUnitDestroy(Unit unit, IWarfare warfare) {
+
+        private void OnUnitDestroy(Unit unit, IAttack attack) {
             if (selectedUnitGroup.Contains(unit))
                 selectedUnitGroup.Remove(unit);
         }

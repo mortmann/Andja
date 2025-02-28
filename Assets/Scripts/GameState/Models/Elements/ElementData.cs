@@ -1,4 +1,4 @@
-namespace GameState.Models.Elements {
+namespace Andja.Model {
     public abstract class ElementData {
 
     }

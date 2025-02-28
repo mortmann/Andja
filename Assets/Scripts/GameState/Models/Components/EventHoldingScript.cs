@@ -18,13 +18,13 @@ namespace Andja.Model.Components {
 
         //THIS one is the one that works for now! Because itself is a trigger!
         private void OnTriggerEnter2D(Collider2D collider) {
-            ITargetableHoldingScript iths = collider.GetComponent<ITargetableHoldingScript>();
+            TargetHoldingScript iths = collider.GetComponent<TargetHoldingScript>();
             if (iths.Holding is IGEventable eventable && gameEvent.IsTarget(eventable)) {
                 eventable.OnEventCreate(gameEvent);
             }
         }
         private void OnTriggerExit2D(Collider2D collider) {
-            ITargetableHoldingScript iths = collider.GetComponent<ITargetableHoldingScript>();
+            TargetHoldingScript iths = collider.GetComponent<TargetHoldingScript>();
             if (iths.Holding is IGEventable eventable && gameEvent.IsTarget(eventable)) {
                 eventable.OnEventEnded(gameEvent);
             }

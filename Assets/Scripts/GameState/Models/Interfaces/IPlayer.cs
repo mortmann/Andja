@@ -48,9 +48,9 @@ namespace Andja.Model {
         void OnEventCreate(GameEvent ge);
         void OnEventEnded(GameEvent ge);
         void OnStructureAdded(Structure structure);
-        void OnStructureLost(Structure structure, IWarfare destroyer);
+        void OnStructureLost(Structure structure, IAttack attack);
         void OnUnitCreated(Unit unit);
-        void OnUnitDestroy(Unit unit, IWarfare warfare);
+        void OnUnitDestroy(Unit unit, IAttack attack);
         void ReduceTreasure(int money);
         void ReduceTreasureChange(int amount);
         void RegisterCityCreated(Action<ICity> callbackfunc);

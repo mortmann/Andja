@@ -211,77 +211,77 @@ namespace Andja.Controller {
 
         public List<IGEventable> GetPlayerTargets(TargetGroup targetGroup, Player player) {
             List<IGEventable> targets = new List<IGEventable>();
-            foreach (Target target in targetGroup.Targets) {
+            foreach (EventTarget target in targetGroup.Targets) {
                 switch (target) {
-                    case Target.AllUnit:
+                    case EventTarget.AllUnit:
                         targets.AddRange(player.Units);
                         break;
 
-                    case Target.Ship:
+                    case EventTarget.Ship:
                         targets.AddRange(player.GetShipUnits());
                         break;
 
-                    case Target.LandUnit:
+                    case EventTarget.LandUnit:
                         targets.AddRange(player.GetLandUnits());
                         break;
 
-                    case Target.Island:
+                    case EventTarget.Island:
                         targets.AddRange(player.GetIslandList());
                         break;
 
-                    case Target.City:
+                    case EventTarget.City:
                         targets.AddRange(player.Cities.ConvertAll(x=>(City)x));
                         break;
 
-                    case Target.AllStructure:
+                    case EventTarget.AllStructure:
                         targets.AddRange(player.AllStructures);
                         break;
-                    case Target.DamageableStructure:
+                    case EventTarget.DamageableStructure:
                         targets.AddRange(player.AllStructures.Where(x => x.CanTakeDamage));
                         break;
-                    case Target.BurnableStructure:
+                    case EventTarget.BurnableStructure:
                         targets.AddRange(player.AllStructures.Where(x => x.CanStartBurning));
                         break;
-                    case Target.RoadStructure:
+                    case EventTarget.RoadStructure:
                         targets.AddRange(player.AllStructures.OfType<RoadStructure>());
                         break;
-                    case Target.NeedStructure:
+                    case EventTarget.NeedStructure:
                         targets.AddRange(player.AllStructures.OfType<NeedStructure>());
                         break;
-                    case Target.MilitaryStructure:
+                    case EventTarget.MilitaryStructure:
                         targets.AddRange(player.AllStructures.OfType<MilitaryStructure>());
                         break;
-                    case Target.HomeStructure:
+                    case EventTarget.HomeStructure:
                         targets.AddRange(player.AllStructures.OfType<HomeStructure>());
                         break;
-                    case Target.ServiceStructure:
+                    case EventTarget.ServiceStructure:
                         targets.AddRange(player.AllStructures.OfType<ServiceStructure>());
                         break;
-                    case Target.GrowableStructure:
+                    case EventTarget.GrowableStructure:
                         targets.AddRange(player.AllStructures.OfType<GrowableStructure>());
                         break;
-                    case Target.OutputStructure:
+                    case EventTarget.OutputStructure:
                         targets.AddRange(player.AllStructures.OfType<OutputStructure>());
                         break;
-                    case Target.MarketStructure:
+                    case EventTarget.MarketStructure:
                         targets.AddRange(player.AllStructures.OfType<MarketStructure>());
                         break;
-                    case Target.WarehouseStructure:
+                    case EventTarget.WarehouseStructure:
                         targets.AddRange(player.AllStructures.OfType<WarehouseStructure>());
                         break;
-                    case Target.MineStructure:
+                    case EventTarget.MineStructure:
                         targets.AddRange(player.AllStructures.OfType<MineStructure>());
                         break;
-                    case Target.FarmStructure:
+                    case EventTarget.FarmStructure:
                         targets.AddRange(player.AllStructures.OfType<FarmStructure>());
                         break;
-                    case Target.ProductionStructure:
+                    case EventTarget.ProductionStructure:
                         targets.AddRange(player.AllStructures.OfType<ProductionStructure>());
                         break;
                     //non player targets
-                    case Target.World:
+                    case EventTarget.World:
                         break;
-                    case Target.Player:
+                    case EventTarget.Player:
                         break;
                 }
             }
@@ -457,31 +457,31 @@ namespace Andja.Controller {
             _cbEventEnded += ending;
         }
 
-        public static Type TargetToType(Target target) {
-            return target switch {
-                Target.World => typeof(World),
-                Target.Player => typeof(Player),
-                Target.Island => typeof(Island),
-                Target.City => typeof(City),
-                Target.AllUnit => typeof(Unit),
-                Target.Ship => typeof(Ship),
+        public static Type TargetToType(EventTarget eventTarget) {
+            return eventTarget switch {
+                EventTarget.World => typeof(World),
+                EventTarget.Player => typeof(Player),
+                EventTarget.Island => typeof(Island),
+                EventTarget.City => typeof(City),
+                EventTarget.AllUnit => typeof(Unit),
+                EventTarget.Ship => typeof(Ship),
                 //default type is unit -- so dunno what todo in this case
-                Target.LandUnit => typeof(Unit),
-                Target.AllStructure => typeof(Structure),
+                EventTarget.LandUnit => typeof(Unit),
+                EventTarget.AllStructure => typeof(Structure),
                 //is selected over bool -- so dunno what todo in this case
-                Target.DamageableStructure => typeof(Structure),
-                Target.RoadStructure => typeof(RoadStructure),
-                Target.NeedStructure => typeof(NeedStructure),
-                Target.MilitaryStructure => typeof(MilitaryStructure),
-                Target.HomeStructure => typeof(HomeStructure),
-                Target.ServiceStructure => typeof(ServiceStructure),
-                Target.GrowableStructure => typeof(GrowableStructure),
-                Target.OutputStructure => typeof(OutputStructure),
-                Target.MarketStructure => typeof(MarketStructure),
-                Target.WarehouseStructure => typeof(WarehouseStructure),
-                Target.MineStructure => typeof(MineStructure),
-                Target.FarmStructure => typeof(FarmStructure),
-                Target.ProductionStructure => typeof(ProductionStructure),
+                EventTarget.DamageableStructure => typeof(Structure),
+                EventTarget.RoadStructure => typeof(RoadStructure),
+                EventTarget.NeedStructure => typeof(NeedStructure),
+                EventTarget.MilitaryStructure => typeof(MilitaryStructure),
+                EventTarget.HomeStructure => typeof(HomeStructure),
+                EventTarget.ServiceStructure => typeof(ServiceStructure),
+                EventTarget.GrowableStructure => typeof(GrowableStructure),
+                EventTarget.OutputStructure => typeof(OutputStructure),
+                EventTarget.MarketStructure => typeof(MarketStructure),
+                EventTarget.WarehouseStructure => typeof(WarehouseStructure),
+                EventTarget.MineStructure => typeof(MineStructure),
+                EventTarget.FarmStructure => typeof(FarmStructure),
+                EventTarget.ProductionStructure => typeof(ProductionStructure),
                 _ => null
             };
         }

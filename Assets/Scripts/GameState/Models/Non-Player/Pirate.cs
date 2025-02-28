@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.Model {
-
     [JsonObject(MemberSerialization.OptIn)]
     public class Pirate {
         public static readonly int Number = GameData.PirateNumber; // so it isnt the same like the number of wilderness
@@ -14,6 +13,7 @@ namespace Andja.Model {
         [JsonPropertyAttribute] private float startCooldown;
         [JsonPropertyAttribute] private List<Ship> Ships;
         private float checkShipsCooldown = 0f;
+
         public Pirate() {
             Ships = new List<Ship>();
             this.startCooldown = GameData.PirateCooldown;
@@ -24,13 +24,16 @@ namespace Andja.Model {
                 startCooldown = Mathf.Clamp(startCooldown - deltaTime, 0, startCooldown);
                 return;
             }
+
             if (Ships.Count < GameData.PirateShipCount) {
                 AddShip();
             }
-            if(checkShipsCooldown <= 0) {
+
+            if (checkShipsCooldown <= 0) {
                 checkShipsCooldown = GameData.PirateCheckRespawnShipCount;
                 CheckShips();
-            } else {
+            }
+            else {
                 checkShipsCooldown -= deltaTime;
             }
         }
@@ -43,17 +46,17 @@ namespace Andja.Model {
                 List<Ship> targets = new List<Ship>();
                 Collider2D[] colls = Physics2D.OverlapCircleAll(s.CurrentPosition, AggroRange);
                 foreach (Collider2D c in colls) {
-                    ITargetableHoldingScript iths = c.gameObject.GetComponent<ITargetableHoldingScript>();
-                    if (iths == null || !(iths.Holding is Ship ship)) continue;
-                    if(ship.PlayerNumber != Number)
+                    TargetHoldingScript iths = c.gameObject.GetComponent<TargetHoldingScript>();
+                    if (iths == null || !(iths.Unit is Ship ship)) continue;
+                    if (ship.PlayerNumber != Number)
                         targets.Add(ship);
                 }
 
                 if (targets.Count <= 0) continue;
-                var grouped = targets.GroupBy(x => x.PlayerNumber, (y,z)=>new { count = y, Ships = z });
+                var grouped = targets.GroupBy(x => x.PlayerNumber, (y, z) => new { count = y, Ships = z });
                 var ships = grouped.OrderBy(x => x.count).First();
                 if (ships.count < 2) {
-                    s.GiveAttackCommand(ships.Ships.First(), true);
+                    s.GiveAttackCommand(ships.Ships.First().GetElement<Target>(), true);
                 }
             }
         }
@@ -74,22 +77,23 @@ namespace Andja.Model {
                 Debug.LogError("Why did called when it is not a pirate ship?");
                 return;
             }
+
             if (goal) {
                 ship.GiveMovementCommand(World.Current.GetRandomOceanTile());
             }
         }
 
-        public void OnShipDestroy(Unit u, IWarfare warfare) {
+        public void OnShipDestroy(Unit u, IAttack attack) {
             u.UnregisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
             u.UnregisterOnDestroyCallback(OnShipDestroy);
             Ships.Remove((Ship)u);
         }
 
         internal void Load() {
-            foreach(Ship ship in Ships) {
+            foreach (Ship ship in Ships) {
                 ship.RegisterOnDestroyCallback(OnShipDestroy);
                 ship.RegisterOnArrivedAtDestinationCallback(OnShipArriveDestination);
-                if(ship.Pathfinding.IsAtDestination)
+                if (ship.Pathfinding.IsAtDestination)
                     OnShipArriveDestination(ship, true);
                 ship.Load();
             }

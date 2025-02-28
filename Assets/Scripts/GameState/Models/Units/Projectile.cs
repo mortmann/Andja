@@ -7,35 +7,40 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Andja.Model {
-
     [JsonObject(MemberSerialization.OptIn)]
     public class Projectile {
-
         //for now there will be NO friendly fire!
-        [JsonPropertyAttribute] private IWarfare origin;
-
+        [JsonPropertyAttribute] private Attack origin;
         [JsonPropertyAttribute] private float remainingTravelDistance;
         [JsonPropertyAttribute] private SeriaziableVector2 _position;
         [JsonPropertyAttribute] private SeriaziableVector2 _destination;
-        [JsonPropertyAttribute] private ITargetable target;
+        [JsonPropertyAttribute] private ITarget target;
         [JsonPropertyAttribute] public bool HasHitbox;
         [JsonPropertyAttribute] public bool Impact;
         [JsonPropertyAttribute] public int ImpactRange;
         [JsonPropertyAttribute] public string SpriteName = "cannonball_1";
         private float Speed = 2f;
-        public Vector2 Position { get { return _position; } protected set { _position = value; } }
-        private Vector2 Destination { get { return _destination.Vec; } set { _destination.Vec = value; } }
+
+        public Vector2 Position {
+            get { return _position; }
+            protected set { _position = value; }
+        }
+
+        private Vector2 Destination {
+            get { return _destination.Vec; }
+            set { _destination.Vec = value; }
+        }
 
         public SeriaziableVector2 Velocity { get; internal set; }
 
         private Action<Projectile> cbOnDestroy;
         private Action<Projectile> cbOnChange;
 
-        public Projectile() {
-        }
+        public Projectile() { }
 
-        public Projectile(IWarfare origin, Vector3 startPosition, ITargetable target, Vector2 destination,
-            Vector3 move, float travelDistance, bool HasHitbox, float speed = 2, bool impact = false, int impactRange = 1) {
+        public Projectile(Attack origin, Vector3 startPosition, ITarget target, Vector2 destination,
+            Vector3 move, float travelDistance, bool HasHitbox, float speed = 2, bool impact = false,
+            int impactRange = 1) {
             Speed = speed;
             remainingTravelDistance = travelDistance;
             Velocity = move * speed;
@@ -57,6 +62,7 @@ namespace Andja.Model {
                 Destroy();
                 return;
             }
+
             Vector2 dir = Velocity.Vec * deltaTime;
             remainingTravelDistance -= dir.magnitude;
             Position += dir;
@@ -72,10 +78,11 @@ namespace Andja.Model {
                 }
                 //TODO: show impact crater
             }
+
             cbOnDestroy?.Invoke(this);
         }
 
-        public bool OnHit(ITargetable hit) {
+        public bool OnHit(Target hit) {
             if (ConfirmHit(hit) == false)
                 return false;
             if (hit.IsAttackableFrom(origin) == false)
@@ -85,7 +92,7 @@ namespace Andja.Model {
             return true;
         }
 
-        private bool ConfirmHit(ITargetable hit) {
+        private bool ConfirmHit(Target hit) {
             //Does it have to be the targeted unit it damages???
             //if (hit == target)
             //    return true;
@@ -94,6 +101,7 @@ namespace Andja.Model {
             if (PlayerController.Instance.ArePlayersAtWar(origin.PlayerNumber, hit.PlayerNumber)) {
                 return true;
             }
+
             return false;
         }
 
@@ -104,6 +112,7 @@ namespace Andja.Model {
         public void UnregisterOnDestroyCallback(Action<Projectile> cb) {
             cbOnDestroy -= cb;
         }
+
         //////////////////////////////////////////////////////////////////////////////
         //This implies that no solution exists for this situation as the target may literally outrun the projectile with its current direction
         //In cases like that, we simply aim at the place where the target will be 1 to 5 seconds from now.
@@ -121,8 +130,10 @@ namespace Andja.Model {
         //Full derivation by Kain Shin exists here:
         //http://www.gamasutra.com/blogs/KainShin/20090515/83954/Predictive_Aim_Mathematics_for_AI_Targeting.php
         //gravity is assumed to be a positive number. It will be calculated in the downward direction, feel free to change that if you game takes place in Spaaaaaaaace
-        static public bool PredictiveAim(Vector3 muzzlePosition, float projectileSpeed, Vector3 targetPosition, Vector3 targetVelocity, float gravity, out Vector3 projectileVelocity, out Vector3 projectileDestination) {
-            Debug.Assert(projectileSpeed > 0, "What are you doing shooting at something with a projectile that doesn't move?");
+        static public bool PredictiveAim(Vector3 muzzlePosition, float projectileSpeed, Vector3 targetPosition,
+            Vector3 targetVelocity, float gravity, out Vector3 projectileVelocity, out Vector3 projectileDestination) {
+            Debug.Assert(projectileSpeed > 0,
+                "What are you doing shooting at something with a projectile that doesn't move?");
             if (muzzlePosition == targetPosition) {
                 //Why dost thou hate thyself so?
                 //Do something smart here. I dunno... whatever.
@@ -133,10 +144,12 @@ namespace Andja.Model {
 
             //Much of this is geared towards reducing floating point precision errors
             float projectileSpeedSq = projectileSpeed * projectileSpeed;
-            float targetSpeedSq = targetVelocity.sqrMagnitude; //doing this instead of self-multiply for maximum accuracy
+            float targetSpeedSq =
+                targetVelocity.sqrMagnitude; //doing this instead of self-multiply for maximum accuracy
             float targetSpeed = Mathf.Sqrt(targetSpeedSq);
             Vector3 targetToMuzzle = muzzlePosition - targetPosition;
-            float targetToMuzzleDistSq = targetToMuzzle.sqrMagnitude; //doing this instead of self-multiply for maximum accuracy
+            float targetToMuzzleDistSq =
+                targetToMuzzle.sqrMagnitude; //doing this instead of self-multiply for maximum accuracy
             float targetToMuzzleDist = Mathf.Sqrt(targetToMuzzleDistSq);
             Vector3 targetToMuzzleDir = targetToMuzzle;
             targetToMuzzleDir.Normalize();
@@ -227,10 +240,12 @@ namespace Andja.Model {
                 //assuming gravity is a positive number, this next line will apply a free magical upwards lift to compensate for gravity
                 Vector3 gravityCompensation = (0.5f * projectileAcceleration * t);
                 //Let's cap gravityCompensation to avoid AIs that shoot infinitely high
-                float gravityCompensationCap = 0.5f * projectileSpeed;  //let's assume we won't lob higher than 50% of the canon's shot range
+                float gravityCompensationCap =
+                    0.5f * projectileSpeed; //let's assume we won't lob higher than 50% of the canon's shot range
                 if (gravityCompensation.magnitude > gravityCompensationCap) {
                     gravityCompensation = gravityCompensationCap * gravityCompensation.normalized;
                 }
+
                 projectileVelocity -= gravityCompensation;
             }
 
@@ -241,6 +256,5 @@ namespace Andja.Model {
             projectileDestination = targetPosition + t * targetVelocity;
             return validSolutionFound;
         }
-
     }
 }

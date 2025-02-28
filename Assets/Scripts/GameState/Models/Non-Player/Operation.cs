@@ -52,8 +52,8 @@ namespace Andja.Model {
         }
     }
     public class UnitAttackOperation : UnitOperation {
-        ITargetable Target;
-        public UnitAttackOperation(AIPlayer player, Unit[] unitGroup, ITargetable target, Tile destination, 
+        Target Target;
+        public UnitAttackOperation(AIPlayer player, Unit[] unitGroup, Target target, Tile destination, 
             bool overrideCurrentCommand = false) : base(player, unitGroup, overrideCurrentCommand) {
             Target = target;
         }

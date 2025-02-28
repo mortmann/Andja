@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Andja.UI.Model {
-
     public class UnitUI : MonoBehaviour {
         public ImageText[] UnitInfos;
         public Transform content;
@@ -41,6 +40,7 @@ namespace Andja.UI.Model {
             if (unit == showUnit) {
                 return;
             }
+
             unit?.UnregisterOnDestroyCallback(OnUnitDestroy);
             unit?.Inventory?.UnregisterOnChangedCallback(OnInvChange);
             unit = showUnit;
@@ -57,6 +57,7 @@ namespace Andja.UI.Model {
             foreach (Transform item in content.transform) {
                 GameObject.Destroy(item.gameObject);
             }
+
             if (unitGoalGOs != null)
                 foreach (GameObject goal in unitGoalGOs)
                     Destroy(goal);
@@ -68,22 +69,24 @@ namespace Andja.UI.Model {
             for (int i = 0; i < 3; i++) {
                 UnitInfos[i].gameObject.SetActive(false);
             }
+
             UnitInfos[3].Set(UISpriteController.GetIcon(unit.ArmorType.ID), unit.ArmorType);
             UnitInfos[4].Set(UISpriteController.GetIcon(unit.DamageType.ID), unit.DamageType);
             if (unit.IsOwnedByCurrentPlayer() == false) {
                 return;
             }
+
             UnitInfos[0].Set(UISpriteController.GetIcon(CommonIcon.CurrentDamage),
                 StaticLanguageVariables.CurrentDamage, () => { return unit.CurrentDamage + ""; });
             UnitInfos[1].Set(UISpriteController.GetIcon(CommonIcon.MaximumDamage),
                 StaticLanguageVariables.MaximumDamage, () => { return unit.MaximumDamage + ""; });
             UnitInfos[2].Set(UISpriteController.GetIcon(CommonIcon.Speed),
                 StaticLanguageVariables.Speed, () => { return unit.Speed + ""; });
-            
+
             OnPatrolRouteChange(unit.PatrolCommand);
             unit.PatrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
 
-            inv = (UnitInventory) unit.Inventory;
+            inv = (UnitInventory)unit.Inventory;
             buttonCanvas.SetActive(true);
 
             //only ships can settle
@@ -98,10 +101,10 @@ namespace Andja.UI.Model {
                             unit.rangeUStructure.City.TradeUnit = unit;
                             ICity city = unit.rangeUStructure.City;
                             UIController.Instance.OpenOwnedCityInventory(
-                                city, 
-                                item => city.TradeWithShip(item, 
-                                                        () => city.PlayerTradeAmount, 
-                                                        ship)
+                                city,
+                                item => city.TradeWithShip(item,
+                                    () => city.PlayerTradeAmount,
+                                    ship)
                             );
                         }
                     }
@@ -121,12 +124,13 @@ namespace Andja.UI.Model {
             if (inv == null) {
                 return;
             }
+
             for (int i = 0; i < inv.NumberOfSpaces; i++) {
                 AddItemGameObject(i);
             }
         }
 
-        private void OnUnitDestroy(Unit unit, IWarfare destroyer) {
+        private void OnUnitDestroy(Unit unit, IAttack attack) {
             UIController.Instance.CloseInfoUI();
         }
 
@@ -143,6 +147,7 @@ namespace Andja.UI.Model {
                     foreach (LineRenderer goal in PatrolLineRendererList)
                         Destroy(goal.gameObject);
             }
+
             Vector2[] array = unit.PatrolCommand.ToPositionArray();
             if (array.Length == 0)
                 return;
@@ -150,6 +155,7 @@ namespace Andja.UI.Model {
                 GameObject target = Instantiate(unitPatrolGoalPrefab);
                 target.transform.position = new Vector3(v.x, v.y, -1);
             }
+
             if (array.Length == 1)
                 return;
 
@@ -166,6 +172,7 @@ namespace Andja.UI.Model {
                 if (array.Length == 2)
                     return;
             }
+
             unit.PatrolCommand.RegisterOnRouteChange(OnPatrolRouteChange);
         }
 
@@ -199,6 +206,7 @@ namespace Andja.UI.Model {
             if (currentlySelectedButton != null) {
                 currentlySelectedButton.image.color = Color.white;
             }
+
             //for the case it is open when scene change or game closes
             if (MouseController.Instance != null)
                 MouseController.Instance.SetMouseUnitState(MouseUnitState.Normal);
@@ -215,12 +223,14 @@ namespace Andja.UI.Model {
                 itemToGO.Add(i, iui);
                 return;
             }
+
             Item item = inv.GetItemInSpace(i);
             go.name = "item " + i;
             if (item.ID != null || item.ID.Length == 0) {
                 iui.SetItem(item, inv.MaxStackSize);
                 iui.AddClickListener((s) => { OnItemClick(i, s); });
             }
+
             itemToGO.Add(i, iui);
         }
 
@@ -242,10 +252,12 @@ namespace Andja.UI.Model {
             foreach (int i in itemToGO.Keys) {
                 GameObject.Destroy(itemToGO[i].gameObject);
             }
+
             itemToGO = new Dictionary<int, ItemUI>();
             for (int i = 0; i < inv.NumberOfSpaces; i++) {
                 AddItemGameObject(i);
             }
+
             inv = (UnitInventory)changedInv;
         }
 
@@ -253,17 +265,21 @@ namespace Andja.UI.Model {
             if (unit.CurrentHealth <= 0) {
                 UIController.Instance.CloseInfoUI();
             }
+
             if (unit.IsOwnedByCurrentPlayer()) {
                 if (IsCurrentShipUI) {
                     Ship ship = ((Ship)unit);
                     if (ship.HasCannonsToAddInInventory() != addCannon.gameObject.activeSelf) {
                         addCannon.gameObject.SetActive(ship.HasCannonsToAddInInventory());
                     }
+
                     if (ship.CanRemoveCannons() != removeCannon.gameObject.activeSelf) {
                         removeCannon.gameObject.SetActive(ship.CanRemoveCannons());
                     }
+
                     cannonsItem.RefreshItem(((Ship)unit).CannonItem);
                 }
+
                 if (unit.QueuedCommands != null) {
                     int moveCommandCount = 0;
                     for (int i = 0; i < unit.QueuedCommands.Count; i++) {
@@ -271,18 +287,22 @@ namespace Andja.UI.Model {
                         if (c is MoveCommand == false) {
                             continue; // TODO: make it otherwise visible
                         }
+
                         if (unitGoalGOs.Count - 1 <= moveCommandCount)
                             unitGoalGOs.Add(Instantiate(unitGoalPrefab));
                         unitGoalGOs[moveCommandCount].transform.position = c.Position;
                         moveCommandCount++;
                     }
+
                     while (unit.QueuedCommands.Count < unitGoalGOs.Count) {
                         Destroy(unitGoalGOs[unitGoalGOs.Count - 1]);
                         unitGoalGOs.RemoveAt(unitGoalGOs.Count - 1);
                     }
                 }
+
                 InfoUI.Instance.UpdateUpkeep(unit.UpkeepCost);
-            } 
+            }
+
             InfoUI.Instance.UpdateHealth(unit.CurrentHealth, unit.MaximumHealth);
         }
 
@@ -291,6 +311,7 @@ namespace Andja.UI.Model {
             if (IsCurrentShipUI == false) {
                 return;
             }
+
             Ship ship = ((Ship)unit);
             ship.AddCannonsFromInventory(InputHandler.ShiftKey);
         }
@@ -299,6 +320,7 @@ namespace Andja.UI.Model {
             if (IsCurrentShipUI == false) {
                 return;
             }
+
             Ship ship = ((Ship)unit);
             ship.RemoveCannonsToInventory(InputHandler.ShiftKey);
         }
@@ -312,12 +334,14 @@ namespace Andja.UI.Model {
                     unit.rangeUStructure.City.TradeUnit = null;
                 MouseController.Instance?.UnselectUnit(false);
             }
+
             DeselectButton();
             if (unitGoalGOs == null)
                 return;
             foreach (var unitGoalGO in unitGoalGOs) {
                 Destroy(unitGoalGO);
             }
+
             unitGoalGOs.Clear();
             if (unitPatrolGoalGOs != null)
                 foreach (GameObject goal in unitPatrolGoalGOs)
@@ -328,6 +352,7 @@ namespace Andja.UI.Model {
                         continue;
                     Destroy(goal.gameObject);
                 }
+
             unit = null;
         }
     }

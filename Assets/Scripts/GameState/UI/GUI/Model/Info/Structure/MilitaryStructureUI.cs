@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Andja.UI.Model {
-
     public class MilitaryStructureUI : MonoBehaviour {
         public GameObject unitSelectionPanel;
         public CurrentlyBuildingUnitUI currentlyBuildingUnit;
@@ -16,15 +15,18 @@ namespace Andja.UI.Model {
             if (CurrentMilitary == str) {
                 return;
             }
+
             if (str is MilitaryStructure == false) {
                 Debug.Log("Structure is not a Military!");
                 return;
             }
+
             CurrentMilitary = (MilitaryStructure)str;
             CurrentMilitary.RegisterOnDestroyCallback(OnStructureDestroy);
             foreach (Transform child in unitSelectionPanel.transform) {
                 Destroy(child.gameObject);
             }
+
             unitToBuildUI = new Dictionary<Unit, UnitBuildUI>();
             foreach (Unit u in CurrentMilitary.CanBeBuildUnits) {
                 if (u == null) {
@@ -41,10 +43,11 @@ namespace Andja.UI.Model {
                 ubui.AddClickListener(() => { CurrentMilitary.AddUnitToBuildQueue(temp); });
                 unitToBuildUI.Add(u, ubui);
             }
+
             currentlyBuildingUnit.Show(CurrentMilitary);
         }
 
-        private void OnStructureDestroy(Structure str, IWarfare destroyer) {
+        private void OnStructureDestroy(Structure str, IAttack attack) {
             UIController.Instance.CloseInfoUI();
         }
 

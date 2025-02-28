@@ -3,18 +3,41 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Andja.Model {
+    public enum TrackedStatisticGroups {
+        Unit,
+        City,
+        Structure,
+        Diplomatic,
+        War
+    }
 
-    public enum TrackedStatisticGroups { Unit, City, Structure, Diplomatic, War }
+    public enum TrackedUnitStatistics {
+        Built,
+        Destroyed,
+        Lost,
+        PiratesDestroyed
+    }
 
-    public enum TrackedUnitStatistics { Built, Destroyed, Lost, PiratesDestroyed }
+    public enum TrackedStructureStatistics {
+        Built,
+        Destroyed,
+        Lost,
+    }
 
-    public enum TrackedStructureStatistics { Built, Destroyed, Lost, }
+    public enum TrackedCityStatistics {
+        Created,
+        Lost, /*Captured*/
+    }
 
-    public enum TrackedCityStatistics { Created, Lost, /*Captured*/ }
+    public enum TrackedDiplomaticStatistics {
+        Standings, /*Captured*/
+    }
 
-    public enum TrackedDiplomaticStatistics { Standings, /*Captured*/ }
-
-    public enum TrackedWarStatistics { Times, Declared, Attacked /*Captured*/ }
+    public enum TrackedWarStatistics {
+        Times,
+        Declared,
+        Attacked /*Captured*/
+    }
 
     /// <summary>
     /// Tracks alot of diffrent Stats so it can be used for achievements and other related things.
@@ -96,11 +119,12 @@ namespace Andja.Model {
                 }
             }
 
-            private void OnUnitDestroy(Unit destroyed, IWarfare destroyer) {
+            private void OnUnitDestroy(Unit destroyed, IAttack attack) {
                 if (IsTracker(destroyed.PlayerNumber)) {
                     AddStat(TrackedUnitStatistics.Lost);
                 }
-                if (destroyer != null && IsTracker(destroyer.PlayerNumber)) {
+
+                if (attack != null && IsTracker(attack.PlayerNumber)) {
                     if (destroyed.PlayerNumber == Pirate.Number) {
                         AddStat(TrackedUnitStatistics.PiratesDestroyed);
                     }
@@ -146,11 +170,12 @@ namespace Andja.Model {
                 BuildController.Instance.RegisterStructureDestroyed(OnStructureDestroyed);
             }
 
-            private void OnStructureDestroyed(Structure str, IWarfare destroyer) {
+            private void OnStructureDestroyed(Structure str, IAttack attack) {
                 if (IsTracker(str.PlayerNumber)) {
                     AddStat(TrackedStructureStatistics.Lost);
                 }
-                if (destroyer != null && IsTracker(destroyer.PlayerNumber)) {
+
+                if (attack != null && IsTracker(attack.PlayerNumber)) {
                     AddStat(TrackedStructureStatistics.Destroyed);
                 }
             }
@@ -159,6 +184,7 @@ namespace Andja.Model {
                 if (load) {
                     return;
                 }
+
                 if (IsTracker(str.PlayerNumber)) {
                     AddStat(TrackedStructureStatistics.Built);
                 }
@@ -222,7 +248,6 @@ namespace Andja.Model {
 
         [JsonObject]
         private class DiplomaticStatistic : Statistic {
-
             public DiplomaticStatistic(int playerNumber) : base(playerNumber) {
                 Setup();
             }
@@ -246,7 +271,6 @@ namespace Andja.Model {
 
         [JsonObject]
         private class WarStatistics : Statistic {
-
             public WarStatistics(int playerNumber) : base(playerNumber) {
                 Setup();
             }
@@ -261,6 +285,7 @@ namespace Andja.Model {
                         AddStat(TrackedWarStatistics.Times);
                         AddStat(TrackedWarStatistics.Declared);
                     }
+
                     if (IsTracker(two.Number)) {
                         AddStat(TrackedWarStatistics.Times);
                         AddStat(TrackedWarStatistics.Attacked);

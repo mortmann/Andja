@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.UI.Model {
-
     public class NeedsUIController : MonoBehaviour {
         public GenericStructureUI structureUI;
         public GameObject needPrefab;
@@ -31,19 +30,23 @@ namespace Andja.UI.Model {
             foreach (Transform child in buttonPopulationsLevelContent.transform) {
                 Destroy(child.gameObject);
             }
+
             popLevelToGO = new Dictionary<int, ButtonSetter>();
             taxSlider.onValueChanged.AddListener(TaxSliderChange);
             foreach (PopulationLevelPrototypData pl in PrototypController.Instance.PopulationLevelDatas.Values) {
                 GameObject go = Instantiate(populationButtonPrefab);
                 go.transform.SetParent(buttonPopulationsLevelContent.transform, false);
                 ButtonSetter bs = go.GetComponent<ButtonSetter>();
-                bs.Set(pl.Name, () => { ChangeNeedLevel(pl.LEVEL); }, UISpriteController.GetIcon(pl.iconSpriteName), pl.Name);
+                bs.Set(pl.Name, () => { ChangeNeedLevel(pl.LEVEL); }, UISpriteController.GetIcon(pl.iconSpriteName),
+                    pl.Name);
                 popLevelToGO.Add(pl.LEVEL, bs);
                 bs.Interactable(Player.MaxPopulationLevel >= pl.LEVEL);
             }
+
             foreach (Transform child in needGroupCanvas.transform) {
                 Destroy(child.gameObject);
             }
+
             taxSlider.maxValue = 150;
             taxSlider.minValue = 50;
             taxSlider.wholeNumbers = true;
@@ -65,6 +68,7 @@ namespace Andja.UI.Model {
             if (this.home == home) {
                 return;
             }
+
             this.home = home;
             home.RegisterOnDestroyCallback(OnHomeDestroy);
             bool isPlayerHome = home.PlayerNumber == PlayerController.currentPlayerNumber;
@@ -80,8 +84,9 @@ namespace Andja.UI.Model {
                 ngui.Show(home);
                 ngui.gameObject.SetActive(
                     ngui.transform.Cast<Transform>().Any(child => child.gameObject.activeInHierarchy)
-                    );
+                );
             }
+
             float F = (float)Math.Round(home.GetTaxPercentage() * 100f, 2);
             taxSlider.value = F;
             structureUI.Show(home);
@@ -91,7 +96,7 @@ namespace Andja.UI.Model {
             }
         }
 
-        private void OnHomeDestroy(Structure arg1, IWarfare arg2) {
+        private void OnHomeDestroy(Structure arg1, IAttack attack) {
             UIController.Instance.CloseHomeUI();
         }
 
@@ -120,6 +125,7 @@ namespace Andja.UI.Model {
             if (home == null || home.PlayerNumber != PlayerController.currentPlayerNumber) {
                 return;
             }
+
             peopleCount.text = home.People + "/" + home.MaxLivingSpaces;
             if (home.CanBeUpgraded) {
                 upgradeButton.SetActive(true);
@@ -127,6 +133,7 @@ namespace Andja.UI.Model {
             else {
                 upgradeButton.SetActive(false);
             }
+
             switch (home.CurrentMood) {
                 case HomeStructure.CitizenMoods.Mad:
                     citizenCanvas.color = Color.red;
@@ -140,6 +147,7 @@ namespace Andja.UI.Model {
                     citizenCanvas.color = Color.green;
                     break;
             }
+
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 popLevelToGO[i].Interactable(home.PopulationLevel >= i);
             }

@@ -95,7 +95,7 @@ namespace Andja.UI.Model {
             }
             unitUI.gameObject.SetActive(true);
             unitUI.Show(unit);
-            GetPosition = () => unit.PositionVector2;
+            GetPosition = () => unit.Position;
             Sleep.gameObject.SetActive(false);
             Follow.gameObject.SetActive(true);
             Follow.onClick.RemoveAllListeners();

@@ -58,7 +58,7 @@ public class GameEventTest {
         PrototypeData.maxDuration = 5;
         PrototypeData.minDuration = 5;
         Mock<IEffect> effectMock = new Mock<IEffect>();
-        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(Target.World));
+        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(EventTarget.World));
         PrototypeData.effects = new IEffect[] { effectMock.Object };
         GameEvent.StartEvent(new Vector2(50, 50));
         AssertThat(GameEvent.currentDuration).IsEqualTo(5);
@@ -77,7 +77,7 @@ public class GameEventTest {
     [Test]
     public void EffectTarget() {
         Mock<IEffect> effectMock = new Mock<IEffect>();
-        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(Target.World));
+        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(EventTarget.World));
         PrototypeData.effects = new IEffect[] { effectMock.Object };
         GameEvent.target = mockUtil.EventableMock.Object;
         AssertThat(mockUtil.EventableMock).HasInvoked(e => e.AddEffect(It.IsAny<Effect>()));
@@ -86,9 +86,9 @@ public class GameEventTest {
     [Test]
     public void IsTarget() {
         Mock<IEffect> effectMock = new Mock<IEffect>();
-        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(Target.AllStructure));
+        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(EventTarget.AllStructure));
         PrototypeData.effects = new IEffect[] { effectMock.Object };
-        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(Target.AllStructure));
+        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(EventTarget.AllStructure));
         GameEvent.target = mockUtil.EventableMock.Object;
         AssertThat(GameEvent.IsTarget(mockUtil.EventableMock.Object)).IsTrue();
     }
@@ -96,9 +96,9 @@ public class GameEventTest {
     [Test]
     public void IsTarget_FalseOtherTarget() {
         Mock<IEffect> effectMock = new Mock<IEffect>();
-        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(Target.AllStructure));
+        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(EventTarget.AllStructure));
         PrototypeData.effects = new IEffect[] { effectMock.Object };
-        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(Target.AllUnit));
+        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(EventTarget.AllUnit));
         GameEvent.target = mockUtil.EventableMock.Object;
         AssertThat(GameEvent.IsTarget(mockUtil.EventableMock.Object)).IsFalse();
     }
@@ -106,10 +106,10 @@ public class GameEventTest {
     [Test]
     public void IsTarget_SpecialRange() {
         Mock<IEffect> effectMock = new Mock<IEffect>();
-        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(Target.AllStructure));
+        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(EventTarget.AllStructure));
         PrototypeData.effects = new IEffect[] { effectMock.Object };
-        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(Target.AllStructure));
-        PrototypeData.specialRange = new Dictionary<Target, List<string>> { { Target.AllStructure, new List<string> { "InRange" } } };
+        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(EventTarget.AllStructure));
+        PrototypeData.specialRange = new Dictionary<EventTarget, List<string>> { { EventTarget.AllStructure, new List<string> { "InRange" } } };
         mockUtil.EventableMock.Setup(e => e.GetID()).Returns("InRange");
         GameEvent.target = mockUtil.EventableMock.Object;
         AssertThat(GameEvent.IsTarget(mockUtil.EventableMock.Object)).IsTrue();
@@ -117,10 +117,10 @@ public class GameEventTest {
     [Test]
     public void IsTarget_FalseNotInSpecialRange() {
         Mock<IEffect> effectMock = new Mock<IEffect>();
-        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(Target.AllStructure));
+        effectMock.Setup(e => e.Targets).Returns(new TargetGroup(EventTarget.AllStructure));
         PrototypeData.effects = new IEffect[] { effectMock.Object };
-        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(Target.AllStructure));
-        PrototypeData.specialRange = new Dictionary<Target, List<string>> { { Target.AllStructure, new List<string> { "InRange" } } };
+        mockUtil.EventableMock.Setup(e => e.TargetGroups).Returns(new TargetGroup(EventTarget.AllStructure));
+        PrototypeData.specialRange = new Dictionary<EventTarget, List<string>> { { EventTarget.AllStructure, new List<string> { "InRange" } } };
         mockUtil.EventableMock.Setup(e => e.GetID()).Returns("NotInRange");
         GameEvent.target = mockUtil.EventableMock.Object;
         AssertThat(GameEvent.IsTarget(mockUtil.EventableMock.Object)).IsFalse();

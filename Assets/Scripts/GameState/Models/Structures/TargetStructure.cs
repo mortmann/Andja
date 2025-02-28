@@ -2,25 +2,22 @@ using Andja.Controller;
 using UnityEngine;
 
 namespace Andja.Model {
+    public class TargetStructurePrototypeData : StructurePrototypeData { }
 
-    public class TargetStructurePrototypeData : StructurePrototypeData {
-    }
-
-    public abstract class TargetStructure : Structure, ITargetable {
-
+    public abstract class TargetStructure : Structure {
         public Vector2 CurrentPosition => Center;
         public ArmorType ArmorType => PrototypController.Instance.StructureArmor;
 
-        public bool IsAttackableFrom(IWarfare warfare) {
+        public bool IsAttackableFrom(IAttack attack) {
             if (CanTakeDamage == false)
                 return false;
-            return warfare.DamageType.GetDamageMultiplier(ArmorType) > 0;
+            return attack.DamageType.GetDamageMultiplier(ArmorType) > 0;
         }
 
-        public void TakeDamageFrom(IWarfare warfare) {
-            ReduceHealth(warfare.GetCurrentDamage(ArmorType));
+        public void TakeDamageFrom(IAttack attack) {
+            ReduceHealth(attack.GetCurrentDamage(ArmorType));
             if (IsDestroyed == false && PlayerController.currentPlayerNumber == City.PlayerNumber) {
-                UI.Model.EventUIManager.Instance.Show(this, warfare);
+                UI.Model.EventUIManager.Instance.Show(this, attack);
             }
         }
 
@@ -31,6 +28,5 @@ namespace Andja.Model {
 
         public float Width => TileWidth;
         public float Height => TileHeight;
-
     }
 }

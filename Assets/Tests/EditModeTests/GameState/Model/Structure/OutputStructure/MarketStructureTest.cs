@@ -15,6 +15,7 @@ public class MarketStructureTest {
     OutputPrototypData PrototypeData;
     private MockUtil mockutil;
     private ICity City;
+
     [SetUp]
     public void SetUp() {
         PrototypeData = new OutputPrototypData() {
@@ -22,11 +23,14 @@ public class MarketStructureTest {
             structureRange = 20,
             tileWidth = 4,
             tileHeight = 4,
-            elements = { {typeof(CapturablePrototypeData), new CapturablePrototypeData() {
-                takeOverStartGoal = 100,
-                decreaseCaptureSpeed = 0.01f,
-                maximumCaptureSpeed = 0.05f
-            }}
+            elements = {
+                {
+                    typeof(CapturablePrototypeData), new CapturablePrototypeData() {
+                        takeOverStartGoal = 100,
+                        decreaseCaptureSpeed = 0.01f,
+                        maximumCaptureSpeed = 0.05f
+                    }
+                }
             }
         };
         mockutil = new MockUtil();
@@ -37,10 +41,10 @@ public class MarketStructureTest {
         mockutil.CityMock.Setup(x => x.RemoveTiles(It.IsAny<IEnumerable<Tile>>()));
         var Items = new Dictionary<string, Item>() {
             { ItemProvider.Brick.ID, ItemProvider.Brick.Clone() },
-            { ItemProvider.Tool.ID, ItemProvider.Tool.Clone()   },
-            { ItemProvider.Wood.ID, ItemProvider.Wood.Clone()   },
-            { ItemProvider.Fish.ID, ItemProvider.Fish.Clone()   },
-            { ItemProvider.Stone.ID, ItemProvider.Stone.Clone()   },
+            { ItemProvider.Tool.ID, ItemProvider.Tool.Clone() },
+            { ItemProvider.Wood.ID, ItemProvider.Wood.Clone() },
+            { ItemProvider.Fish.ID, ItemProvider.Fish.Clone() },
+            { ItemProvider.Stone.ID, ItemProvider.Stone.Clone() },
         };
         prototypeControllerMock.Setup(m => m.GetCopieOfAllItems()).Returns(() => {
             return Items.ToDictionary(x => x.Key, y => y.Value.Clone());
@@ -51,7 +55,7 @@ public class MarketStructureTest {
         Market = new MarketStructure(ID, null);
         CreateFourByFour();
     }
-    
+
     private void CreateFourByFour() {
         Market.City = mockutil.City;
         Market.OutputMarkedStructures = new List<OutputStructure>();
@@ -96,51 +100,57 @@ public class MarketStructureTest {
 
     [Test]
     public void Capture() {
-        Mock<IWarfare> warfare = new Mock<IWarfare>();
-        warfare.Setup(w => w.PlayerNumber).Returns(1);
+        Mock<ICapturer> capturer = new Mock<ICapturer>();
+        capturer.Setup(w => w.PlayerNumber).Returns(1);
         Capturable capturable = Market.GetElement<Capturable>();
         for (int i = 0; i < 20; i++) {
-            capturable.Capture(warfare.Object, 0.1f);
+            capturable.Capture(capturer.Object, 0.1f);
             capturable.OnUpdate(1f);
-            Assert.AreEqual(capturable.MaximumCaptureSpeed * 1f * (i+1), capturable.CapturedProgress, 0.0001);
+            Assert.AreEqual(capturable.MaximumCaptureSpeed * 1f * (i + 1), capturable.CapturedProgress, 0.0001);
         }
+
         Assert.IsTrue(capturable.Captured);
     }
+
     [Test]
     public void Capture_Stops_ReturnsToFull() {
-        Mock<IWarfare> warfare = new Mock<IWarfare>();
-        warfare.Setup(w => w.PlayerNumber).Returns(1);
+        Mock<ICapturer> capturer = new Mock<ICapturer>();
+        capturer.Setup(w => w.PlayerNumber).Returns(1);
         Capturable capturable = Market.GetElement<Capturable>();
 
         for (int i = 0; i < 20; i++) {
-            capturable.Capture(warfare.Object, 0.01f);
+            capturable.Capture(capturer.Object, 0.01f);
             capturable.OnUpdate(1f);
         }
+
         for (int i = 0; i < 10; i++) {
-            capturable.Capture(warfare.Object, 0);
+            capturable.Capture(capturer.Object, 0);
             capturable.OnUpdate(1f);
         }
+
         AssertThat(capturable.CapturedProgress).IsGreaterThan(0);
         for (int i = 0; i < 10; i++) {
-            capturable.Capture(warfare.Object, 0);
+            capturable.Capture(capturer.Object, 0);
             capturable.OnUpdate(1f);
         }
-        AssertThat(capturable.CapturedProgress).IsEqualTo(0,0.0001f);
+
+        AssertThat(capturable.CapturedProgress).IsEqualTo(0, 0.0001f);
         AssertThat(capturable.Captured).IsFalse();
     }
+
     [Test]
     public void DoneCapturing_WithCity() {
         Market.Tiles.ForEach(t => t.City = mockutil.City);
         Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
         Capturable capturable = Market.GetElement<Capturable>();
 
-        Mock<IWarfare> warfare = new Mock<IWarfare>();
-        warfare.Setup(w => w.PlayerNumber).Returns(1);
+        Mock<ICapturer> capturer = new Mock<ICapturer>();
+        capturer.Setup(w => w.PlayerNumber).Returns(1);
         mockutil.WorldIsland.Cities.Add(new City(1, mockutil.WorldIsland));
 
         Market.City = City;
         capturable.CapturedProgress = 1;
-        capturable.Capture(warfare.Object, 10010101);
+        capturable.Capture(capturer.Object, 10010101);
 
         Assert.AreEqual(1, Market.PlayerNumber);
         Assert.IsFalse(capturable.Captured);
@@ -152,12 +162,12 @@ public class MarketStructureTest {
         Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
         Capturable capturable = Market.GetElement<Capturable>();
 
-        Mock<IWarfare> warfare = new Mock<IWarfare>();
-        warfare.Setup(w => w.PlayerNumber).Returns(1);
+        Mock<ICapturer> capturer = new Mock<ICapturer>();
+        capturer.Setup(w => w.PlayerNumber).Returns(1);
 
         Market.City = City;
         capturable.CapturedProgress = 1;
-        capturable.Capture(warfare.Object, 10010101);
+        capturable.Capture(capturer.Object, 10010101);
 
         Assert.IsTrue(Market.IsDestroyed);
     }
@@ -169,7 +179,7 @@ public class MarketStructureTest {
     [TestCase(16, true)]
     public void InCityCheck_BuildTiles(int tilesInCity, bool expected) {
         Market.Tiles.Take(tilesInCity).ToList()
-                    .ForEach(x => x.City = City);
+            .ForEach(x => x.City = City);
         Assert.AreEqual(expected, Market.InCityCheck(Market.Tiles, City.PlayerNumber));
     }
 
@@ -180,7 +190,7 @@ public class MarketStructureTest {
     [TestCase(42, true)]
     public void InCityCheck_RangeTiles(int tilesInCity, bool expected) {
         Market.RangeTiles.Take(tilesInCity).ToList()
-                    .ForEach(x => x.City = City);
+            .ForEach(x => x.City = City);
         Assert.AreEqual(expected, Market.InCityCheck(Market.Tiles, City.PlayerNumber));
     }
 
@@ -209,7 +219,6 @@ public class MarketStructureTest {
         mockutil.CityMock.SetupGet(c => c.MarketStructures).Returns(new List<MarketStructure>());
         AssertThat(Market.GetRequiredItems(new OutputStructureTest.TestOutputStructure(), items))
             .AllSatisfy(newItem => items.ToList().Exists(x => x.ID == newItem.ID && newItem.count == 50));
-
     }
 
     [Test]
@@ -237,6 +246,7 @@ public class MarketStructureTest {
         Assert.IsFalse(routeOne.MarketStructures.Contains(Market));
         Assert.IsTrue(routeTwo.MarketStructures.Contains(Market));
     }
+
     [Test]
     public void RemoveRoute() {
         var road = new RoadStructure();
@@ -247,10 +257,9 @@ public class MarketStructureTest {
         Market.RemoveRoute(road.Route);
         Assert.IsFalse(road.Route.MarketStructures.Contains(Market));
         Assert.IsFalse(Market.GetRoutes().Contains(road.Route));
-
     }
-    [Test]
 
+    [Test]
     public void Destroy() {
         Market.Tiles.ForEach(t => t.City = mockutil.City);
         Market.RangeTiles.ToList().ForEach(t => t.City = mockutil.City);
@@ -263,24 +272,29 @@ public class MarketStructureTest {
 
     [Test]
     public void OnOutputChangedStructure_HasOutput_NoRoute() {
-        OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
+        OutputStructureTest.TestOutputStructure outputStructureTest =
+            new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
         Market.OutputMarkedStructures = new List<OutputStructure>();
         outputStructureTest.Output = new Item[] { ItemProvider.Tool_5 };
         Market.OnOutputChangedStructure(outputStructureTest);
         Assert.True(Market.OutputMarkedStructures.Contains(outputStructureTest));
     }
+
     [Test]
     public void OnOutputChangedStructure_NoOutput_NoRoute() {
-        OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
+        OutputStructureTest.TestOutputStructure outputStructureTest =
+            new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
         outputStructureTest.Output = new Item[] { ItemProvider.Wood };
 
         Market.OutputMarkedStructures = new List<OutputStructure>();
         Market.OnOutputChangedStructure(outputStructureTest);
         Assert.False(Market.OutputMarkedStructures.Contains(outputStructureTest));
     }
+
     [Test]
     public void OnOutputChangedStructure_HasOutput_Route() {
-        OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
+        OutputStructureTest.TestOutputStructure outputStructureTest =
+            new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
         Market.OutputMarkedStructures = new List<OutputStructure>();
 
         RoadStructure road = new RoadStructure();
@@ -290,13 +304,15 @@ public class MarketStructureTest {
         Market.OutputMarkedStructures = new List<OutputStructure>();
         outputStructureTest.Output = new Item[] { ItemProvider.Tool_5 };
         Market.OnOutputChangedStructure(outputStructureTest);
-        
+
         Assert.IsTrue(Market.WorkerJobsToDo.ContainsKey(outputStructureTest));
         Assert.IsFalse(Market.OutputMarkedStructures.Contains(outputStructureTest));
     }
+
     [Test]
     public void OnOutputChangedStructure_NoOutput_Route() {
-        OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
+        OutputStructureTest.TestOutputStructure outputStructureTest =
+            new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
         Market.OutputMarkedStructures = new List<OutputStructure>();
         outputStructureTest.Output = new Item[] { ItemProvider.Wood };
 
@@ -309,9 +325,11 @@ public class MarketStructureTest {
 
         Assert.IsFalse(Market.WorkerJobsToDo.ContainsKey(outputStructureTest));
     }
+
     [Test]
     public void OnStructureAdded_OutputStructure() {
-        OutputStructureTest.TestOutputStructure outputStructureTest = new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
+        OutputStructureTest.TestOutputStructure outputStructureTest =
+            new OutputStructureTest.TestOutputStructure("URG", new OutputPrototypData());
         Market.OutputMarkedStructures = new List<OutputStructure>();
 
         outputStructureTest.Output = Array.Empty<Item>();

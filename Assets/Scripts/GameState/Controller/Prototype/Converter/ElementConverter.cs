@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using System.Xml;
 using Andja.Model;
-using GameState.Models.Elements;
 using UnityEngine;
 
 namespace GameState.Controller.Prototype.Converter {
@@ -11,6 +10,8 @@ namespace GameState.Controller.Prototype.Converter {
             switch (child.Attributes["type"].Value) {
                 case "Capturable":
                     return SetFields(new CapturablePrototypeData(), child);
+                case "Attackable":
+                    return SetFields(new TargetPrototypeData(), child);
                 default:
                     Debug.LogError("Unknown element type");
                     return null;

@@ -14,20 +14,52 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Andja.Controller {
+    public enum MouseState {
+        Idle,
+        BuildDrag,
+        BuildPath,
+        BuildSingle,
+        Unit,
+        UnitGroup,
+        Destroy,
+        DragSelect,
+        Copy,
+        Upgrade
+    };
 
-    public enum MouseState { Idle, BuildDrag, BuildPath, BuildSingle, Unit, UnitGroup, Destroy, DragSelect, Copy, Upgrade };
+    public enum MouseUnitState {
+        None,
+        Normal,
+        Patrol,
+        Build
+    };
 
-    public enum MouseUnitState { None, Normal, Patrol, Build };
+    public enum TileHighlightType {
+        Green,
+        Red
+    }
 
-    public enum TileHighlightType { Green, Red }
+    public enum CursorType {
+        Pointer,
+        Attack,
+        Escort,
+        Destroy,
+        Build,
+        Copy,
+        Upgrade
+    }
 
-    public enum CursorType { Pointer, Attack, Escort, Destroy, Build, Copy, Upgrade }
-
-    public enum MapErrorMessage { NoSpace, NotEnoughResources, NotEnoughMoney, NotInCity, Missing,
+    public enum MapErrorMessage {
+        NoSpace,
+        NotEnoughResources,
+        NotEnoughMoney,
+        NotInCity,
+        Missing,
         NotInRange,
         CanNotBuildHere,
         CanNotDestroy
     }
+
     /// <summary>
     /// Controls all Mouse Interactions with the Map and Units.
     /// Shows Previews for Building and Destroy.
@@ -46,7 +78,7 @@ namespace Andja.Controller {
         /// <summary>
         /// If it is in either build or destroy mode
         /// </summary>
-        bool IsInBuildDestroyMode => MouseState == MouseState.BuildDrag || 
+        bool IsInBuildDestroyMode => MouseState == MouseState.BuildDrag ||
                                      MouseState == MouseState.BuildPath ||
                                      MouseState == MouseState.BuildSingle ||
                                      MouseState == MouseState.Destroy;
@@ -55,11 +87,14 @@ namespace Andja.Controller {
         /// The world-position of the mouse last frame.
         /// </summary>
         public Vector3 LastFramePosition { get; protected set; }
+
         /// <summary>
         /// The world-position of the mouse last frame with TileOffset.
         /// </summary>
-        public Vector3 CurrentFramePositionOffset => CurrentFramePosition 
-                                                    + new Vector3(TileSpriteController.offset, TileSpriteController.offset, 0);
+        public Vector3 CurrentFramePositionOffset => CurrentFramePosition
+                                                     + new Vector3(TileSpriteController.offset,
+                                                         TileSpriteController.offset, 0);
+
         public Vector3 LastFrameGuiPosition { get; protected set; }
         public Vector3 CurrentFramePosition { get; protected set; }
 
@@ -78,6 +113,7 @@ namespace Andja.Controller {
 
         BaseMouseState ActiveState;
         Dictionary<MouseState, BaseMouseState> typToMouseState;
+
         public Structure SelectedStructure {
             get => _selectedStructure;
             set {
@@ -131,6 +167,7 @@ namespace Andja.Controller {
             if (Instance != null) {
                 Debug.LogError("There should never be two mouse controllers.");
             }
+
             Instance = this;
         }
 
@@ -140,9 +177,11 @@ namespace Andja.Controller {
             foreach (ExtraStructureBuildUI esbu in extraStructureBuildUIPrefabsEditor) {
                 ExtraStructureBuildUIPrefabs[esbu.Type] = esbu.Prefab;
             }
-            if(EditorController.IsEditor) {
+
+            if (EditorController.IsEditor) {
                 SetupEditorMouseStates();
-            } else {
+            }
+            else {
                 SetupMouseStates();
             }
         }
@@ -162,7 +201,7 @@ namespace Andja.Controller {
             };
             ActiveState = typToMouseState[MouseState.Idle];
         }
-        
+
         private void SetupEditorMouseStates() {
             typToMouseState = new Dictionary<MouseState, BaseMouseState> {
                 [MouseState.Idle] = new IdleMouseState(),
@@ -193,6 +232,7 @@ namespace Andja.Controller {
             if (CurrentFramePosition.y < 0 || CurrentFramePosition.x < 0) {
                 return;
             }
+
             UpdateMouseStates();
             if (EditorController.IsEditor == false) {
                 CheckDragBoxSelect();
@@ -224,6 +264,7 @@ namespace Andja.Controller {
                     SetMouseState(MouseState.BuildSingle);
                     break;
             }
+
             //this has to be here to prevent the previous state to change the values
             NeededItemsToBuild = ToBuildStructure.BuildingItems?.CloneArrayWithCounts();
             NeededBuildCost = ToBuildStructure.BuildCost;
@@ -243,6 +284,7 @@ namespace Andja.Controller {
         public void SetMouseUnitState(MouseUnitState state) {
             MouseUnitState = state;
         }
+
         /// <summary>
         /// Moves Highlights with offset so that mouse is in the middle.
         /// </summary>
@@ -257,12 +299,13 @@ namespace Andja.Controller {
         public void UpdateMouseStates() {
             ActiveState.Update();
         }
+
         /// <summary>
         /// Responsible for detecting a drag not in Build/Destroy Mode 
         /// </summary>
         private void CheckDragBoxSelect() {
-            if (IsInBuildDestroyMode || MouseState == MouseState.DragSelect 
-                || EventSystem.current.IsPointerOverGameObject() || ShortcutUI.Instance.IsDragging)
+            if (IsInBuildDestroyMode || MouseState == MouseState.DragSelect
+                                     || EventSystem.current.IsPointerOverGameObject() || ShortcutUI.Instance.IsDragging)
                 return;
             if (InputHandler.GetMouseButton(InputMouse.Primary)) {
                 float sqrdist = (Input.mousePosition - LastFrameGuiPosition).sqrMagnitude;
@@ -276,7 +319,7 @@ namespace Andja.Controller {
             UnselectUnit();
             UnselectUnitGroup();
             UnselectStructure();
-            if(escape == false)
+            if (escape == false)
                 UIController.Instance.CloseMouseUnselect();
         }
 
@@ -285,8 +328,10 @@ namespace Andja.Controller {
         }
 
         public void ShowError(MapErrorMessage message, Vector3 position) {
-            TextMeshPro text = SimplePool.Spawn(fadeOutTextPrefab, position, Quaternion.identity).GetComponent<TextMeshPro>();
-            text.fontSize = Mathf.Max(8.333f * (CameraController.Instance.zoomLevel / CameraController.MaxZoomLevel), 2);
+            TextMeshPro text = SimplePool.Spawn(fadeOutTextPrefab, position, Quaternion.identity)
+                .GetComponent<TextMeshPro>();
+            text.fontSize = Mathf.Max(8.333f * (CameraController.Instance.zoomLevel / CameraController.MaxZoomLevel),
+                2);
             text.text = UILanguageController.Instance.GetTranslation(message);
             StartCoroutine(DespawnFade(text));
         }
@@ -299,6 +344,7 @@ namespace Andja.Controller {
         public void SetEditorBrushHighlightActive(bool brushBuild) {
             _highlightGO.SetActive(brushBuild);
         }
+
         /// <summary>
         /// Which tiles will be highlighted. 
         /// Size of the texture.
@@ -329,10 +375,11 @@ namespace Andja.Controller {
         }
 
         public void SelectUnitGroup(List<Unit> units) {
-            if(units.Count == 1) {
+            if (units.Count == 1) {
                 SelectUnit(units[0]);
                 return;
             }
+
             selectedUnitGroup = units;
             SelectedUnit = null;
             SetMouseState(MouseState.UnitGroup);
@@ -355,6 +402,7 @@ namespace Andja.Controller {
                     continue;
                 tex.SetPixel(t.X, t.Y, new Color32(255, 255, 255, 20));
             }
+
             tex.filterMode = FilterMode.Point;
             sr.sortingLayerName = "Structures";
             tex.Apply();
@@ -372,7 +420,7 @@ namespace Andja.Controller {
             if (closeUI)
                 UIController.Instance.CloseInfoUI();
         }
- 
+
         /// <summary>
         /// Send the build command to the buildcontroller based on what the player has selected.
         /// </summary>
@@ -385,10 +433,12 @@ namespace Andja.Controller {
             }
             else {
                 if (MouseUnitState == MouseUnitState.Build) {
-                    BuildController.Instance.CurrentPlayerBuildOnTile(t, buildPerTile, PlayerController.currentPlayerNumber, false, SelectedUnit);
+                    BuildController.Instance.CurrentPlayerBuildOnTile(t, buildPerTile,
+                        PlayerController.currentPlayerNumber, false, SelectedUnit);
                 }
                 else {
-                    BuildController.Instance.CurrentPlayerBuildOnTile(t, buildPerTile, PlayerController.currentPlayerNumber, false);
+                    BuildController.Instance.CurrentPlayerBuildOnTile(t, buildPerTile,
+                        PlayerController.currentPlayerNumber, false);
                 }
             }
         }
@@ -404,8 +454,9 @@ namespace Andja.Controller {
 
         public void ResetBuild(bool loading = false) {
             if (loading) {
-                return;// there is no need to call any following
+                return; // there is no need to call any following
             }
+
             if (BuildController.Instance.BuildState != BuildStateModes.None)
                 BuildController.Instance.ResetBuild();
             NeededBuildCost = 0;
@@ -432,16 +483,18 @@ namespace Andja.Controller {
                 UIController.Instance.CloseInfoUI();
                 UnselectUnitGroup();
             }
+
             if (selectedUnitGroup.Count == 1) {
                 UIController.Instance.CloseInfoUI();
                 UIController.Instance.OpenUnitUI(selectedUnitGroup[0]);
                 SelectUnit(selectedUnitGroup[0]);
                 selectedUnitGroup.Clear();
             }
+
             unit.UnregisterOnDestroyCallback(OnUnitDestroy);
         }
 
-        private void OnUnitDestroy(Unit unit, IWarfare warfare) {
+        private void OnUnitDestroy(Unit unit, IAttack attack) {
             if (SelectedUnit == unit) {
                 SetMouseState(MouseState.Idle);
                 _selectedUnit = null;
@@ -457,6 +510,7 @@ namespace Andja.Controller {
             if (SelectedUnit == null || SelectedUnit.IsOwnedByCurrentPlayer() == false) {
                 return;
             }
+
             SelectedUnit.GoIdle();
         }
 
@@ -469,7 +523,8 @@ namespace Andja.Controller {
         }
 
         public Transform MouseRayCast() {
-            return Physics2D.Raycast(new Vector2(CurrentFramePosition.x, CurrentFramePosition.y), Vector2.zero, 200).transform;
+            return Physics2D.Raycast(new Vector2(CurrentFramePosition.x, CurrentFramePosition.y), Vector2.zero, 200)
+                .transform;
         }
 
         /// <summary>
@@ -483,13 +538,14 @@ namespace Andja.Controller {
             SetMouseState(MouseState.Idle);
             SetMouseUnitState(MouseUnitState.None);
         }
+
         public void SetCopyMode(bool on) {
-            if(on) {
+            if (on) {
                 Escape();
                 SetMouseState(MouseState.Copy);
             }
             else {
-                if(MouseState == MouseState.Copy)
+                if (MouseState == MouseState.Copy)
                     SetMouseState(MouseState.Idle);
             }
         }
@@ -510,6 +566,5 @@ namespace Andja.Controller {
             public ExtraBuildUI Type;
             public GameObject Prefab;
         }
-
     }
 }

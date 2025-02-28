@@ -8,7 +8,6 @@ using System.Xml;
 using UnityEngine;
 using System.Linq;
 using GameState.Controller.Prototype.Converter;
-using GameState.Models.Elements;
 using Range = Andja.Utility.Range;
 
 namespace Andja.Controller { 
@@ -222,28 +221,28 @@ namespace Andja.Controller {
                     fi.SetValue(data, new Range(currentNode["lower"].GetIntValue(), currentNode["upper"].GetIntValue()));
                     continue;
                 }
-                if (fi.FieldType == typeof(Dictionary<Target, List<int>>)) {
-                    Dictionary<Target, List<int>> range = new Dictionary<Target, List<int>>();
+                if (fi.FieldType == typeof(Dictionary<EventTarget, List<int>>)) {
+                    Dictionary<EventTarget, List<int>> range = new Dictionary<EventTarget, List<int>>();
                     foreach (XmlNode child in currentNode.ChildNodes) {
-                        Target target;
+                        EventTarget eventTarget;
                         if (child.Attributes[0] == null)
                             continue;
-                        if (Enum.TryParse<Target>(child.Attributes[0].InnerXml, true, out target) == false)
+                        if (Enum.TryParse<EventTarget>(child.Attributes[0].InnerXml, true, out eventTarget) == false)
                             continue;
                         string[] ids = child.InnerXml.Split(',');
                         if (ids.Length == 0) {
                             continue;
                         }
-                        range.Add(target, new List<int>());
+                        range.Add(eventTarget, new List<int>());
                         foreach (string stringid in ids) {
                             int.TryParse(stringid, out int id);
                             if (id == -1)
                                 continue;
-                            range[target].Add(id);
+                            range[eventTarget].Add(id);
                         }
                     }
                     //clean up empty target groups
-                    List<Target> targets = new List<Target>(range.Keys);
+                    List<EventTarget> targets = new List<EventTarget>(range.Keys);
                     targets.RemoveAll(t => range[t].Count == 0);
                     //only if it has stuff we need to set it
                     if (range.Count > 0)
@@ -251,9 +250,9 @@ namespace Andja.Controller {
                     continue;
                 }
                 if (fi.FieldType == typeof(TargetGroup)) {
-                    List<Target> targets = new List<Target>();
+                    List<EventTarget> targets = new List<EventTarget>();
                     foreach (XmlNode child in currentNode.ChildNodes) {
-                        if (Enum.TryParse(child.InnerXml, true, out Target target) == false)
+                        if (Enum.TryParse(child.InnerXml, true, out EventTarget target) == false)
                             continue;
                         targets.Add(target);
                     }

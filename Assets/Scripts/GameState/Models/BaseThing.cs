@@ -6,23 +6,23 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using GameState.Models.Elements;
 using UnityEngine;
 
 public abstract class BaseThing : GEventable {
-
     protected BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
 
     private Dictionary<Type, Element> Elements = new Dictionary<Type, Element>();
 
     private BaseThingData GetPrototypeData() {
-        if(this is Structure) {
+        if (this is Structure) {
             return PrototypController.Instance.GetStructurePrototypDataForID(ID);
         }
+
         if (this is Unit) {
             return PrototypController.Instance.GetUnitPrototypDataForID(ID);
         }
+
         Log.PROTOTYPE_ERROR("No Prototyp Data Type for this " + this);
         return null;
     }
@@ -31,8 +31,13 @@ public abstract class BaseThing : GEventable {
 
     [JsonPropertyAttribute] protected float currentHealth;
 
+    [JsonPropertyAttribute] protected bool isActive = true;
+
+    public virtual bool IsActive => isActive;
     public float MaximumHealth => CalculateRealValue(nameof(Data.maxHealth), Data.maxHealth);
-    public int UpkeepCost => CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost).ClampZero(); //UNTESTED HOW THIS WILL WORK
+
+    public int UpkeepCost =>
+        CalculateRealValue(nameof(Data.upkeepCost), Data.upkeepCost).ClampZero(); //UNTESTED HOW THIS WILL WORK
 
     public bool IsDestroyed => CurrentHealth <= 0;
     public bool CanTakeDamage => Data.canTakeDamage;
@@ -43,9 +48,10 @@ public abstract class BaseThing : GEventable {
     public int PopulationLevel => Data.populationLevel;
     public int PopulationCount => Data.populationCount;
     public bool IsStructure => this is Structure;
-    public bool IsUnit => this is Unit; 
+    public bool IsUnit => this is Unit;
 
     public abstract Vector2 Position { get; }
+
     public float CurrentHealth {
         get => currentHealth;
         set {
@@ -53,36 +59,42 @@ public abstract class BaseThing : GEventable {
             if (CanTakeDamage == false) {
                 return;
             }
+
             if (currentHealth <= 0) {
                 Destroy();
             }
         }
     }
 
+    public abstract int PlayerNumber { get; }
+
     public void OnBaseThingBuild(bool loading = false) {
         foreach (Element element in Elements.Values) {
             element.OnStart(loading);
         }
+
         OnBuild(loading);
     }
+
     public abstract void OnBuild(bool loading = false);
 
-    public void ReduceHealth(float damage, IWarfare warfare = null) {
+    public void ReduceHealth(float damage, IAttack attack = null) {
         if (CanTakeDamage == false) {
             return;
         }
+
         if (CurrentHealth <= 0) // fix for killing it too many times -- triggering destroy multiple times
             return;
         if (damage < 0) {
             Debug.LogWarning("Damage should be never smaller than 0 - Fix it!");
             return;
         }
+
         CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, MaximumHealth);
-        OnReduceHealth(damage, warfare);
+        OnReduceHealth(damage, attack);
     }
 
-    protected virtual void OnReduceHealth(float damage, IWarfare warfare) {
-    }
+    protected virtual void OnReduceHealth(float damage, IAttack attack) { }
 
     public void RepairHealth(float heal) {
         if (IsDestroyed) return;
@@ -90,23 +102,25 @@ public abstract class BaseThing : GEventable {
             Debug.LogWarning("Healing should be never smaller than 0 - Fix it!");
             return;
         }
+
         CurrentHealth += heal;
         CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaximumHealth);
     }
+
     public void Update(float deltaTime) {
         if (CurrentHealth > MaximumHealth) {
             //Values got changed or maybe upgrade lost? we need to reduce it slowly
             CurrentHealth = Mathf.Clamp(CurrentHealth - 10 * deltaTime, MaximumHealth, CurrentHealth);
         }
+
         UpdateEffects(deltaTime);
         OnUpdate(deltaTime);
-        foreach(Element element in Elements.Values) {
+        foreach (Element element in Elements.Values) {
             element.OnUpdate(deltaTime);
         }
     }
 
-    protected virtual void OnUpdate(float deltaTime) {
-    }
+    protected virtual void OnUpdate(float deltaTime) { }
 
 
     public void ChangeHealth(float change) {
@@ -115,36 +129,42 @@ public abstract class BaseThing : GEventable {
         if (change > 0)
             RepairHealth(change);
     }
-    
+
     /// <summary>
     /// Destroys this immedietly and without any further checks. 
     /// </summary>
     /// <param name="destroyer"></param>
     /// <param name="onLoad"></param>
     /// <returns></returns>
-    public bool Destroy(IWarfare destroyer = null, bool onLoad = false) {
+    public bool Destroy(IAttack destroyer = null, bool onLoad = false) {
         foreach (Element element in Elements.Values) {
             element.OnDestroy();
         }
+
         return OnDestroy(destroyer, onLoad);
     }
+
+    public virtual bool IsInRange(Target target, float range) {
+        return (target.CurrentPosition - Position).magnitude <= range;
+    }
+
     public bool AddElement(Element element) {
         return Elements.TryAdd(element.GetType(), element);
     }
-    
-    public T GetElement<T> () where T : Element {
-        return (T) Elements[typeof(T)];
+
+    public T GetElement<T>() where T : Element {
+        return (T)Elements[typeof(T)];
     }
 
     public bool HasElement<T>() where T : Element {
         return Elements.ContainsKey(typeof(T));
     }
-    
-    protected virtual bool OnDestroy(IWarfare destroyer = null, bool onLoad = false) {
+
+    protected virtual bool OnDestroy(IAttack destroyer = null, bool onLoad = false) {
         return true;
     }
 
     public T GetElementData<T>() where T : ElementData {
-        return (T) Data.elements[typeof(T)];
+        return (T)Data.elements[typeof(T)];
     }
 }

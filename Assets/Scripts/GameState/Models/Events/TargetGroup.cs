@@ -2,7 +2,7 @@
 
 namespace Andja.Model {
 
-    public enum Target {
+    public enum EventTarget {
         World, Player, Island, City,
         AllUnit, Ship, LandUnit,
         AllStructure, DamageableStructure, BurnableStructure,
@@ -12,25 +12,25 @@ namespace Andja.Model {
     }
 
     public class TargetGroup {
-        public static List<Target> GetStructureTargets() {
-            return new List<Target> { Target.AllStructure, Target.DamageableStructure, Target.BurnableStructure,
-                Target.RoadStructure, Target.NeedStructure, Target.MilitaryStructure, Target.HomeStructure, 
-                Target.ServiceStructure, Target.GrowableStructure, Target.OutputStructure, Target.MarketStructure, 
-                Target.WarehouseStructure, Target.MineStructure, Target.FarmStructure, Target.ProductionStructure };
+        public static List<EventTarget> GetStructureTargets() {
+            return new List<EventTarget> { EventTarget.AllStructure, EventTarget.DamageableStructure, EventTarget.BurnableStructure,
+                EventTarget.RoadStructure, EventTarget.NeedStructure, EventTarget.MilitaryStructure, EventTarget.HomeStructure, 
+                EventTarget.ServiceStructure, EventTarget.GrowableStructure, EventTarget.OutputStructure, EventTarget.MarketStructure, 
+                EventTarget.WarehouseStructure, EventTarget.MineStructure, EventTarget.FarmStructure, EventTarget.ProductionStructure };
         }
-        public static List<Target> GetUnitTargets() {
-            return new List<Target> { Target.AllUnit, Target.Ship, Target.LandUnit };
+        public static List<EventTarget> GetUnitTargets() {
+            return new List<EventTarget> { EventTarget.AllUnit, EventTarget.Ship, EventTarget.LandUnit };
         }
 
-        public HashSet<Target> Targets;
+        public HashSet<EventTarget> Targets;
 
-        public TargetGroup(params Target[] targets) {
-            Targets = new HashSet<Target>();
+        public TargetGroup(params EventTarget[] targets) {
+            Targets = new HashSet<EventTarget>();
             Targets.UnionWith(targets);
         }
 
-        public TargetGroup(ICollection<Target> targets) {
-            Targets = new HashSet<Target>();
+        public TargetGroup(ICollection<EventTarget> targets) {
+            Targets = new HashSet<EventTarget>();
             Targets.UnionWith(targets);
         }
 
@@ -38,7 +38,7 @@ namespace Andja.Model {
             Targets.UnionWith(target.Targets);
         }
 
-        public bool IsTargeted(IEnumerable<Target> beingTargeted) {
+        public bool IsTargeted(IEnumerable<EventTarget> beingTargeted) {
             return Targets.Overlaps(beingTargeted);
         }
 

@@ -32,14 +32,13 @@ namespace Andja.Model {
 
     [JsonObject(MemberSerialization.OptIn)]
     public class AttackCommand : Command {
-        public override bool IsFinished => Target.IsDestroyed;
+        public override bool IsFinished => Target.Parent.IsDestroyed;
         public override UnitMainModes MainMode => UnitMainModes.Attack;
         public override Vector2 Position => Target.CurrentPosition;
 
-        [JsonPropertyAttribute] public ITargetable Target;
-        [JsonPropertyAttribute] public int playerNumber;
+        [JsonPropertyAttribute] public Target Target;
 
-        public AttackCommand(ITargetable target) {
+        public AttackCommand(Target target) {
             this.Target = target;
         }
 
@@ -48,13 +47,13 @@ namespace Andja.Model {
     }
     [JsonObject(MemberSerialization.OptIn)]
     public class AggroCommand : AttackCommand {
-        public override bool IsFinished => Target.IsDestroyed || isDone;
+        public override bool IsFinished => Target.Parent.IsDestroyed || isDone;
         public override UnitMainModes MainMode => UnitMainModes.Aggroing;
 
         [JsonPropertyAttribute] public Vector2 StartPosition;
         [JsonPropertyAttribute] bool isDone;
 
-        public AggroCommand(ITargetable target, Vector2 startPosition) {
+        public AggroCommand(Target target, Vector2 startPosition) {
             this.Target = target;
             StartPosition = startPosition;
         }
@@ -69,12 +68,12 @@ namespace Andja.Model {
     }
     [JsonObject(MemberSerialization.OptIn)]
     public class CaptureCommand : Command {
-        public override bool IsFinished => Target.GetElement<Capturable>().Captured;
+        public override bool IsFinished => Target.Captured;
         public override UnitMainModes MainMode => UnitMainModes.Capture;
-        [JsonPropertyAttribute] public Structure Target;
-        public override Vector2 Position => Target.Center;
+        [JsonPropertyAttribute] public Capturable Target;
+        public override Vector2 Position => Target.Parent.Position;
 
-        public CaptureCommand(Structure target) {
+        public CaptureCommand(Capturable target) {
             this.Target = target;
         }
 

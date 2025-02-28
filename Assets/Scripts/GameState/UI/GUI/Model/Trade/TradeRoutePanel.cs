@@ -9,7 +9,6 @@ using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
 namespace Andja.UI.Model {
-
     public class TradeRoutePanel : MonoBehaviour {
         public static TradeRoutePanel Instance;
         public const int TradeAmountMaximum = 100;
@@ -29,6 +28,7 @@ namespace Andja.UI.Model {
         public Transform allTradeRoutesList;
 
         private Item _currentlySelectedItem;
+
         private Item CurrentlySelectedItem {
             get { return _currentlySelectedItem; }
             set {
@@ -54,9 +54,11 @@ namespace Andja.UI.Model {
                     continue;
                 Destroy(child.gameObject);
             }
+
             foreach (Transform child in currentShipList.transform) {
                 Destroy(child.gameObject);
             }
+
             tradeRouteToGameObject = new Dictionary<TradeRoute, GameObject>();
             shipToGOElement = new Dictionary<Ship, ShipElement>();
             itemToGameObject = new Dictionary<Item, ItemUI>();
@@ -68,11 +70,14 @@ namespace Andja.UI.Model {
                 if (item.IsShip == false || item.IsOwnedByCurrentPlayer() == false) {
                     continue;
                 }
+
                 OnShipCreate(item);
             }
+
             foreach (TradeRoute tr in PlayerController.CurrentPlayer.TradeRoutes) {
                 AddTradeRouteToList(tr);
             }
+
             if (PlayerController.CurrentPlayer.TradeRoutes.Count == 0)
                 CreateNewTradeRoute();
             else
@@ -85,7 +90,7 @@ namespace Andja.UI.Model {
             tradeRouteToGameObject.Remove(tradeRoute);
         }
 
-        public void OnShipDestroy(Unit unit, IWarfare warfare) {
+        public void OnShipDestroy(Unit unit, IAttack attack) {
             if (unit.IsOwnedByCurrentPlayer() == false || unit is Ship == false)
                 return;
             Ship ship = (Ship)unit;
@@ -110,6 +115,7 @@ namespace Andja.UI.Model {
             if (CurrentlySelectedItem == null || itemToGameObject.ContainsKey(CurrentlySelectedItem) == false) {
                 return;
             }
+
             CurrentlySelectedItem.count = (int)f;
             itemToGameObject[CurrentlySelectedItem].ChangeItemCount(f);
             //tradeRoute.ChangeItemAmount(city, CurrentlySelectedItem);
@@ -194,6 +200,7 @@ namespace Andja.UI.Model {
             if (tradeRoute.Contains(c) == false) {
                 return;
             }
+
             SetCity(c);
         }
 
@@ -229,8 +236,8 @@ namespace Andja.UI.Model {
             ItemUI ui = gameObject.GetComponent<ItemUI>();
             ui.SetItem(item, TradeAmountMaximum);
             ui.AddClickListener((PointerEventData) => {
-                OnItemClick(item, ((PointerEventData)PointerEventData).button);
-            }
+                    OnItemClick(item, ((PointerEventData)PointerEventData).button);
+                }
             );
             ui.ChangeItemCount(amountSlider.value);
             item.count = (int)amountSlider.value;
@@ -245,6 +252,7 @@ namespace Andja.UI.Model {
                     gameObject.transform.SetSiblingIndex(unloadItemParent.childCount - 2);
                     break;
             }
+
             tradeRoute.AddItemToTrade(city, item, typ);
             itemToGameObject.Add(item, ui);
             CurrentlySelectedItem = item;
@@ -262,6 +270,7 @@ namespace Andja.UI.Model {
                 Debug.LogError("NO TRADEROUTE");
                 return -1;
             }
+
             if (selected) {
                 SetCity(city);
                 //not that good
@@ -279,6 +288,7 @@ namespace Andja.UI.Model {
             foreach (ItemUI i in itemToGameObject.Values) {
                 GameObject.Destroy(i.transform.gameObject);
             }
+
             itemToGameObject.Clear();
         }
 
@@ -291,8 +301,9 @@ namespace Andja.UI.Model {
             TradeRoute.Trade t = tradeRoute.GetTrade(tradeRouteCityState);
             SetCity(t.city);
         }
+
         public void SetCity(ICity c) {
-            if(c != null) {
+            if (c != null) {
                 text.text = c.Name;
                 ResetItemIcons();
                 city = c;
@@ -300,9 +311,11 @@ namespace Andja.UI.Model {
                 if (t == null) {
                     return;
                 }
+
                 foreach (Item i in t.load) {
                     AddItem(i, TradeTyp.Load);
                 }
+
                 foreach (Item i in t.unload) {
                     AddItem(i, TradeTyp.Unload);
                 }

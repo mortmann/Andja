@@ -15,7 +15,7 @@ public class MockUtil {
     public Mock<IWorld> WorldMock;
     public Mock<ICity> CityMock;
     public Mock<ICity> OtherCityMock;
-    public Mock<IWarfare> IWarfareMock;
+    public Mock<IAttack> AttackMock;
     public Mock<IPlayer> IPlayerMock;
 
     public IPlayer Player => IPlayerMock.Object;
@@ -31,8 +31,10 @@ public class MockUtil {
 
     public Island WorldIsland;
     Dictionary<(int, int), Tile> tiles = new Dictionary<(int, int), Tile>();
+
     public Dictionary<string, Item> AllItems = new Dictionary<string, Item>() {
-        { ItemProvider.Brick.ID, ItemProvider.Brick.Clone()
+        {
+            ItemProvider.Brick.ID, ItemProvider.Brick.Clone()
         },
         { ItemProvider.Tool.ID, ItemProvider.Tool.Clone() },
         { ItemProvider.Wood.ID, ItemProvider.Wood.Clone() },
@@ -48,7 +50,8 @@ public class MockUtil {
         PlayerControllerMock = new Mock<IPlayerController>();
         PlayerControllerMock.Setup(pc => pc.HasEnoughMoney(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
         PlayerControllerMock.SetupGet(pc => pc.Players).Returns(new List<Player>() { new Player() });
-        PlayerControllerMock.Setup(pc => pc.GetPlayer(It.IsAny<int>())).Returns((int num) => new Player(num, false, 50000));
+        PlayerControllerMock.Setup(pc => pc.GetPlayer(It.IsAny<int>()))
+            .Returns((int num) => new Player(num, false, 50000));
 
         PlayerController.Instance = PlayerControllerMock.Object;
 
@@ -71,14 +74,15 @@ public class MockUtil {
 
         WorldMock = new Mock<IWorld>();
         World.Current = WorldMock.Object;
-        WorldMock.Setup(w => w.GetTileAt(It.IsAny<float>(), It.IsAny<float>())).Returns((float x, float y) => CreateTile(x, y));
+        WorldMock.Setup(w => w.GetTileAt(It.IsAny<float>(), It.IsAny<float>()))
+            .Returns((float x, float y) => CreateTile(x, y));
         WorldMock.Setup(w => w.GetTileAt(It.IsAny<int>(), It.IsAny<int>())).Returns((int x, int y) => CreateTile(x, y));
         WorldMock.Setup(w => w.GetTileAt(It.IsAny<Vector2>())).Returns((Vector2 vec) => CreateTile(vec.x, vec.y));
 
         BuildControllerMock = new Mock<IBuildController>();
         BuildController.Instance = BuildControllerMock.Object;
 
-        IWarfareMock = new Mock<IWarfare>();
+        AttackMock = new Mock<IAttack>();
         pathfindingMock = new Mock<PathfindingThreadHandler>();
         PathfindingThreadHandler.Instance = pathfindingMock.Object;
 
@@ -104,27 +108,31 @@ public class MockUtil {
             .Returns<ICity>((c) => new List<PopulationLevel>() { new PopulationLevel(0, c, null) });
         return this;
     }
+
     public MockUtil WithPopulationLevelMock() {
         PopulationMock = new Mock<IPopulationLevel>();
         return this;
     }
 
     public LandTile GetInCityTile(int x, int y) {
-        LandTile tile = World.Current.GetTileAt(x,y) as LandTile;
+        LandTile tile = World.Current.GetTileAt(x, y) as LandTile;
         tile.City = City;
         return tile;
     }
+
     public LandTile GetInOtherCityTile(int x, int y) {
         LandTile tile = World.Current.GetTileAt(x, y) as LandTile;
         tile.City = OtherCity;
         return tile;
     }
+
     private Tile CreateTile(float fx, float fy) {
         int x = (int)fx;
         int y = (int)fy;
-        if(tiles.ContainsKey((x,y))) {
+        if (tiles.ContainsKey((x, y))) {
             return tiles[(x, y)];
         }
+
         LandTile t = new LandTile(x, y) {
             Type = TileType.Dirt,
             Island = WorldIsland

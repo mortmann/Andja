@@ -6,19 +6,37 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
+    public enum ServiceTarget {
+        All,
+        Damageable,
+        Military,
+        Homes,
+        Production,
+        Service,
+        NeedStructure,
+        SpecificRange,
+        City,
+        None
+    }
 
-    public enum ServiceTarget { All, Damageable, Military, Homes, Production, Service, NeedStructure, SpecificRange, City, None }
-
-    public enum ServiceFunction { None, Repair, AddEffect, RemoveEffect, PreventEffect }
+    public enum ServiceFunction {
+        None,
+        Repair,
+        AddEffect,
+        RemoveEffect,
+        PreventEffect
+    }
 
     public class ServiceStructurePrototypeData : StructurePrototypeData {
         public ServiceTarget targets = ServiceTarget.All;
         public ServiceFunction function;
         public Structure[] specificRange = null;
+
         public Effect[] effectsOnTargets;
+
         //IF the order of this changes it will not have massive effect
         //but it will change how much of each is in it atm look at remainingItems
-        public Item[] usageItems; 
+        public Item[] usageItems;
         public float[] usagePerTick;
         public int maxNumberOfWorker = 1;
         public float workSpeed = 0.01f;
@@ -48,18 +66,19 @@ namespace Andja.Model {
         public Func<Structure, float, bool> WorkOnTarget { get; protected set; }
         protected Action<Structure> todoOnNewTarget;
         protected Action<Structure> onTargetChanged;
-        protected Action<Structure, IWarfare> onTargetDestroy;
+        protected Action<Structure, IAttack> onTargetDestroy;
         protected Action<Structure> onSelfDestroy;
 
         protected Action<GEventable, Effect, bool> onTargetEffectChange;
 
         protected ServiceStructurePrototypeData serviceData;
+
         //TODO: make it possible service structure to need certain items every time unit to function(otherwise inactive)
-        public ServiceStructurePrototypeData ServiceData => serviceData ??= (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+        public ServiceStructurePrototypeData ServiceData => serviceData ??=
+            (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
 
 
-        public ServiceStructure() {
-        }
+        public ServiceStructure() { }
 
         protected ServiceStructure(ServiceStructure s) : base() {
             BaseCopyData(s);
@@ -78,10 +97,12 @@ namespace Andja.Model {
             if (remainingUsageItems == null && UsageItems != null) {
                 remainingUsageItems = new float[UsageItems.Length];
             }
+
             if (Targets == ServiceTarget.City) {
                 AddEffectCity();
                 return;
             }
+
             jobsToDo = new List<Structure>();
             SetCallbacks();
             SetUpStructures();
@@ -101,7 +122,8 @@ namespace Andja.Model {
         }
 
         private IEnumerable<Tile> GetEffectedStructuresInRange() {
-            return RangeTiles.GroupBy(x=>x.Structure).SelectMany(group => group.ToList()).Where(IsStructureTileEffected);
+            return RangeTiles.GroupBy(x => x.Structure).SelectMany(group => group.ToList())
+                .Where(IsStructureTileEffected);
         }
 
         private bool IsStructureTileEffected(Tile t) {
@@ -128,6 +150,7 @@ namespace Andja.Model {
                         todoOnNewTarget += RegisterOnStructureEffectChanged;
                         onTargetEffectChange += CheckForMissingEffect;
                     }
+
                     onTargetDestroy += UnregisterOnStructureEffectChanged;
                     todoOnNewTarget += ImproveTarget;
                     onSelfDestroy += RemoveTargetEffect;
@@ -158,15 +181,17 @@ namespace Andja.Model {
             if (started) {
                 return;
             }
+
             if (Array.Exists(EffectsOnTargets, element => element.ID == effect.ID) == false) {
                 return;
             }
+
             if (eventable.HasEffect(effect) && effect.IsUnique)
                 return;
             eventable.AddEffect(new Effect(effect.ID));
         }
 
-        private void RemoveFromJobs(Structure str, IWarfare destroyer) {
+        private void RemoveFromJobs(Structure str, IAttack attack) {
             if (jobsToDo.Contains(str))
                 jobsToDo.Remove(str);
         }
@@ -181,11 +206,13 @@ namespace Andja.Model {
             if (Array.Exists(EffectsOnTargets, element => element.ID == eff.ID) == false) {
                 return;
             }
+
             if (started == false) {
                 if (jobsToDo.Contains(structure))
                     jobsToDo.Remove(structure);
                 return;
             }
+
             EnqueueJob(structure);
         }
 
@@ -195,6 +222,7 @@ namespace Andja.Model {
                     jobsToDo.Remove(obj);
                 return;
             }
+
             EnqueueJob(obj);
         }
 
@@ -230,6 +258,7 @@ namespace Andja.Model {
                 if (strEffect.WorkAmount >= 1)
                     str.RemoveEffect(strEffect);
             }
+
             return false;
         }
 
@@ -248,12 +277,13 @@ namespace Andja.Model {
         }
 
         protected override void OnUpdate(float deltaTime) {
-            if(UsageItems != null) {
-                if(usageTickTimer > 0) {
+            if (UsageItems != null) {
+                if (usageTickTimer > 0) {
                     usageTickTimer = Mathf.Clamp(usageTickTimer - deltaTime, 0, UsageTickTime);
-                } else {
+                }
+                else {
                     for (int i = 0; i < remainingUsageItems.Length; i++) {
-                        if(remainingUsageItems[i] < UsagePerTick[i]) {
+                        if (remainingUsageItems[i] < UsagePerTick[i]) {
                             if (City.HasEnoughOfItem(UsageItems[i])) {
                                 //has not enough and can get more
                                 City.Inventory.RemoveItemAmount(UsageItems[i]);
@@ -265,7 +295,8 @@ namespace Andja.Model {
                                 CanWork = false;
                                 break;
                             }
-                        } else {
+                        }
+                        else {
                             //has enough in internal stock for operation
                             remainingUsageItems[i] -= UsageItems[i].count;
                             CanWork = true;
@@ -274,6 +305,7 @@ namespace Andja.Model {
                     }
                 }
             }
+
             SendOutWorkerIfCan();
             if (workers == null)
                 return;
@@ -289,16 +321,18 @@ namespace Andja.Model {
             if (jobsToDo == null || jobsToDo.Count == 0)
                 return;
             workers ??= new List<Worker>();
-            if(UsageItems != null) {
+            if (UsageItems != null) {
                 if (CanWork == false)
                     return;
             }
+
             if (workers.Count >= MaxNumberOfWorker) {
                 return;
             }
-            Structure s = jobsToDo.Where(str => Function != ServiceFunction.Repair 
+
+            Structure s = jobsToDo.Where(str => Function != ServiceFunction.Repair
                                                 || str.HasNegativeEffect == false)
-                                  .FirstOrDefault(CanReachStructure);
+                .FirstOrDefault(CanReachStructure);
             jobsToDo.Remove(s);
             Worker w = new Worker(this, s, WorkSpeed, ServiceData.workerID ?? "placeholder_road");
             World.Current.CreateWorkerGameObject(w);
@@ -309,7 +343,7 @@ namespace Andja.Model {
             str.RegisterOnChangedCallback(onTargetChanged);
         }
 
-        public void UnregisterOnStructureChange(Structure str, IWarfare destroyer) {
+        public void UnregisterOnStructureChange(Structure str, IAttack attack) {
             str.UnregisterOnChangedCallback(onTargetChanged);
         }
 
@@ -317,7 +351,7 @@ namespace Andja.Model {
             str.RegisterOnEffectChangedCallback(onTargetEffectChange);
         }
 
-        public void UnregisterOnStructureEffectChanged(Structure str, IWarfare destroyer) {
+        public void UnregisterOnStructureEffectChanged(Structure str, IAttack attack) {
             str.UnregisterOnEffectChangedCallback(onTargetEffectChange);
         }
 
@@ -341,26 +375,32 @@ namespace Andja.Model {
                 RemoveEffectCity();
                 return;
             }
+
             if (workers != null) {
                 for (int i = workers.Count - 1; i >= 0; i--) {
                     workers[i].Destroy();
                 }
             }
+
             if (RangeTiles != null) {
                 foreach (var t in GetEffectedStructuresInRange()) {
                     foreach (Effect effect in EffectsOnTargets) {
                         t.Structure.RemoveEffect(effect);
                     }
+
                     UnregisterOnStructureChange(t.Structure, null);
                     UnregisterOnStructureEffectChanged(t.Structure, null);
                     onSelfDestroy?.Invoke(t.Structure);
                 }
             }
+
             City.UnregisterStructureAdded(OnAddedStructure);
         }
+
         public override void Load() {
             base.Load();
-            if (UsageItems != null && (remainingUsageItems == null || remainingUsageItems.Length != UsageItems.Length)) {
+            if (UsageItems != null &&
+                (remainingUsageItems == null || remainingUsageItems.Length != UsageItems.Length)) {
                 float[] temp = remainingUsageItems;
                 remainingUsageItems = new float[UsageItems.Length];
                 if (temp != null) {
@@ -369,11 +409,13 @@ namespace Andja.Model {
                     }
                 }
             }
+
             if (workers == null) return;
             foreach (var worker in workers) {
                 worker.Load(this);
             }
         }
+
         protected override void OnUpgrade() {
             base.OnUpgrade();
             serviceData = null;

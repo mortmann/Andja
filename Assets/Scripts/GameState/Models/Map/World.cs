@@ -8,7 +8,6 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
-
     [JsonObject(MemberSerialization.OptIn)]
     public class World : GEventable, IWorld {
         private static IWorld _current { get; set; }
@@ -24,7 +23,7 @@ namespace Andja.Model {
             }
         }
 
-#region Serialize
+        #region Serialize
 
         [JsonPropertyAttribute] public List<Island> Islands { get; protected set; }
         [JsonPropertyAttribute] public List<Unit> Units { get; protected set; }
@@ -34,11 +33,13 @@ namespace Andja.Model {
         #endregion Serialize
 
         #region RuntimeOrOther
+
         /// <summary>
         /// Unique ID that gets assigned to a created unit.
         /// Should start with one -- so 0 is unset
         /// </summary>
         private uint _unitBuildId = 1;
+
         public int Width => GameData.Width;
         public int Height => GameData.Height;
 
@@ -65,6 +66,7 @@ namespace Andja.Model {
                         }
                     }
                 }
+
                 return _tilesMap;
             }
         }
@@ -78,6 +80,7 @@ namespace Andja.Model {
         public void UnregisterOnCreateProjectileCallback(Action<Projectile> cb) {
             cbCreateProjectile -= cb;
         }
+
         public Vector2 Center => new Vector2(Width / 2, Height / 2);
 
         private Action<Unit> cbUnitCreated;
@@ -86,26 +89,28 @@ namespace Andja.Model {
         private Action<Crate> cbCrateSpawn;
         private Action<Crate> cbCrateDespawned;
 
-        private Action<Unit, IWarfare> cbAnyUnitDestroyed;
+        private Action<Unit, IAttack> cbAnyUnitDestroyed;
 
-#endregion RuntimeOrOther
+        #endregion RuntimeOrOther
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="World"/> class.
-    /// Used in the GameState!
-    /// </summary>
-    public World(Tile[] addTiles, bool isIslandEditor = true) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="World"/> class.
+        /// Used in the GameState!
+        /// </summary>
+        public World(Tile[] addTiles, bool isIslandEditor = true) {
             this.Tiles = new Tile[Width * Height];
             foreach (Tile t in addTiles) {
                 if (t != null)
                     SetTileAt(t.X, t.Y, t);
             }
+
             for (int x = 0; x < Width; x++) {
                 for (int y = 0; y < Height; y++) {
                     if (GetTileAt(x, y) == null)
                         SetTileAt(x, y, new Tile(x, y));
                 }
             }
+
             SetupWorld();
             //whole world IS 1 Island -- so add all tiles to single island
             if (isIslandEditor) {
@@ -122,6 +127,7 @@ namespace Andja.Model {
                 }
             }
         }
+
         public void Load() {
             WorldGraph = new WorldGraph();
             foreach (Unit u in Units) {
@@ -130,11 +136,13 @@ namespace Andja.Model {
                 u.RegisterOnCreateProjectileCallback(OnCreateProjectile);
                 cbUnitCreated?.Invoke(u);
             }
+
             _unitBuildId = Units.Max(u => u.BuildID);
             foreach (Crate c in Crates) {
                 cbCrateSpawn?.Invoke(c);
             }
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class. Used in the Editor!
         /// </summary>
@@ -144,6 +152,7 @@ namespace Andja.Model {
             Crates ??= new List<Crate>();
             Projectiles ??= new List<Projectile>();
         }
+
         public void SetupWorld() {
             Current = this;
             allFertilities = PrototypController.Instance.AllFertilities;
@@ -159,6 +168,7 @@ namespace Andja.Model {
             foreach (Island i in Islands) {
                 i.Update(deltaTime);
             }
+
             for (int pos = Crates.Count - 1; pos >= 0; pos--) {
                 Crates[pos].Update(deltaTime);
             }
@@ -183,6 +193,7 @@ namespace Andja.Model {
                     Units.RemoveAt(i);
                 }
             }
+
             for (int i = Projectiles.Count - 1; i >= 0; i--) {
                 Projectiles[i].Update(deltaTime);
             }
@@ -199,9 +210,11 @@ namespace Andja.Model {
             if (x >= Width || y >= Height) {
                 return;
             }
+
             if (x < 0 || y < 0) {
                 return;
             }
+
             Tiles[x * Height + y] = t;
         }
 
@@ -209,11 +222,14 @@ namespace Andja.Model {
             if (x >= Width || y >= Height) {
                 return null;
             }
+
             if (x < 0 || y < 0) {
                 return null;
             }
+
             return Tiles[x * Height + y];
         }
+
         private Tile GetTileClampedAt(Vector2 v) {
             return GetTileAt(Mathf.Clamp(v.x, 0, Width - 1), Mathf.Clamp(v.y, 0, Height - 1));
         }
@@ -222,14 +238,17 @@ namespace Andja.Model {
             if (x >= Width || y >= Height) {
                 return false;
             }
+
             if (x < 0 || y < 0) {
                 return false;
             }
+
             if (x <= (float)t.X + 0.1f && x >= (float)t.X - 0.1f) {
                 if (y <= (float)t.Y + 0.1f && y >= (float)t.Y - 0.1f) {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -265,26 +284,30 @@ namespace Andja.Model {
             Projectiles.Remove(pro);
         }
 
-        public void OnUnitDestroy(Unit u, IWarfare warfare) {
+        public void OnUnitDestroy(Unit u, IAttack attack) {
             //Spawn items from Inventory on the map
             if (u.IsShip) {
                 Ship ship = u as Ship;
                 if (ship.isOffWorld)
                     return;
             }
+
             if (u.Inventory != null) {
                 foreach (Item i in u.Inventory.GetAllItemsAndRemoveThem()) {
                     CreateItemOnMap(i, u.PositionVector);
                 }
             }
-            cbAnyUnitDestroyed?.Invoke(u, warfare);
+
+            cbAnyUnitDestroyed?.Invoke(u, attack);
         }
 
         public void CreateItemOnMap(Item i, Vector2 toSpawnPosition) {
-            Vector2 randomFactor = new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f));
+            Vector2 randomFactor =
+                new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f), UnityEngine.Random.Range(-0.5f, 0.5f));
             if (GetTileClampedAt((toSpawnPosition + randomFactor)).Type != TileType.Ocean) {
                 toSpawnPosition += randomFactor;
             }
+
             Crate c = new Crate(toSpawnPosition, i);
             c.onDespawn += DespawnItem;
             Crates.Add(c);
@@ -312,11 +335,11 @@ namespace Andja.Model {
             cbCrateDespawned -= onDespawned;
         }
 
-        public void RegisterAnyUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
+        public void RegisterAnyUnitDestroyed(Action<Unit, IAttack> onAnyUnitDestroyed) {
             cbAnyUnitDestroyed += onAnyUnitDestroyed;
         }
 
-        public void UnregisterUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed) {
+        public void UnregisterUnitDestroyed(Action<Unit, IAttack> onAnyUnitDestroyed) {
             cbAnyUnitDestroyed -= onAnyUnitDestroyed;
         }
 
@@ -329,6 +352,7 @@ namespace Andja.Model {
         public Fertility GetFertility(string ID) {
             return idToFertilities[ID];
         }
+
         public Tile GetRandomOceanTile() {
             int x = UnityEngine.Random.Range(0, Width);
             int y = UnityEngine.Random.Range(0, Height);
@@ -336,13 +360,15 @@ namespace Andja.Model {
                 x = UnityEngine.Random.Range(0, Width);
                 y = UnityEngine.Random.Range(0, Height);
             }
+
             return World.Current.GetTileAt(x, y);
         }
+
         public void CreateWorkerGameObject(Worker worker) {
             cbWorkerCreated?.Invoke(worker);
         }
 
-#region callbacks
+        #region callbacks
 
         public void RegisterTileChanged(Action<Tile> callbackfunc) {
             cbTileChanged += callbackfunc;
@@ -373,19 +399,19 @@ namespace Andja.Model {
             cbTileChanged?.Invoke(t);
         }
 
-#endregion callbacks
+        #endregion callbacks
 
-#region igeventable
+        #region igeventable
 
         public override void OnEventCreate(GameEvent ge) {
-            if (ge.HasWorldEffect()) {
-            }
+            if (ge.HasWorldEffect()) { }
+
             cbEventCreated?.Invoke(ge);
         }
 
         public override void OnEventEnded(GameEvent ge) {
-            if (ge.HasWorldEffect()) {
-            }
+            if (ge.HasWorldEffect()) { }
+
             cbEventEnded?.Invoke(ge);
         }
 
@@ -393,7 +419,7 @@ namespace Andja.Model {
             return -2;
         }
 
-#endregion igeventable
+        #endregion igeventable
 
         public void LoadWaterTiles() {
             for (int x = 0; x < Width; x++) {
@@ -409,62 +435,9 @@ namespace Andja.Model {
             Current = null;
         }
 
-        public class WorldDamage : IWarfare {
-            public int PlayerNumber => GameData.WorldNumber;
-            private float Damage;
-            public float CurrentDamage => Damage;
-            public float MaximumDamage => Damage;
-
-            public WorldDamage(float Damage) {
-                this.Damage = Damage;
-            }
-
-            public DamageType DamageType => PrototypController.Instance.GetWorldDamageType();
-
-            public float MaximumHealth => throw new NotImplementedException();
-
-            public float CurrentHealth => throw new NotImplementedException();
-
-            public bool IsDestroyed => throw new NotImplementedException();
-
-            public Vector2 CurrentPosition => throw new NotImplementedException();
-
-            public Vector2 NextDestinationPosition => throw new NotImplementedException();
-
-            public Vector2 LastMovement => throw new NotImplementedException();
-
-            public ArmorType ArmorType => throw new NotImplementedException();
-
-            public float Speed => throw new NotImplementedException();
-
-            public float Width => throw new NotImplementedException();
-
-            public float Height => throw new NotImplementedException();
-
-            public float Rotation => throw new NotImplementedException();
-
-            public float GetCurrentDamage(ArmorType armorType) {
-                return CurrentDamage;
-            }
-
-            public bool GiveAttackCommand(ITargetable warfare, bool overrideCurrent = false) {
-                return false;
-            }
-
-            public void GoIdle() {
-                return;
-            }
-
-            public bool IsAttackableFrom(IWarfare warfare) {
-                throw new NotImplementedException();
-            }
-
-            public void TakeDamageFrom(IWarfare warfare) {
-                throw new NotImplementedException();
-            }
-
-            public uint GetBuildID() {
-                return 0;
+        public class WorldDamage : Attack {
+            public WorldDamage(float Damage) : base(null) {
+                _data = new AttackPrototypeData() { damage = Damage };
             }
         }
 
@@ -473,6 +446,7 @@ namespace Andja.Model {
             foreach (Vector2 v in q) {
                 tiles.Enqueue(GetTileAt(v));
             }
+
             return tiles;
         }
 
@@ -480,6 +454,7 @@ namespace Andja.Model {
             foreach (var item in doneIslands) {
                 CreateIsland(item);
             }
+
             WorldGraph = new WorldGraph();
         }
 

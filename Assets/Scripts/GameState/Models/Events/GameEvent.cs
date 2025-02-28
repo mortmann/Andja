@@ -16,7 +16,7 @@ namespace Andja.Model {
         public float minRange = 50;
         public float maxRange = 100;
         public IEffect[] effects;
-        public Dictionary<Target, List<string>> specialRange;
+        public Dictionary<EventTarget, List<string>> specialRange;
 
         public ShadowType cloudCoverage;
         public Speed cloudSpeed;
@@ -33,7 +33,7 @@ namespace Andja.Model {
         public GameEventPrototypData PrototypeData =>
             _PrototypData ??= (GameEventPrototypData)PrototypController.Instance.GetGameEventPrototypDataForID(ID);
 
-        public Dictionary<Target, List<string>> SpecialRange => PrototypeData.specialRange;
+        public Dictionary<EventTarget, List<string>> SpecialRange => PrototypeData.specialRange;
 
         public EventType Type => PrototypeData.type;
 
@@ -73,7 +73,7 @@ namespace Andja.Model {
         public Vector2 GetRealPosition() {
             return target switch {
                 Structure s => s.Center,
-                Unit u => u.PositionVector2,
+                Unit u => u.Position,
                 _ => DefinedPosition
             };
         }
@@ -180,7 +180,7 @@ namespace Andja.Model {
         public bool IsValid() {
             if (target is Island) {
                 if (((IIsland)target).Features != null) {
-                    if (SpecialRange[Target.Island].Exists(t => ((IIsland)target).Features.Exists(x => x.ID == t))) {
+                    if (SpecialRange[EventTarget.Island].Exists(t => ((IIsland)target).Features.Exists(x => x.ID == t))) {
                         return true;
                     }
                 }
@@ -216,7 +216,7 @@ namespace Andja.Model {
                 return false;
             }
             if (SpecialRange != null) {
-                foreach (Target target in t.TargetGroups.Targets) {
+                foreach (EventTarget target in t.TargetGroups.Targets) {
                     if (SpecialRange.ContainsKey(target)) {
                         if (SpecialRange[target].Contains(t.GetID()) == false) {
                             return false;

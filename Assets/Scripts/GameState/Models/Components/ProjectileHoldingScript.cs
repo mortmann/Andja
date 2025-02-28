@@ -26,7 +26,7 @@ namespace Andja.Model.Components {
 
         //Doesnt get triggerd on hit because itself is a trigger
         private void OnCollisionEnter2D(Collision2D collision) {
-            ITargetableHoldingScript iths = collision.collider.GetComponent<ITargetableHoldingScript>();
+            TargetHoldingScript iths = collision.collider.GetComponent<TargetHoldingScript>();
             if (iths == null) {
                 return;
             }
@@ -37,7 +37,7 @@ namespace Andja.Model.Components {
 
         //THIS one is the one that works for now! Because itself is a trigger!
         private void OnTriggerEnter2D(Collider2D collider) {
-            ITargetableHoldingScript iths = collider.GetComponent<ITargetableHoldingScript>();
+            TargetHoldingScript iths = collider.GetComponent<TargetHoldingScript>();
             if (iths == null) {
                 return;
             }

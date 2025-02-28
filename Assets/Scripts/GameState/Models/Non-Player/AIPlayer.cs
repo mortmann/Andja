@@ -12,10 +12,8 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
-
     [JsonObject(MemberSerialization.OptIn)]
     public class AIPlayer {
-
         public bool isActive;
         public int PlayerNumber => Player.Number;
         public Player Player;
@@ -36,6 +34,7 @@ namespace Andja.Model {
         /// Negative = has less Production than needed
         /// </summary>
         public Dictionary<string, float> itemToProducePerMinuteChange;
+
         SimplePriorityQueue<ItemPriority> buildItemPriority = new SimplePriorityQueue<ItemPriority>();
         SimplePriorityQueue<ItemPriority> itemPriority = new SimplePriorityQueue<ItemPriority>();
         Queue<PlaceStructure> toBuildStructures = new Queue<PlaceStructure>();
@@ -44,6 +43,7 @@ namespace Andja.Model {
 
         Unlocks nextUnlocks;
         Dictionary<ICity, CityGrid> cityToGrid = new Dictionary<ICity, CityGrid>();
+
         public AIPlayer(Player player) {
             this.Player = player;
             neededFertilities = new List<Fertility>();
@@ -56,29 +56,36 @@ namespace Andja.Model {
             foreach (string item in PrototypController.Instance.AllItems.Keys) {
                 itemToProducePerMinuteChange[item] = 0;
             }
+
             foreach (Structure s in player.AllStructures) {
                 OnPlaceStructure(s);
             }
+
             foreach (Item item in PrototypController.Instance.BuildItems) {
                 ItemPriority ip = new ItemPriority(item);
                 ip.CalculatePriority(this);
                 buildItemPriority.Enqueue(ip, ip.Priority);
             }
-            foreach (Item item in PrototypController.Instance.AllItems.Values.Except(PrototypController.Instance.BuildItems)) {
+
+            foreach (Item item in PrototypController.Instance.AllItems.Values.Except(PrototypController.Instance
+                         .BuildItems)) {
                 ItemPriority ip = new ItemPriority(item);
                 ip.CalculatePriority(this);
                 itemPriority.Enqueue(ip, ip.Priority);
             }
+
             player.RegisterCityCreated(OnCityCreated);
             player.RegisterCityDestroy(OnCityDestroy);
             foreach (var item in player.Cities) {
                 OnCityCreated(item);
             }
+
             player.RegisterNewStructure(OnNewStructure);
             player.RegisterLostStructure(OnLostStructure);
             isActive = player.IsHuman == false;
             BuildPathAgent = new BuildPathAgent(player.Number);
-            nextUnlocks = PrototypController.Instance.GetNextUnlocks(player.MaxPopulationLevel, player.MaxPopulationCounts[player.MaxPopulationLevel]);
+            nextUnlocks = PrototypController.Instance.GetNextUnlocks(player.MaxPopulationLevel,
+                player.MaxPopulationCounts[player.MaxPopulationLevel]);
             PlayerAttitude = new Dictionary<int, PlayerDiplomaticAI>();
             foreach (Player item in PlayerController.Instance.GetPlayers()) {
                 if (item == player)
@@ -120,9 +127,11 @@ namespace Andja.Model {
                 if (os.Output == null) {
                     return;
                 }
+
                 foreach (Item p in os.Output) {
                     itemToProducePerMinuteChange[p.ID] += os.OutputData.ProducePerMinute;
                 }
+
                 if (structure is ProductionStructure) {
                     ProductionStructure ps = structure as ProductionStructure;
                     if (ps.InputTyp == InputTyp.OR) {
@@ -132,7 +141,7 @@ namespace Andja.Model {
                         }
                     }
                     else {
-                        if(ps.ProductionData.intake != null) {
+                        if (ps.ProductionData.intake != null) {
                             foreach (Item p in ps.ProductionData.intake) {
                                 itemToProducePerMinuteChange[p.ID] -= p.count * (60f / ps.ProduceTime);
                             }
@@ -141,12 +150,15 @@ namespace Andja.Model {
                 }
             }
         }
+
         internal void Loop() {
-            while(AIController.ShutdownAI == false && isActive) {
-                if(AIController.ActiveAI == false || WorldController.Instance.IsPaused) {
+            while (AIController.ShutdownAI == false && isActive) {
+                if (AIController.ActiveAI == false || WorldController.Instance.IsPaused) {
                     continue;
                 }
-                if (AIController._cityToCurrentSpaceValueTiles == null||AIController._cityToCurrentSpaceValueTiles.Count == 0)
+
+                if (AIController._cityToCurrentSpaceValueTiles == null ||
+                    AIController._cityToCurrentSpaceValueTiles.Count == 0)
                     continue;
                 foreach (Operation item in currentOperationPending.ToArray()) {
                     switch (item.Status) {
@@ -160,6 +172,7 @@ namespace Andja.Model {
                             break;
                     }
                 }
+
                 GameStartFunction();
                 UnlocksFunction();
                 BuildBuildings();
@@ -171,6 +184,7 @@ namespace Andja.Model {
                 //}
             }
         }
+
         /// <summary>
         /// WARNING! THIS runs on the MAIN thread.
         /// Do not make heavy calculations here.
@@ -185,58 +199,70 @@ namespace Andja.Model {
         private void UnlocksFunction() {
             if (nextUnlocks == null)
                 return;
-            if(nextUnlocks.populationLevel > Player.MaxPopulationCount) 
+            if (nextUnlocks.populationLevel > Player.MaxPopulationCount)
                 return;
-            if(nextUnlocks.peopleCount > Player.MaxPopulationCount)
+            if (nextUnlocks.peopleCount > Player.MaxPopulationCount)
                 return;
-            nextUnlocks = PrototypController.Instance.GetNextUnlocks(Player.MaxPopulationCount, Player.MaxPopulationCount);
+            nextUnlocks =
+                PrototypController.Instance.GetNextUnlocks(Player.MaxPopulationCount, Player.MaxPopulationCount);
         }
 
 
         bool t;
+
         private void BuildBuildings() {
             if (Player.Cities.Count == 0) {
                 return;
             }
-            if(t==false) {
+
+            if (t == false) {
                 BuildMarketStructure(Player.Cities[0]);
                 t = true;
             }
-            if(toBuildStructures.Count > 0) {
+
+            if (toBuildStructures.Count > 0) {
                 PlaceStructure ps = toBuildStructures.Dequeue();
                 //TODO:this could technically not be in the city so we would need to get it other way
                 Structure s = PrototypController.Instance.GetStructure(ps.ID);
-                if(ps.City.HasEnoughOfItems(s.BuildingItems) == false || Player.HasEnoughMoney(s.BuildCost) == false) {
+                if (ps.City.HasEnoughOfItems(s.BuildingItems) == false || Player.HasEnoughMoney(s.BuildCost) == false) {
                     toBuildStructures.Enqueue(ps);
                     return;
                 }
+
                 currentOperationPending.Add(AIController.Instance.AddOperation(new BuildStructureOperation(this, ps)));
                 return;
             }
+
             //For now only plan a single round of buildings
-            if (currentOperationPending.Count > 0 && currentOperationPending.Exists(x=>x is BuildStructureOperation)) return;
+            if (currentOperationPending.Count > 0 &&
+                currentOperationPending.Exists(x => x is BuildStructureOperation)) return;
             foreach (var item in buildItemPriority) {
                 item.CalculatePriority(this);
                 buildItemPriority.UpdatePriority(item, item.Priority);
             }
+
             if (buildItemPriority.First.Priority < -0.2) {
                 BuildItemStructure(buildItemPriority.First.item);
                 return;
             }
+
             foreach (var item in itemPriority) {
                 item.CalculatePriority(this);
                 itemPriority.UpdatePriority(item, item.Priority);
             }
+
             if (itemPriority.First.Priority < -0) {
                 BuildItemStructure(itemPriority.First.item);
                 return;
             }
+
             foreach (string need in Player.UnlockedStructureNeeds[Player.CurrentPopulationLevel]) {
                 string structureID = DecideNeedStructure(need);
-                if(structureToCount.ContainsKey(structureID)) {
+                if (structureToCount.ContainsKey(structureID)) {
                     //we have on already so we need to check if it is enough...
                     //later doing this
-                } else {
+                }
+                else {
                     BuildNeedStructure(structureID);
                     return;
                 }
@@ -245,7 +271,7 @@ namespace Andja.Model {
             //Then we need to build more homes
 
             int alreadyBuild = 0;
-            if(structureToCount.ContainsKey(PrototypController.Instance.BuildableHomeStructure.ID))
+            if (structureToCount.ContainsKey(PrototypController.Instance.BuildableHomeStructure.ID))
                 alreadyBuild = structureToCount[PrototypController.Instance.BuildableHomeStructure.ID];
             if (nextUnlocks.requiredFullHomes - alreadyBuild > 0) {
                 BuildHomeStructure();
@@ -253,7 +279,7 @@ namespace Andja.Model {
         }
 
         internal void ReceiveDemandMoney(Player demands, int money) {
-            if(combatValues.Find(x=>x.Player == demands).EndScore>CombatValue.EndScore * 1.15f) {
+            if (combatValues.Find(x => x.Player == demands).EndScore > CombatValue.EndScore * 1.15f) {
                 PlayerController.Instance.SendMoneyFromTo(Player, demands, money);
                 PlayerAttitude[demands.Number].GotDemandMoney(true);
             }
@@ -265,19 +291,22 @@ namespace Andja.Model {
         internal void ReceiveDenounce(Player from) {
             PlayerAttitude[from.Number].GotDenounce();
         }
+
         internal void ReceivedMoney(Player sendPlayer, int amount) {
             PlayerAttitude[sendPlayer.Number].GotMoney(amount, sendPlayer.TreasuryBalance, sendPlayer.TreasuryChange);
         }
+
         internal void ReceivePraise(Player from) {
             PlayerAttitude[from.Number].GotPraise();
         }
 
         internal bool AskDiplomaticIncrease(Player other, DiplomaticStatus ds) {
-            if(ds.CurrentStatus == DiplomacyType.War) {
-                if(combatValues.Find(x=>x.Player == other).EndScore < CombatValue.EndScore) {
+            if (ds.CurrentStatus == DiplomacyType.War) {
+                if (combatValues.Find(x => x.Player == other).EndScore < CombatValue.EndScore) {
                     return false;
                 }
             }
+
             return PlayerAttitude[other.Number].AskDiplomaticIncrease(ds);
         }
 
@@ -287,11 +316,12 @@ namespace Andja.Model {
                 Log.AI_ERROR($"No structures for {need}");
                 return null;
             }
+
             if (structures.Length == 1)
                 return structures[0].ID;
             return structures.Where(x => Player.HasStructureUnlocked(x.ID))
-                   .OrderBy(x => x.AICalculatedCost() / x.NeedStructureData.MaxHomesInRange)
-                   .First().ID;
+                .OrderBy(x => x.AICalculatedCost() / x.NeedStructureData.MaxHomesInRange)
+                .First().ID;
         }
 
         private void BuildHomeStructure() {
@@ -303,45 +333,49 @@ namespace Andja.Model {
             var tempStructures = city.Structures.ToList();
             var poplevel = PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(0);
             var structureNeeds = AIController.PerPopulationLevelDatas[0].structureNeeds;
-            var ns = tempStructures.FindAll(x => x is NeedStructure && structureNeeds.Any(y=>y.Data.structures.Any(z=>z.ID==x.ID)));
+            var ns = tempStructures.FindAll(x =>
+                x is NeedStructure && structureNeeds.Any(y => y.Data.structures.Any(z => z.ID == x.ID)));
             if (ns.Count == 0)
                 return;
             var tiles = ns.SelectMany(x => x.RangeTiles)
-                .Where(x=> PrototypController.Instance.BuildableHomeStructure.CanBuildOnSpot(
-                        PrototypController.Instance.BuildableHomeStructure.GetBuildingTiles(x)
-                    ));
+                .Where(x => PrototypController.Instance.BuildableHomeStructure.CanBuildOnSpot(
+                    PrototypController.Instance.BuildableHomeStructure.GetBuildingTiles(x)
+                ));
             tiles = tiles.Where(x => x.City.PlayerNumber == Player.Number);
             var temp = tiles.GroupBy(i => i);
-            var t = temp.OrderByDescending(grp => grp.Count()).Select(x=>x.Key);
+            var t = temp.OrderByDescending(grp => grp.Count()).Select(x => x.Key);
             var tempt = t.First();
             if (ns.Count >= 1) {
                 var distanceOrdered = tiles.OrderBy(x => Vector2.Distance(x.Vector2, ns[0].Center));
-                foreach(Tile nt in distanceOrdered) {
+                foreach (Tile nt in distanceOrdered) {
                     if (PrototypController.Instance.BuildableHomeStructure.GetBuildingTiles(nt)
-                        .Exists(x => x.City.PlayerNumber != Player.Number) == false) {
+                            .Exists(x => x.City.PlayerNumber != Player.Number) == false) {
                         tempt = nt;
                         break;
                     }
                 }
             }
+
             toBuildStructures.Enqueue(new PlaceStructure {
                 buildTile = tempt,
                 ID = PrototypController.Instance.BuildableHomeStructure.ID,
                 rotation = 0,
                 City = city,
             });
-            
         }
 
         private void BuildMarketStructure(ICity city, Tile[] newCityTiles = null) {
-            if(newCityTiles == null) {
+            if (newCityTiles == null) {
                 List<TileValue> islandValues = null;
                 List<MarketStructure> currentMarkets = city.MarketStructures;
                 lock (AIController.IslandsTileToValue[city.Island]) {
                     islandValues = AIController._cityToCurrentSpaceValueTiles[city.Island.Wilderness].Values.ToList();
                 }
+
                 MarketStructure market = PrototypController.Instance.FirstLevelMarket;
-                islandValues.RemoveAll(x => currentMarkets.Any(y => Vector2.Distance(y.Center, x.tile.Vector2) < 2 * market.StructureRange) == false);
+                islandValues.RemoveAll(x =>
+                    currentMarkets.Any(y => Vector2.Distance(y.Center, x.tile.Vector2) < 2 * market.StructureRange) ==
+                    false);
                 islandValues.RemoveAll(x => x.MinValue < market.TileWidth && x.MinValue < market.TileHeight);
                 var ordered = islandValues.OrderByDescending(x => x.Value);
                 if (ordered.Count() > 0)
@@ -351,7 +385,8 @@ namespace Andja.Model {
                         rotation = 0,
                         City = city
                     });
-            } else {
+            }
+            else {
                 double aX = newCityTiles.Average(x => x.X);
                 double aY = newCityTiles.Average(x => x.Y);
                 List<MarketStructure> currentMarkets = city.MarketStructures;
@@ -362,7 +397,6 @@ namespace Andja.Model {
                 //            roadTargets,
                 //            tiles.Select(x => x.Vector2).ToList()
                 //    );
-
             }
         }
 
@@ -371,54 +405,61 @@ namespace Andja.Model {
             CityGrid grid = cityToGrid[city];
             Block block = grid.ValidBlocks.MaxBy(x => x.Value);
             var structure = PrototypController.Instance.GetStructureCopy(structureID);
-            if(structure.TileWidth > block.WIDTH - 1 || structure.TileHeight > block.HEIGHT - 1) {
+            if (structure.TileWidth > block.WIDTH - 1 || structure.TileHeight > block.HEIGHT - 1) {
                 Log.AI_INFO($"{structureID} is to big for current cityblock limits");
                 return;
             }
+
             toBuildStructures.Enqueue(new PlaceStructure {
                 ID = structureID,
-                buildTile = block.Plots[0].Tiles[0,0],
+                buildTile = block.Plots[0].Tiles[0, 0],
                 rotation = 0,
                 City = city
             });
         }
 
         private void BuildItemStructure(Item item) {
-            var produces = PrototypController.Instance.ItemIDToProduce[item.ID].Where(x => Player.HasStructureUnlocked(x.ProducerStructure.ID));
+            var produces = PrototypController.Instance.ItemIDToProduce[item.ID]
+                .Where(x => Player.HasStructureUnlocked(x.ProducerStructure.ID));
             var sorted = produces.SelectMany(x => x.SupplyChains.Where(y => y.IsValid && y.IsUnlocked(Player)));
             if (sorted.Count() == 0) {
                 Log.AI_WARNING("AI cannot find a valid SupplyChain for " + item.ID + "! Wanted behaviour?");
                 return;
             }
+
             sorted.OrderBy(z => z.cost);
             SupplyChain currentlySelected = sorted.First();
-            if (currentlySelected.cost.requiredFertilites != null && currentlySelected.cost.requiredFertilites.Count > 0) {
+            if (currentlySelected.cost.requiredFertilites != null &&
+                currentlySelected.cost.requiredFertilites.Count > 0) {
                 IEnumerable<Fertility> missing = null;
                 foreach (SupplyChain p in sorted) {
-                    var missingFertilities = p.cost.requiredFertilites.Except(Player.GetIslandList().SelectMany(x => x.Fertilities).ToList());
-                    if(missingFertilities.Count() == 0) {
+                    var missingFertilities =
+                        p.cost.requiredFertilites.Except(Player.GetIslandList().SelectMany(x => x.Fertilities)
+                            .ToList());
+                    if (missingFertilities.Count() == 0) {
                         currentlySelected = p;
                         break;
                     }
+
                     //For now it is preferring the SupplyChain that is not requiring any new fertility.
                     //But it also should take in a count how difficult each new fertility is to get or how much space 
                     //is left on each island with the corresponding fertility -- 
-                    if(missing == null || missing.Count() > missingFertilities.Count()) {
+                    if (missing == null || missing.Count() > missingFertilities.Count()) {
                         missing = missingFertilities;
                         currentlySelected = p;
                     }
                 }
             }
+
             //We need to queue these structures -- maybe we can remove already exisiting structures
             //because not all of the produced is needed for another supplychain?
             var strucuturesToCount = currentlySelected.StructureToBuildForOneRatio();
-            if(item.Type == ItemType.Intermediate) {
-                
-            }
+            if (item.Type == ItemType.Intermediate) { }
+
             foreach (var structureToCount in strucuturesToCount) {
                 for (int i = 0; i < structureToCount.Value; i++) {
                     var place = FindStructurePlace(structureToCount.Key);
-                    if(place != null)
+                    if (place != null)
                         toBuildStructures.Enqueue(place.Value);
                 }
             }
@@ -427,58 +468,72 @@ namespace Andja.Model {
         internal void OperationSuccess(Operation op) {
             currentOperationPending.Remove(op);
             if (op is BuildStructureOperation bs) {
-                if(bs.Structure is OutputStructure os) {
+                if (bs.Structure is OutputStructure os) {
                     if (os is MarketStructure) {
-                        if(os is WarehouseStructure ws && bs.BuildUnit != null) {
+                        if (os is WarehouseStructure ws && bs.BuildUnit != null) {
                             currentOperationPending.Add(AIController.Instance.AddOperation(
-                                new UnitCityMoveItemOperation(this, bs.BuildUnit, ws.City, bs.BuildUnit.Inventory.Items.ToArray(), false)
-                                ));
+                                new UnitCityMoveItemOperation(this, bs.BuildUnit, ws.City,
+                                    bs.BuildUnit.Inventory.Items.ToArray(), false)
+                            ));
                             currentOperationPending.Add(AIController.Instance.AddOperation(
-                                new TradeItemOperation(this, ws.City, new List<TradeItem> { new TradeItem("tools", 25, 50, Trade.Buy)}, true)
-                                ));
+                                new TradeItemOperation(this, ws.City,
+                                    new List<TradeItem> { new TradeItem("tools", 25, 50, Trade.Buy) }, true)
+                            ));
                         }
+
                         return;
                     }
+
                     if (os.ForMarketplace == false) {
                         //TODO: only build roads IF it is needed when the os is not in range of intake 
                     }
+
                     ICity c = bs.BuildTile.Island.FindCityByPlayer(Player.Number);
-                    var marketStructures = c.Structures.Where(x => x is MarketStructure && x.RangeTiles.Intersect(os.Tiles).Any());
+                    var marketStructures =
+                        c.Structures.Where(x => x is MarketStructure && x.RangeTiles.Intersect(os.Tiles).Any());
                     var routes = marketStructures.SelectMany(x => x.GetRoutes()).Distinct();
-                    List<Tile> tiles = marketStructures.SelectMany(y=>y.Tiles.Where(x=>x.IsGenericBuildType())).ToList();
+                    List<Tile> tiles = marketStructures.SelectMany(y => y.Tiles.Where(x => x.IsGenericBuildType()))
+                        .ToList();
                     tiles.AddRange(routes.SelectMany(x => x.Tiles));
                     var roadTargets = os.Tiles.Where(x => x.IsGenericBuildType()).Select(x => x.Vector2).ToList();
                     Tile start = tiles.MinBy(x => Mathf.Abs(x.X - os.Center.x) + Mathf.Abs(x.Y - os.Center.y));
-                    PathJob job = new PathJob(BuildPathAgent, bs.BuildTile.Island.Grid, 
-                            start.Vector2,
-                            roadTargets.MinBy(x => Mathf.Abs(x.x - start.Vector2.x) + Mathf.Abs(x.y - start.Vector2.y)),
-                            roadTargets, 
-                            tiles.Select(x=>x.Vector2).ToList()
+                    PathJob job = new PathJob(BuildPathAgent, bs.BuildTile.Island.Grid,
+                        start.Vector2,
+                        roadTargets.MinBy(x => Mathf.Abs(x.x - start.Vector2.x) + Mathf.Abs(x.y - start.Vector2.y)),
+                        roadTargets,
+                        tiles.Select(x => x.Vector2).ToList()
                     );
                     PathfindingThreadHandler.EnqueueJob(job, () => { });
-                    while(job.Status == JobStatus.InQueue || job.Status == JobStatus.Calculating) { }
-                    if(job.Status == JobStatus.Done) {
+                    while (job.Status == JobStatus.InQueue || job.Status == JobStatus.Calculating) { }
+
+                    if (job.Status == JobStatus.Done) {
                         currentOperationPending.Add(
-                        AIController.Instance.AddOperation(
-                            new BuildSingleStructureOperation(this, job.Path.ToList(), PrototypController.Instance.GetRoadForLevel(0))
+                            AIController.Instance.AddOperation(
+                                new BuildSingleStructureOperation(this, job.Path.ToList(),
+                                    PrototypController.Instance.GetRoadForLevel(0))
                             )
                         );
-                    } else {
+                    }
+                    else {
                         Log.AI_WARNING("Path not found for roads to structure: " + os);
                     }
-                    if(os is FarmStructure fs) {
-                        if(fs.Growable != null) {
+
+                    if (os is FarmStructure fs) {
+                        if (fs.Growable != null) {
                             AIController.Instance.AddOperation(
-                                new BuildSingleStructureOperation(this, fs.RangeTiles.Select(x=>x.Vector2).ToList(), fs.Growable)
+                                new BuildSingleStructureOperation(this, fs.RangeTiles.Select(x => x.Vector2).ToList(),
+                                    fs.Growable)
                             );
                         }
                     }
                 }
-                if(bs.Structure is NeedStructure ns) {
+
+                if (bs.Structure is NeedStructure ns) {
                     if (ns.NeedStructureData.SatisfiesNeeds.Any(x => x.HasToReachPerRoad)) {
                         AIController.Instance.AddOperation(
-                                new BuildSingleStructureOperation(this, ns.NeighbourTiles.Select(x => x.Vector2).ToList(), PrototypController.Instance.GetRoadForLevel(0))
-                            );
+                            new BuildSingleStructureOperation(this, ns.NeighbourTiles.Select(x => x.Vector2).ToList(),
+                                PrototypController.Instance.GetRoadForLevel(0))
+                        );
                     }
                 }
             }
@@ -504,10 +559,11 @@ namespace Andja.Model {
             IEnumerable<IIsland> isls = Player.GetIslandList();
             if (s is FarmStructure fs && fs.Growable.Fertility != null) {
                 isls = isls.Where(x => x.Fertilities.Contains(fs.Growable.Fertility));
-            } else 
-            if(s is MineStructure ms) {
+            }
+            else if (s is MineStructure ms) {
                 isls = isls.Where(x => x.Resources.ContainsKey(ms.Resource));
             }
+
             isls.OrderBy(x => islandScores.Find(y => y.Island == x).SizeScore);
             foreach (var island in isls) {
                 ICity city = island.FindCityByPlayer(Player.Number);
@@ -516,7 +572,8 @@ namespace Andja.Model {
                 lock (cityValues) {
                     tiles = cityValues.Values.ToList();
                 }
-                if(s.BuildTileTypes != null) {
+
+                if (s.BuildTileTypes != null) {
                     HashSet<TileType> typesRequired = new HashSet<TileType>();
                     for (int x = 0; x < s.BuildTileTypes.GetLength(0); x++) {
                         for (int y = 0; y < s.BuildTileTypes.GetLength(1); y++) {
@@ -524,6 +581,7 @@ namespace Andja.Model {
                                 typesRequired.Add(s.BuildTileTypes[x, y].Value);
                         }
                     }
+
                     tiles.RemoveAll(x => typesRequired.Contains(x.tile.Type) == false);
                     var minTileValues = s.Data.BuildTileTypesToMinLength;
                     tiles.RemoveAll(x => minTileValues[x.tile.Type] > x.MaxValue);
@@ -531,7 +589,8 @@ namespace Andja.Model {
                         //AI has to expand or choose another island
                         return null;
                     }
-                    foreach(var t in tiles.OrderBy(x => x.MaxValue)) {
+
+                    foreach (var t in tiles.OrderBy(x => x.MaxValue)) {
                         for (int i = 0; i < 4; i++) {
                             List<Tile> buildtiles = s.GetBuildingTiles(t.tile);
                             if (buildtiles.Exists(x => x.City?.PlayerNumber != Player.Number))
@@ -544,27 +603,38 @@ namespace Andja.Model {
                                     City = city
                                 };
                             }
+
                             s.Rotate();
                         }
                     }
-                } else {
-                    tiles = tiles.Where(x => x.tile.CheckTile() && x.MaxRectangle.x >= s.TileWidth && x.MaxRectangle.y >= s.TileHeight).ToList();
                 }
+                else {
+                    tiles = tiles.Where(x =>
+                            x.tile.CheckTile() && x.MaxRectangle.x >= s.TileWidth && x.MaxRectangle.y >= s.TileHeight)
+                        .ToList();
+                }
+
                 if (s.StructureRange > 0) {
-                    var ordered = tiles.OrderBy(x => x.MaxRectangle.x == s.StructureRange && x.MaxRectangle.y == s.StructureRange);
-                    var tooSmall = ordered.Where(x => x.MaxRectangle.x < s.StructureRange || x.MaxRectangle.y < s.StructureRange);
+                    var ordered = tiles.OrderBy(x =>
+                        x.MaxRectangle.x == s.StructureRange && x.MaxRectangle.y == s.StructureRange);
+                    var tooSmall = ordered.Where(x =>
+                        x.MaxRectangle.x < s.StructureRange || x.MaxRectangle.y < s.StructureRange);
                     var bigger = ordered.Except(tooSmall);
                     Tile tile = null;
                     if (bigger.Count() > 0) {
-                        bigger.OrderBy(x => x.MaxRectangle.x - s.StructureRange).ThenBy(x => x.MaxRectangle.y - s.StructureRange);
+                        bigger.OrderBy(x => x.MaxRectangle.x - s.StructureRange)
+                            .ThenBy(x => x.MaxRectangle.y - s.StructureRange);
                         tile = bigger.First().tile;
                     }
+
                     if (tile == null) {
                         if (tooSmall.Count() == 0)
                             continue;
-                        tooSmall.OrderBy(x => x.MaxRectangle.x - s.StructureRange).ThenBy(x => x.MaxRectangle.y - s.StructureRange);
+                        tooSmall.OrderBy(x => x.MaxRectangle.x - s.StructureRange)
+                            .ThenBy(x => x.MaxRectangle.y - s.StructureRange);
                         tile = tooSmall.Last()?.tile;
                     }
+
                     if (tile == null)
                         continue;
                     return new PlaceStructure {
@@ -575,15 +645,18 @@ namespace Andja.Model {
                     };
                 }
             }
+
             Log.AI_WARNING("AI did not FindStructurePlace " + key + "!");
             return null;
         }
 
         private bool _startFunction = false;
+
         private void GameStartFunction() {
             if (Player.Cities.Count != 0 || Player.Ships.Count == 0) return;
             Ship ship = Player.Ships
-                .First(s => s.Inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse.BuildingItems));
+                .First(s => s.Inventory.HasEnoughOfItems(PrototypController.Instance.FirstLevelWarehouse
+                    .BuildingItems));
             if (_startFunction)
                 return;
             _startFunction = true;
@@ -594,13 +667,16 @@ namespace Andja.Model {
             }
             else {
                 currentOperationPending.Add(AIController.Instance.AddOperation(
-                    new MoveUnitOperation(this, ship, tileAndRotation.Item1.GetNeighbours().First(x => x.Type == TileType.Ocean), true)));
+                    new MoveUnitOperation(this, ship,
+                        tileAndRotation.Item1.GetNeighbours().First(x => x.Type == TileType.Ocean), true)));
             }
+
             void ShipWarehouse(Unit u, bool atdest) {
                 if (atdest == false)
                     return;
                 currentOperationPending.Add(
-                    AIController.Instance.AddOperation(new BuildStructureOperation(this, tileAndRotation.Item1, tileAndRotation.Item2, ship))
+                    AIController.Instance.AddOperation(new BuildStructureOperation(this, tileAndRotation.Item1,
+                        tileAndRotation.Item2, ship))
                 );
                 ship.UnregisterOnArrivedAtDestinationCallback(ShipWarehouse);
             }
@@ -611,15 +687,17 @@ namespace Andja.Model {
         private void OnLostStructure(Structure structure) {
             structureToCount[structure.ID]--;
             if (structure is OutputStructure os) {
-                if(os.Output != null)
+                if (os.Output != null)
                     foreach (Item p in os.Output) {
                         itemToProducePerMinuteChange[p.ID] -= os.OutputData.ProducePerMinute;
                     }
+
                 if (os is ProductionStructure ps) {
                     if (ps.InputTyp == InputTyp.OR) {
                         Log.AI_WARNING("AI CAN'T HANDLE OR INTAKE YET!");
                         return;
                     }
+
                     foreach (Item p in ps.Intake) {
                         itemToProducePerMinuteChange[p.ID] += p.count * (60f / ps.ProduceTime);
                     }
@@ -640,60 +718,63 @@ namespace Andja.Model {
             OnNewStructure(s);
         }
 
-        private void OnOwnerChange(Structure str, ICity oldCity, ICity newCity) {
+        private void OnOwnerChange(Structure str, ICity oldCity, ICity newCity) { }
 
-        }
-
-        private void OnStructureDestroy(Structure structure, IWarfare destroyer) {
-
-        }
+        private void OnStructureDestroy(Structure structure, IAttack attack) { }
 
         public Tuple<Tile, WarehouseStructure> DecideIsland(bool startIslands = false) {
             //TODO:set here desires
             CalculateIslandScores();
             islandScores = islandScores.OrderByDescending(x => x.EndScore).ToList();
-            if(startIslands && neededFertilities.Count > 0) {
+            if (startIslands && neededFertilities.Count > 0) {
                 islandScores.RemoveAll(x => x.Island.Fertilities.Any(y => neededFertilities.Contains(y)) == false);
                 if (islandScores.Count == 0) {
                     Log.AI_INFO("No island found that would be a possible start for ai (anyone).");
                     return null;
                 }
-                if(islandScores.Count < PlayerController.Instance.PlayerCount) {
+
+                if (islandScores.Count < PlayerController.Instance.PlayerCount) {
                     startIslands = false;
                 }
             }
-            WarehouseStructure warehouse = PrototypController.Instance.FirstLevelWarehouse.Clone() as WarehouseStructure;
+
+            WarehouseStructure warehouse =
+                PrototypController.Instance.FirstLevelWarehouse.Clone() as WarehouseStructure;
             int index = 0;
-            while(warehouse.BuildTile == null) {
-                List<TileValue> values = new List<TileValue>(AIController.IslandsTileToValue[islandScores[index].Island].Values);
+            while (warehouse.BuildTile == null) {
+                List<TileValue> values =
+                    new List<TileValue>(AIController.IslandsTileToValue[islandScores[index].Island].Values);
                 values.RemoveAll(x => x.Type != TileType.Shore);
                 List<TileValue> selected = new List<TileValue>(from TileValue in values
-                                                               where TileValue.MaxValue >= warehouse.Height 
-                                                                     && TileValue.tile.City.IsWilderness()
-                                                               select new TileValue(TileValue));
+                    where TileValue.MaxValue >= warehouse.TileHeight
+                          && TileValue.tile.City.IsWilderness()
+                    select new TileValue(TileValue));
                 lock (islandScores[index].Island) {
-                    if(startIslands && islandScores[index].Island.startClaimed) {
-
-                    } else {
+                    if (startIslands && islandScores[index].Island.startClaimed) { }
+                    else {
                         foreach (TileValue t in selected) {
                             for (int i = 0; i < 4; i++) {
                                 List<Tile> buildtiles = warehouse.GetBuildingTiles(t.tile);
                                 if (buildtiles.Exists(x => x.Type == TileType.Ocean || x.City.IsWilderness() == false))
                                     continue;
                                 if (warehouse.CanBuildOnSpot(buildtiles)) {
-                                    if (Array.Exists(t.tile.GetNeighbours(),t => t.Type == TileType.Ocean) == false)
+                                    if (Array.Exists(t.tile.GetNeighbours(), t => t.Type == TileType.Ocean) == false)
                                         continue;
                                     islandScores[index].Island.startClaimed = startIslands;
                                     return new Tuple<Tile, WarehouseStructure>(t.tile, warehouse);
                                 }
+
                                 warehouse.Rotate();
                             }
                         }
                     }
                 }
+
                 index++;
             }
-            Log.AI_ERROR("AI Player " + Player.Name + " did not find any possible build location for warehouse. Please report seed/save.");
+
+            Log.AI_ERROR("AI Player " + Player.Name +
+                         " did not find any possible build location for warehouse. Please report seed/save.");
             return null;
         }
 
@@ -721,6 +802,7 @@ namespace Andja.Model {
                         resourceIDtoExisting[resid] = 1;
                     }
                 }
+
                 foreach (Fertility fer in island.Fertilities) {
                     if (fertilitytoExisting.ContainsKey(fer)) {
                         fertilitytoExisting[fer]++;
@@ -730,10 +812,12 @@ namespace Andja.Model {
                     }
                 }
             }
+
             foreach (string resid in resourceIDtoAverageAmount.Keys.ToArray()) {
                 resourceIDtoAverageAmount[resid] /= islands.Count;
                 resourceIDtoExisting[resid] = 1 - (resourceIDtoExisting[resid] / islands.Count);
             }
+
             averageSize /= islands.Count;
             foreach (Island island in islands) {
                 IslandScore score = new IslandScore {
@@ -751,6 +835,7 @@ namespace Andja.Model {
                         if (neededResources.Contains(resid) && resourceIDtoAverageAmount[resid] > 0) {
                             score.ResourceScore += island.Resources[resid] / resourceIDtoAverageAmount[resid];
                         }
+
                         // its always nice to have -- add how rare it is in the world
                         score.ResourceScore += resourceIDtoExisting[resid];
                     }
@@ -769,11 +854,13 @@ namespace Andja.Model {
                     if (neededFertilities.Contains(fertility)) {
                         score.FertilityScore += fertilitytoExisting[fertility];
                     }
+
                     if (fertility.IsUnlocked(Player) == false)
                         score.FertilityScore += 1 - (ordered.IndexOf(fertility) - indexLastUnlocked) / ordered.Count;
                     // its always nice to have -- add how rare it is in the world
                     score.FertilityScore += fertilitytoExisting[fertility];
                 }
+
                 List<IIsland> Islands = new List<IIsland>(Player.GetIslandList());
                 //Distance Score is either how far it is from other islands OR how far from center
                 if (Islands.Count > 0) {
@@ -781,12 +868,15 @@ namespace Andja.Model {
                     foreach (Island isl in Islands) {
                         distance += Vector2.Distance(island.Center, isl.Center);
                     }
+
                     distance /= Islands.Count;
                     score.DistanceScore = distance;
                 }
                 else {
-                    score.DistanceScore = (Vector2.Distance(island.Center, World.Current.Center) / World.Current.Center.magnitude);
+                    score.DistanceScore = (Vector2.Distance(island.Center, World.Current.Center) /
+                                           World.Current.Center.magnitude);
                 }
+
                 Dictionary<Tile, TileValue> values = AIController.IslandsTileToValue[island];
                 int averageTileScore = 0;
                 foreach (Tile t in values.Keys) {
@@ -794,6 +884,7 @@ namespace Andja.Model {
                         averageTileScore += values[t].MinValue;
                     }
                 }
+
                 averageTileScore /= island.Tiles.Count;
                 score.ShapeScore = averageTileScore;
                 //Competition Score is the percentage of unclaimed Tiles multiplied through how many diffrent players
@@ -804,12 +895,15 @@ namespace Andja.Model {
                             continue;
                         avaibleTiles -= c.Tiles.Count;
                     }
+
                     score.CompetitionScore = 1 - (avaibleTiles / island.Tiles.Count);
                     score.CompetitionScore *= island.Cities.Count - 1;
                 }
+
                 islandScores.Add(score);
                 debugCalcValues += (score.Island.StartTile.Vector2 + " " + score.EndScore + "=" + score + "\n");
             }
+
             Log.AI_INFO(debugCalcValues);
         }
 
@@ -817,15 +911,18 @@ namespace Andja.Model {
             List<Player> players = PlayerController.Instance.GetPlayers();
             combatValues = players.Select(p => new PlayerCombatValue(p, CombatValue)).ToList();
         }
+
         internal void Load(Player player) {
             this.Player = player;
             PlayerAttitude ??= PlayerController.Instance.GetPlayers()
-                .Where(p => p != Player).ToDictionary(player => player.Number, player => new PlayerDiplomaticAI(player));
+                .Where(p => p != Player)
+                .ToDictionary(player => player.Number, player => new PlayerDiplomaticAI(player));
             foreach (var item in PlayerAttitude) {
                 item.Value.Player = PlayerController.Instance.GetPlayer(item.Key);
             }
         }
     }
+
     public struct PlaceStructure {
         public Tile buildTile;
         public int rotation;
@@ -857,20 +954,26 @@ namespace Andja.Model {
                 priority = player.Player.MaxPopulationLevel - item.Data.UnlockLevel;
                 return;
             }
+
             if (player.Player.MaxPopulationLevel == item.Data.UnlockLevel) {
                 //Coming up SOON but CANT build it so it will range between -1 and 0
                 if (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] < item.Data.UnlockPopulationCount) {
-                    priority = (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] - item.Data.UnlockPopulationCount)
-                                        / (float)AIController.PerPopulationLevelDatas[item.Data.UnlockLevel].atleastRequiredPeople;
+                    priority = (player.Player.MaxPopulationCounts[item.Data.UnlockLevel] -
+                                item.Data.UnlockPopulationCount)
+                               / (float)AIController.PerPopulationLevelDatas[item.Data.UnlockLevel]
+                                   .atleastRequiredPeople;
                     return;
                 }
             }
+
             switch (item.Type) {
-                case ItemType.Build when PrototypController.Instance.RecommandedBuildSupplyChains.ContainsKey(item.ID) == false:
+                case ItemType.Build
+                    when PrototypController.Instance.RecommandedBuildSupplyChains.ContainsKey(item.ID) == false:
                     priority = int.MinValue;
                     return;
                 case ItemType.Build:
-                    priority = PrototypController.Instance.RecommandedBuildSupplyChains[item.ID][player.Player.CurrentPopulationLevel];
+                    priority = PrototypController.Instance.RecommandedBuildSupplyChains[item.ID][
+                        player.Player.CurrentPopulationLevel];
                     priority -= player.itemToProducePerMinuteChange[item.ID];
                     return;
                 case ItemType.Luxury:
@@ -888,6 +991,5 @@ namespace Andja.Model {
             }
             //int currentPopulation = player.player.GetCurrentPopulation(item.)
         }
-
     }
 }

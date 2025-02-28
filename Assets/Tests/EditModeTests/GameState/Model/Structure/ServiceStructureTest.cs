@@ -38,7 +38,7 @@ public class ServiceStructureTest {
 
         _effect = new Effect("effect", new EffectPrototypeData() {
             targets = new TargetGroup() {
-                Targets = new HashSet<Target> { Target.HomeStructure }
+                Targets = new HashSet<EventTarget> { EventTarget.HomeStructure }
             }
         });
 
@@ -60,7 +60,7 @@ public class ServiceStructureTest {
         PrototypeData.targets = ServiceTarget.City;
         Effect effect = new Effect("effect", new EffectPrototypeData() {
             targets = new TargetGroup() {
-                Targets = new HashSet<Target> { Target.City }
+                Targets = new HashSet<EventTarget> { EventTarget.City }
             }
         });
         PrototypeData.effectsOnTargets = new[] { effect };
@@ -77,7 +77,7 @@ public class ServiceStructureTest {
         PrototypeData.targets = ServiceTarget.City;
         Effect effect = new Effect("effect", new EffectPrototypeData() {
             targets = new TargetGroup() {
-                Targets = new HashSet<Target> { Target.HomeStructure }
+                Targets = new HashSet<EventTarget> { EventTarget.HomeStructure }
             }
         });
         PrototypeData.effectsOnTargets = new[] { effect };

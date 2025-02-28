@@ -5,6 +5,7 @@ using UnityEngine;
 using Andja.Controller;
 using System;
 using Andja.Utility;
+
 namespace Andja.FogOfWar {
     /// <summary>
     /// IS responsible for what is being shown on the map when the structure is invisible.
@@ -16,7 +17,10 @@ namespace Andja.FogOfWar {
         [JsonPropertyAttribute] public bool isBeingShown;
         [JsonPropertyAttribute] public string lastShownSprite;
         [JsonPropertyAttribute] public uint buildID; //link to the build structure
-        [JsonPropertyAttribute] public string id = null; //if the linked structure is destroyed -- we need to know the size etc
+
+        [JsonPropertyAttribute]
+        public string id = null; //if the linked structure is destroyed -- we need to know the size etc
+
         [JsonPropertyAttribute] public int rotation = 0; //and -- we need to know the rotation of the sprite
         [JsonPropertyAttribute] public SeriaziableVector2 buildTileVector;
     }
@@ -24,11 +28,11 @@ namespace Andja.FogOfWar {
     public class FogOfWarStructure : MonoBehaviour {
         public Structure structure;
         private bool isCurrentlyVisible;
+
         public bool IsCurrentlyVisible {
-            get {
-                return isCurrentlyVisible || structure.IsPlayer();
-            }
+            get { return isCurrentlyVisible || structure.IsPlayer(); }
         }
+
         public FogOfWarStructureData Data = new FogOfWarStructureData();
 
         public void Link(Structure structure) {
@@ -38,20 +42,24 @@ namespace Andja.FogOfWar {
             this.structure = structure;
             structure.RegisterOnDestroyCallback(Destroyed);
         }
+
         public void ShowLastShown() {
             SpriteRenderer sr = GetComponent<SpriteRenderer>();
             sr.sprite = StructureSpriteController.Instance.GetSprite(Data.lastShownSprite);
         }
+
         public void LoadStructure() {
             this.structure = BuildController.Instance.BuildIdToStructure[Data.buildID];
             ShowLastShown();
         }
+
         public void LoadStructureDestroyed() {
             var structure = PrototypController.Instance.GetStructureCopy(Data.id);
-            if(structure == null) {
+            if (structure == null) {
                 Destroy(gameObject);
                 return;
             }
+
             float x = ((float)structure.TileWidth) / 2f - TileSpriteController.offset;
             float y = ((float)structure.TileHeight) / 2f - TileSpriteController.offset;
             transform.position = new Vector3(Data.buildTileVector.X + x, Data.buildTileVector.Y + y);
@@ -62,13 +70,15 @@ namespace Andja.FogOfWar {
             structure.ChangeRotation(Data.rotation);
             //structure.GetBuildingTiles(Data.buildTile);
         }
-        private void Destroyed(Structure str, IWarfare des) {
+
+        private void Destroyed(Structure str, IAttack attack) {
             //do we see it at the moment or is it not shown atall -- if so we can destroy it directly
-            if(isCurrentlyVisible || Data.isBeingShown == false) {
+            if (isCurrentlyVisible || Data.isBeingShown == false) {
                 FogOfWarController.Instance.RemoveFogOfWarStructure(Data.buildID);
                 Destroy(this.gameObject);
                 return;
             }
+
             Data.id = str.ID;
             Data.rotation = str.Rotation;
             structure = null;
@@ -80,11 +90,12 @@ namespace Andja.FogOfWar {
         }
 
         private void OnTriggerEnter2D(Collider2D collision) {
-            if(structure == null) {
+            if (structure == null) {
                 FogOfWarController.Instance.RemoveFogOfWarStructure(Data.buildID);
                 Destroy(this.gameObject);
                 return;
             }
+
             if (collision.gameObject.GetComponent<FogOfWarTrigger>() != null) {
                 isCurrentlyVisible = true;
                 Data.isBeingShown = true;
@@ -93,20 +104,22 @@ namespace Andja.FogOfWar {
                 StructureSpriteController.Instance.OnStructureChanged(structure);
             }
         }
+
         private void OnTriggerExit2D(Collider2D collision) {
             if (collision.gameObject.GetComponent<FogOfWarTrigger>() != null) {
                 isCurrentlyVisible = false;
             }
-            if(structure != null)
+
+            if (structure != null)
                 Data.lastShownSprite = structure.SpriteName;
         }
 
         internal void Set(FogOfWarStructureData data) {
             Data = data;
-            if(data.buildID == 0) {
+            if (data.buildID == 0) {
                 LoadStructureDestroyed();
-            } else
-            if(BuildController.Instance.BuildIdToStructure.ContainsKey(data.buildID)) {
+            }
+            else if (BuildController.Instance.BuildIdToStructure.ContainsKey(data.buildID)) {
                 Link(BuildController.Instance.BuildIdToStructure[data.buildID]);
             }
         }
@@ -118,9 +131,8 @@ namespace Andja.FogOfWar {
                     return fwg.IsCurrentlyVisible;
                 }
             }
+
             return true;
-        } 
-
+        }
     }
-
 }

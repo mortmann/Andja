@@ -8,7 +8,6 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Controller {
-
     public class UnitSpriteController : MonoBehaviour {
         public static UnitSpriteController Instance;
 
@@ -44,12 +43,15 @@ namespace Andja.Controller {
             foreach (var item in World.Current.Units.Where(item => item.IsAlive)) {
                 OnUnitCreated(item);
             }
+
             foreach (Crate c in World.Current.Crates) {
                 OnCrateSpawned(c);
             }
+
             foreach (Projectile pro in World.Current.Projectiles) {
                 OnProjectileCreated(pro);
             }
+
             World.Current.RegisterOnCreateProjectileCallback(OnProjectileCreated);
             BuildController.Instance.RegisterBuildStateChange(OnBuildStateChange);
         }
@@ -58,7 +60,7 @@ namespace Andja.Controller {
             // This creates a new GameObject and adds it to our scene.
             GameObject go = new GameObject();
             go.layer = LayerMask.NameToLayer("Unit");
-            go.name = unit.PlayerNumber + ":" + (unit.IsShip?"S":"U") + unit.PlayerSetName ?? unit.Name;
+            go.name = unit.PlayerNumber + ":" + (unit.IsShip ? "S" : "U") + unit.PlayerSetName ?? unit.Name;
             GameObject lineGo = Instantiate(unitPathPrefab);
             lineGo.transform.SetParent(go.transform);
             // Add our tile/GO pair to the dictionary.
@@ -69,7 +71,7 @@ namespace Andja.Controller {
             sr.sprite = _unitSprites[unit.Data.spriteBaseName];
             sr.material = SpriteHighlightMaterial;
             //go.transform.SetParent(this.transform, true);
-            go.AddComponent<ITargetableHoldingScript>().Holding = unit;
+            go.AddComponent<TargetHoldingScript>().SetUnit(unit);
             go.GetComponent<SpriteOutline>().PlayerNumber = unit.PlayerNumber;
             Rigidbody2D r2d = go.AddComponent<Rigidbody2D>();
             r2d.gravityScale = 0;
@@ -90,13 +92,15 @@ namespace Andja.Controller {
                 if (unit.IsOwnedByCurrentPlayer()) {
                     FogOfWarController.Instance.AddUnitFogModule(go, unit);
                 }
+
                 if (FogOfWarController.IsFogOfWarAlways) {
                     if (unit.IsOwnedByCurrentPlayer() == false) {
                         // boom this should make one part of fog always work
-                        sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask; 
+                        sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                     }
                 }
             }
+
             // Register our callback so that our GameObject gets updated whenever
             // the object's into changes.
             OnUnitChanged(unit);
@@ -129,6 +133,7 @@ namespace Andja.Controller {
                     sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                 }
             }
+
             sr.sortingLayerName = "Units";
             sr.sprite = _unitSprites["cannonball_1"];
             projectile.RegisterOnDestroyCallback(OnProjectileDestroy);
@@ -136,8 +141,9 @@ namespace Andja.Controller {
                 BoxCollider2D col = proGo.AddComponent<BoxCollider2D>();
                 col.isTrigger = true;
                 col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
-                                        sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+                    sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
             }
+
             proGo.AddComponent<ProjectileHoldingScript>().Projectile = projectile;
         }
 
@@ -151,6 +157,7 @@ namespace Andja.Controller {
                 Debug.LogError("OnUnitChanged -- trying to change visuals for character not in our map.");
                 return;
             }
+
             GameObject charGo = unitGameObjectMap[c];
             if (c is Ship ship) {
                 charGo.SetActive(ship.isOffWorld == false);
@@ -168,11 +175,12 @@ namespace Andja.Controller {
             }
         }
 
-        private void OnUnitDestroy(Unit c, IWarfare warfare) {
+        private void OnUnitDestroy(Unit c, IAttack attack) {
             if (unitGameObjectMap.ContainsKey(c) == false) {
                 //Debug.LogError("OnUnitDestroy -- trying to change visuals for character not in our map.");
                 return;
             }
+
             GameObject charGo = unitGameObjectMap[c];
             Destroy(charGo);
             unitGameObjectMap.Remove(c);
@@ -188,6 +196,7 @@ namespace Andja.Controller {
                     sr.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                 }
             }
+
             sr.sprite = _unitSprites["Crate"];
             go.AddComponent<CrateHoldingScript>().thisCrate = c;
             go.transform.SetParent(this.transform);
@@ -196,7 +205,8 @@ namespace Andja.Controller {
             sr.sortingLayerName = "Units";
             BoxCollider2D col = go.AddComponent<BoxCollider2D>();
             go.AddComponent<Rigidbody2D>().gravityScale = 0; //TODO: think about if this is good so!
-            col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit, sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
+            col.size = new Vector2(sr.sprite.textureRect.size.x / sr.sprite.pixelsPerUnit,
+                sr.sprite.textureRect.size.y / sr.sprite.pixelsPerUnit);
             go.transform.position = c.position;
             crateGameObjectMap.Add(c, go);
         }
@@ -212,6 +222,7 @@ namespace Andja.Controller {
             foreach (Sprite s in sprites) {
                 _unitSprites[s.name] = s;
             }
+
             Sprite[] custom = ModLoader.LoadSprites(SpriteType.Unit);
             if (custom == null)
                 return;
@@ -231,6 +242,7 @@ namespace Andja.Controller {
                 RemoveBuildCircle();
                 return;
             }
+
             CreateBuildCircle();
         }
 
@@ -238,9 +250,11 @@ namespace Andja.Controller {
             if (_circleUnit == null) {
                 return; // can be because cheats
             }
+
             if (unitGameObjectMap.ContainsKey(_circleUnit) == false) {
-                return;//maybe it has been destroyed or other bug calls this function twice or cheats cause to call this without create
+                return; //maybe it has been destroyed or other bug calls this function twice or cheats cause to call this without create
             }
+
             GameObject go = unitGameObjectMap[_circleUnit].transform.Find(CircleGOName).gameObject;
             Destroy(go);
         }
@@ -250,6 +264,7 @@ namespace Andja.Controller {
             if (circleUnit == null) {
                 return;
             }
+
             Transform parent = unitGameObjectMap[circleUnit].transform;
             GameObject go = Instantiate(unitCirclePrefab);
             go.name = CircleGOName;
@@ -265,6 +280,7 @@ namespace Andja.Controller {
                 if (unit == null) {
                     continue;
                 }
+
                 unitGameObjectMap[unit].GetComponent<SpriteOutline>().enabled = true;
             }
         }
@@ -273,9 +289,10 @@ namespace Andja.Controller {
             if (Application.isPlaying == false)
                 return;
             foreach (Unit unit in units) {
-                if(unitGameObjectMap.ContainsKey(unit) == false) {
+                if (unitGameObjectMap.ContainsKey(unit) == false) {
                     continue;
                 }
+
                 unitGameObjectMap[unit].GetComponent<SpriteOutline>().enabled = false;
             }
         }

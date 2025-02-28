@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace Andja.UI.Model {
-
     public class OffWorldPanelUI : MonoBehaviour {
         public Button delete;
         public Button send;
@@ -18,9 +17,7 @@ namespace Andja.UI.Model {
 
         private int PressedItem {
             get { return _pressedItem; }
-            set {
-                _pressedItem = value;
-            }
+            set { _pressedItem = value; }
         }
 
         private Dictionary<int, ItemUI> intToGameObject;
@@ -42,17 +39,20 @@ namespace Andja.UI.Model {
                 if (item.IsShip == false || item.PlayerNumber != PlayerController.currentPlayerNumber) {
                     continue;
                 }
+
                 ships.Add((Ship)item);
                 unitNames.Add((Ship)item, item.Name);
                 item.RegisterOnDestroyCallback(OnShipDestroy);
                 item.RegisterOnChangedCallback(OnShipChanged);
             }
+
             RefreshDropDownValues();
             shipDP.onValueChanged.AddListener(OnDropDownChange);
             PressedItem = 0;
             if (ships.Count > 0) {
                 Show(ships[0]);
             }
+
             ResetItemIcons();
         }
 
@@ -61,7 +61,7 @@ namespace Andja.UI.Model {
             Show(ships[i]);
         }
 
-        public void OnShipDestroy(Unit u, IWarfare warfare) {
+        public void OnShipDestroy(Unit u, IAttack attack) {
             unitNames.Remove(u);
             shipDP.RefreshShownValue();
         }
@@ -87,6 +87,7 @@ namespace Andja.UI.Model {
             foreach (var item in list) {
                 Debug.Log(item.ToString());
             }
+
             ship.SendToOffworldMarket(list.ToArray());
             unitNames.Remove(ship);
             ship = null;
@@ -97,6 +98,7 @@ namespace Andja.UI.Model {
             if (intToGameObject.ContainsKey(PressedItem) == false) {
                 return;
             }
+
             intToGameObject[this.PressedItem].ChangeItemCount(f);
             intToItem[PressedItem].count = (int)f;
         }
@@ -132,12 +134,15 @@ namespace Andja.UI.Model {
             foreach (Transform t in onShip.transform) {
                 GameObject.Destroy(t.gameObject);
             }
+
             foreach (Transform t in toBuy.transform) {
                 GameObject.Destroy(t.gameObject);
             }
+
             if (ship == null) {
                 return;
             }
+
             for (int i = 0; i < ship.Inventory.NumberOfSpaces; i++) {
                 AddItemPrefabTo(toBuy.transform);
                 Item item = ship.Inventory.GetItemInSpace(i);

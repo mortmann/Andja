@@ -6,32 +6,34 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.UI.Model {
-
     public class UnitGroupUI : MonoBehaviour {
         public Transform unitsContent;
         public UnitHealthUI unitHealthPrefab;
 
-        private Dictionary<Unit, UnitHealthUI> unitToUI= new Dictionary<Unit, UnitHealthUI>();
+        private Dictionary<Unit, UnitHealthUI> unitToUI = new Dictionary<Unit, UnitHealthUI>();
+
         private void Awake() {
             foreach (Transform t in unitsContent)
                 Destroy(t.gameObject);
         }
+
         public void Show(List<Unit> show) {
             if (unitToUI.Keys.Except(show).Any() == false)
                 return;
-            foreach(Unit u in unitToUI.Keys) {
-                if(show.Contains(u)) {
+            foreach (Unit u in unitToUI.Keys) {
+                if (show.Contains(u)) {
                     continue;
                 }
+
                 Destroy(unitToUI[u].gameObject);
             }
 
             UIController.Instance.HighlightUnits(show.ToArray());
-            
+
             foreach (Unit unit in show) {
                 if (unit.IsOwnedByCurrentPlayer() == false)
                     continue;
-                if(unitToUI.ContainsKey(unit) == false) 
+                if (unitToUI.ContainsKey(unit) == false)
                     AddUnit(unit);
             }
         }
@@ -42,7 +44,7 @@ namespace Andja.UI.Model {
             MouseController.Instance.RemoveUnitFromGroup(unit);
         }
 
-        public void RemoveUnit(Unit unit, IWarfare warfare) {
+        public void RemoveUnit(Unit unit, IAttack attack) {
             RemoveUnit(unit);
         }
 
@@ -59,6 +61,7 @@ namespace Andja.UI.Model {
             foreach (Unit unit in unitToUI.Keys) {
                 unit.UnregisterOnDestroyCallback(RemoveUnit);
             }
+
             UIController.Instance.DehighlightUnits(unitToUI.Keys.ToArray());
             MouseController.Instance.UnselectUnitGroup();
         }

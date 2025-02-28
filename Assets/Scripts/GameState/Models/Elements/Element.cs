@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Andja.Model {
-
     public abstract class Element {
-
-        public readonly BaseThing Parent;
+        public BaseThing Parent { get; }
+        public int PlayerNumber => Parent.PlayerNumber;
 
         public Element(BaseThing baseThing) {
             Parent = baseThing;
@@ -18,7 +18,5 @@ namespace Andja.Model {
         public abstract void OnUpdate(float deltaTime);
 
         public abstract void OnLoad();
-
     }
-
 }

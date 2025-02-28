@@ -76,52 +76,52 @@ namespace Andja.Model {
         /// </summary>
         /// <returns></returns>
         private TargetGroup CalculateTargetGroups() {
-            List<Target> targets = new List<Target>();
+            List<EventTarget> targets = new List<EventTarget>();
             if (this is World)
-                targets.Add(Target.World);
+                targets.Add(EventTarget.World);
             if (this is Player)
-                targets.Add(Target.Player);
+                targets.Add(EventTarget.Player);
             if (this is Unit)
-                targets.Add(Target.AllUnit);
+                targets.Add(EventTarget.AllUnit);
             if (this is Unit && this is Ship == false)
-                targets.Add(Target.LandUnit);
+                targets.Add(EventTarget.LandUnit);
             if (this is Ship)
-                targets.Add(Target.Ship);
+                targets.Add(EventTarget.Ship);
             if (this is Island)
-                targets.Add(Target.Island);
+                targets.Add(EventTarget.Island);
             if (this is City)
-                targets.Add(Target.City);
+                targets.Add(EventTarget.City);
             if (this is Structure str) {
-                targets.Add(Target.AllStructure);
+                targets.Add(EventTarget.AllStructure);
                 if (str.CanTakeDamage)
-                    targets.Add(Target.DamageableStructure);
+                    targets.Add(EventTarget.DamageableStructure);
                 if (str.CanStartBurning)
-                    targets.Add(Target.BurnableStructure);
+                    targets.Add(EventTarget.BurnableStructure);
             }
             if (this is HomeStructure)
-                targets.Add(Target.HomeStructure);
+                targets.Add(EventTarget.HomeStructure);
             if (this is RoadStructure)
-                targets.Add(Target.RoadStructure);
+                targets.Add(EventTarget.RoadStructure);
             if (this is NeedStructure)
-                targets.Add(Target.NeedStructure);
+                targets.Add(EventTarget.NeedStructure);
             if (this is MilitaryStructure)
-                targets.Add(Target.MilitaryStructure);
+                targets.Add(EventTarget.MilitaryStructure);
             if (this is ServiceStructure)
-                targets.Add(Target.ServiceStructure);
+                targets.Add(EventTarget.ServiceStructure);
             if (this is GrowableStructure)
-                targets.Add(Target.GrowableStructure);
+                targets.Add(EventTarget.GrowableStructure);
             if (this is OutputStructure)
-                targets.Add(Target.OutputStructure);
+                targets.Add(EventTarget.OutputStructure);
             if (this is MarketStructure)
-                targets.Add(Target.MarketStructure);
+                targets.Add(EventTarget.MarketStructure);
             if (this is WarehouseStructure)
-                targets.Add(Target.WarehouseStructure);
+                targets.Add(EventTarget.WarehouseStructure);
             if (this is MineStructure)
-                targets.Add(Target.MineStructure);
+                targets.Add(EventTarget.MineStructure);
             if (this is FarmStructure)
-                targets.Add(Target.FarmStructure);
+                targets.Add(EventTarget.FarmStructure);
             if (this is ProductionStructure)
-                targets.Add(Target.ProductionStructure);
+                targets.Add(EventTarget.ProductionStructure);
             return new TargetGroup(targets);
         }
 

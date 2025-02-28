@@ -15,10 +15,12 @@ namespace Andja.Controller {
         private Vector3 _lastFramePosition => MouseController.Instance.LastFramePosition;
         private Vector3 _lastFrameGuiPosition => MouseController.Instance.LastFrameGuiPosition;
         public List<Unit> selectedUnitGroup => MouseController.Instance.selectedUnitGroup;
+
         public override void Activate() {
             base.Activate();
             _dragStartPosition = MouseController.Instance.CurrentFramePosition;
         }
+
         public override void Update() {
             if (InputHandler.GetMouseButton(InputMouse.Primary) == false) {
                 Vector3 v1 = _dragStartPosition;
@@ -32,24 +34,26 @@ namespace Andja.Controller {
                 if (MouseController.OverrideCurrentSetting)
                     selectedUnitGroup.Clear();
                 foreach (Collider2D c in c2d) {
-                    ITargetableHoldingScript target = c.GetComponent<ITargetableHoldingScript>();
+                    TargetHoldingScript target = c.GetComponent<TargetHoldingScript>();
                     if (target == null)
                         continue;
                     if (target.IsUnit == false)
                         continue;
                     if (target.Holding.PlayerNumber != PlayerController.currentPlayerNumber) continue;
-                    Unit u = ((Unit)target.Holding);
+                    Unit u = target.Unit;
                     if (selectedUnitGroup.Contains(u) == false)
                         selectedUnitGroup.Add(u);
                 }
+
                 if (selectedUnitGroup.Count > 1)
                     MouseController.Instance.SelectUnitGroup(selectedUnitGroup);
                 else if (selectedUnitGroup.Count == 1)
                     MouseController.Instance.SelectUnit(selectedUnitGroup[0]);
                 else {
-                    MouseController.Instance.SetMouseState(MouseState.Idle);// nothing selected
+                    MouseController.Instance.SetMouseState(MouseState.Idle); // nothing selected
                     MouseController.Instance.UnselectStuff();
                 }
+
                 _drawRect = Rect.zero;
                 _displayDragRectangle = false;
             }
@@ -58,6 +62,7 @@ namespace Andja.Controller {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
+
             // Drag already started
             Vector3 screenPosition1 = Camera.main.WorldToScreenPoint(_dragStartPosition);
             Vector3 screenPosition2 = _lastFrameGuiPosition;
@@ -71,11 +76,13 @@ namespace Andja.Controller {
             _drawRect = Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
             _displayDragRectangle = true;
         }
+
         public override void OnGui() {
             base.OnGui();
-            if(_displayDragRectangle)
+            if (_displayDragRectangle)
                 Util.DrawScreenRectBorder(_drawRect, 2, new Color(0.9f, 0.9f, 0.9f, 0.9f));
         }
+
         public override void Reset() {
             base.Reset();
             _dragStartPosition = MouseController.Instance.CurrentFramePosition;

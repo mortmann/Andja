@@ -57,7 +57,9 @@ namespace Andja.Controller {
         /// <param name="EditorStructure"></param>
         void StartStructureBuild(string structureId, Structure EditorStructure = null);
 
-        bool CurrentPlayerBuildOnTile(List<Tile> tiles, bool forEachTileOnce, int playerNumber, bool wild = false, Unit buildInRange = null);
+        bool CurrentPlayerBuildOnTile(List<Tile> tiles, bool forEachTileOnce, int playerNumber, bool wild = false,
+            Unit buildInRange = null);
+
         bool BuildOnEachTile(Structure structure, List<Tile> tiles, int playerNumber);
 
         bool BuildOnTile(Structure structure, List<Tile> tiles, int playerNumber, bool forEachTileOnce,
@@ -77,7 +79,7 @@ namespace Andja.Controller {
         /// </summary>
         bool LoadBuildOnTile(Structure s, Tile t);
 
-        void OnStructureDestroy(Structure str, IWarfare destroyer);
+        void OnStructureDestroy(Structure str, IAttack attack);
         bool PlayerHasEnoughMoney(Structure s, int playerNumber);
         ICity CreateCity(IIsland i, int playernumber);
 
@@ -107,9 +109,9 @@ namespace Andja.Controller {
         /// Callback called on every structure destroyed
         /// </summary>
         /// <param name="callbackfunc"></param>
-        void RegisterStructureDestroyed(Action<Structure, IWarfare> callbackfunc);
+        void RegisterStructureDestroyed(Action<Structure, IAttack> callbackfunc);
 
-        void UnregisterStructureDestroyed(Action<Structure, IWarfare> callbackfunc);
+        void UnregisterStructureDestroyed(Action<Structure, IAttack> callbackfunc);
 
         /// <summary>
         /// Callback called on every City created

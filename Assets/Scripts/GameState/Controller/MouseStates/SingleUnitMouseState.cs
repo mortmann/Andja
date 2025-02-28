@@ -11,27 +11,32 @@ namespace Andja.Controller {
         protected MouseUnitState MouseUnitState => MouseController.Instance.MouseUnitState;
         protected Vector3 MapClampedMousePosition => MouseController.Instance.MapClampedMousePosition;
         public static bool OverrideCurrentSetting => InputHandler.ShiftKey == false; // TODO: better name
+
         public override void Activate() {
             base.Activate();
             SelectedUnit.RegisterOnDestroyCallback(OnUnitDestroy);
             UIController.Instance.OpenUnitUI(SelectedUnit);
             MouseController.Instance.UIDebug(SelectedUnit);
         }
+
         public override void Update() {
             // If we're over a UI element, then bail out from this.
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
+
             //TEMPORARY FOR TESTING
             if (Input.GetKeyDown(KeyCode.U)) {
                 if (MouseController.Instance.SelectedUnit.IsShip) {
                     ((Ship)SelectedUnit).ShotAtPosition(MouseController.Instance.GetLastMousePosition());
                 }
             }
+
             CheckUnitCursor();
             if (InputHandler.GetMouseButtonUp(InputMouse.Primary)) {
                 OnPrimaryMouseButton(MouseController.Instance.MouseRayCast());
             }
+
             if (InputHandler.GetMouseButtonDown(InputMouse.Secondary)) {
                 OnSecondaryMouseButton(MouseController.Instance.MouseRayCast());
             }
@@ -42,15 +47,17 @@ namespace Andja.Controller {
                 MouseController.Instance.SetMouseState(MouseState.Idle);
                 return;
             }
-            if(hit == null) {
+
+            if (hit == null) {
                 DoNoTargetSecondaryMouseButton();
-            } else {
+            }
+            else {
                 DoTargetSecondaryMouseButton(hit);
             }
         }
 
         private void DoTargetSecondaryMouseButton(Transform hit) {
-            ITargetableHoldingScript targetableHoldingScript = hit.GetComponent<ITargetableHoldingScript>();
+            TargetHoldingScript targetableHoldingScript = hit.GetComponent<TargetHoldingScript>();
             if (targetableHoldingScript != null) {
                 SelectedUnit.GiveAttackCommand(targetableHoldingScript.Holding, OverrideCurrentSetting);
             }
@@ -60,14 +67,16 @@ namespace Andja.Controller {
             }
             else {
                 Tile t = MouseController.Instance.GetTileUnderneathMouse();
-                if(t.Structure == null) {
+                if (t.Structure == null) {
                     return;
                 }
-                if(t.Structure.HasElement<Capturable>()) {
-                    SelectedUnit.GiveCaptureCommand(t.Structure, OverrideCurrentSetting);
+
+                if (t.Structure.HasElement<Capturable>()) {
+                    SelectedUnit.GiveCaptureCommand(t.Structure.GetElement<Capturable>(), OverrideCurrentSetting);
                 }
-                if (t.Structure is TargetStructure target) {
-                    SelectedUnit.GiveAttackCommand(target, OverrideCurrentSetting);
+
+                if (t.Structure.HasElement<Target>()) {
+                    SelectedUnit.GiveAttackCommand(t.Structure.GetElement<Target>(), OverrideCurrentSetting);
                 }
             }
         }
@@ -104,13 +113,14 @@ namespace Andja.Controller {
                 case MouseUnitState.Normal:
                     //TODO: Better way?
                     if (hit) {
-                        ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
+                        TargetHoldingScript iths = hit.GetComponent<TargetHoldingScript>();
                         if (iths != null) {
-                            if (iths.Holding == SelectedUnit) {
+                            if (iths.Unit == SelectedUnit) {
                                 return;
                             }
                         }
                     }
+
                     MouseController.Instance.UnselectUnit();
                     break;
 
@@ -132,10 +142,12 @@ namespace Andja.Controller {
             Transform hit = MouseController.Instance.MouseRayCast();
             bool attackAble = false;
             if (hit) {
-                ITargetableHoldingScript iths = hit.GetComponent<ITargetableHoldingScript>();
+                TargetHoldingScript iths = hit.GetComponent<TargetHoldingScript>();
                 if (iths != null) {
-                    attackAble = PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, iths.PlayerNumber);
-                    if (SelectedUnit != iths.Holding
+                    attackAble =
+                        PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber,
+                            iths.PlayerNumber);
+                    if (SelectedUnit != iths.Unit
                         && PlayerController.currentPlayerNumber == iths.PlayerNumber
                         && SelectedUnit.IsUnit == iths.IsUnit) {
                         MouseController.ChangeCursorType(CursorType.Escort);
@@ -143,17 +155,22 @@ namespace Andja.Controller {
                     }
                 }
             }
+
             Structure str = MouseController.Instance.GetTileUnderneathMouse()?.Structure;
             if (str is TargetStructure) {
-                attackAble = PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, str.PlayerNumber);
+                attackAble =
+                    PlayerController.Instance.ArePlayersAtWar(PlayerController.currentPlayerNumber, str.PlayerNumber);
             }
+
             MouseController.ChangeCursorType(attackAble ? CursorType.Attack : CursorType.Pointer);
         }
-        private void OnUnitDestroy(Unit unit, IWarfare warfare) {
+
+        private void OnUnitDestroy(Unit unit, IAttack attack) {
             if (SelectedUnit == unit) {
                 MouseController.Instance.SetMouseState(MouseState.Idle);
             }
         }
+
         public override void Deactivate() {
             base.Deactivate();
             SelectedUnit.UnregisterOnDestroyCallback(OnUnitDestroy);

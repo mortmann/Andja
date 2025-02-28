@@ -9,20 +9,23 @@ using UnityEngine;
 using static Andja.Controller.AIController;
 
 namespace Andja.Controller {
-
     public class AIController : MonoBehaviour {
         public static AIController Instance { get; protected set; }
+
         /// <summary>
         /// Active means currently calculating things.
         /// </summary>
         public static bool ActiveAI = true;
+
         public static int AIOperationsPerFrame = 1;
+
         /// <summary>
         /// Shutdown means it ai player will stop the threads
         /// </summary>
         public static bool ShutdownAI = false;
 
         private readonly ConcurrentQueue<Operation> _allOperations = new ConcurrentQueue<Operation>();
+
         public static PerPopulationLevelData[] PerPopulationLevelDatas {
             get {
                 if (_perPopulationLevelDatas == null)
@@ -31,6 +34,7 @@ namespace Andja.Controller {
             }
             protected set => _perPopulationLevelDatas = value;
         }
+
         /// <summary>
         /// This is the original values without any structures
         /// </summary>
@@ -54,6 +58,7 @@ namespace Andja.Controller {
             }
             set => _islandsTileToValue = value;
         }
+
         private static Dictionary<IIsland, Dictionary<Tile, TileValue>> _islandToMapSpaceValuedTiles;
         public static ConcurrentDictionary<ICity, ConcurrentDictionary<Tile, TileValue>> _cityToCurrentSpaceValueTiles;
         private static Dictionary<IIsland, Dictionary<Tile, TileValue>> _islandsTileToValue;
@@ -66,6 +71,7 @@ namespace Andja.Controller {
             if (Instance != null) {
                 Debug.LogError("There should never be two AIController.");
             }
+
             Instance = this;
         }
 
@@ -74,6 +80,7 @@ namespace Andja.Controller {
                 Destroy(this);
                 return;
             }
+
             AIOperationsPerFrame = PlayerController.Instance.PlayerCount - 1;
             _cityToCurrentSpaceValueTiles = new ConcurrentDictionary<ICity, ConcurrentDictionary<Tile, TileValue>>();
             BuildController.Instance.RegisterStructureCreated(OnStructureCreated);
@@ -92,16 +99,21 @@ namespace Andja.Controller {
                 player.AI = ai;
                 _aiPlayers.Add(ai);
             }
+
             ShutdownAI = false;
             ActiveAI = true;
             foreach (var city in World.Current.Islands.SelectMany(i => i.Cities)) {
                 OnCityCreated(city);
             }
+
             _threads = new Thread[_aiPlayers.Count];
-            
+
             for (int i = 0; i < _aiPlayers.Count; i++) {
                 AIPlayer ai = _aiPlayers[i];
-                _threads[i] = new Thread(() => { ai.Loop(); Debug.Log("Shutdown AI " + ai.Player.Name); });
+                _threads[i] = new Thread(() => {
+                    ai.Loop();
+                    Debug.Log("Shutdown AI " + ai.Player.Name);
+                });
                 _threads[i].Start();
             }
         }
@@ -121,23 +133,28 @@ namespace Andja.Controller {
         }
 
         private void OnCityTileAdded(ICity c, Tile t) {
-            if(_cityToCurrentSpaceValueTiles[c].ContainsKey(t) == false)
+            if (_cityToCurrentSpaceValueTiles[c].ContainsKey(t) == false)
                 _cityToCurrentSpaceValueTiles[c].TryAdd(t, new TileValue(t, 1, 1, 1, 1));
             if (HasToDoCheck(c, t, t.East(), Direction.E)) ChangeTileValue(t.West(), t, Direction.W);
             if (HasToDoCheck(c, t, t.North(), Direction.N)) ChangeTileValue(t.South(), t, Direction.S);
             if (HasToDoCheck(c, t, t.South(), Direction.S)) ChangeTileValue(t.North(), t, Direction.N);
             if (HasToDoCheck(c, t, t.West(), Direction.W)) ChangeTileValue(t.East(), t, Direction.E);
         }
+
         private bool HasToDoCheck(ICity c, Tile t, Tile o, Direction dir) {
-            return o.City != c || _cityToCurrentSpaceValueTiles[c][t].HasToDoCheck(_cityToCurrentSpaceValueTiles[c][o], dir);
+            return o.City != c || _cityToCurrentSpaceValueTiles[c][t]
+                .HasToDoCheck(_cityToCurrentSpaceValueTiles[c][o], dir);
         }
+
         public void Update() {
             for (int i = 0; i < AIOperationsPerFrame; i++) {
-                if(_allOperations.TryDequeue(out Operation op) == false) {
+                if (_allOperations.TryDequeue(out Operation op) == false) {
                     continue;
                 }
+
                 op.Status = op.Do() == false ? OperationStatus.Failure : OperationStatus.Success;
             }
+
             foreach (AIPlayer item in _aiPlayers) {
                 item.Update(WorldController.Instance.DeltaTime);
             }
@@ -165,9 +182,9 @@ namespace Andja.Controller {
         internal string GetTileValue(Tile tile) {
             if (tile.Type == TileType.Ocean)
                 return "";
-            return _cityToCurrentSpaceValueTiles[tile.City].ContainsKey(tile) == false ?
-                "ERROR" :
-                _cityToCurrentSpaceValueTiles[tile.City][tile].ToString();
+            return _cityToCurrentSpaceValueTiles[tile.City].ContainsKey(tile) == false
+                ? "ERROR"
+                : _cityToCurrentSpaceValueTiles[tile.City][tile].ToString();
         }
 
         internal Operation AddOperation(Operation operation) {
@@ -175,19 +192,22 @@ namespace Andja.Controller {
             return operation;
         }
 
-        private static void OnStructureDestroyed(Structure structure, IWarfare iwarfare) {
+        private static void OnStructureDestroyed(Structure structure, IAttack attack) {
             for (int x = 0; x < structure.TileWidth; x++) {
                 for (int y = 0; y < structure.TileHeight; y++) {
                     Tile t = structure.Tiles[y + x * structure.TileHeight];
                     if (y == 0) {
                         ChangeTileValue(t.East(), t, Direction.E);
                     }
+
                     if (y < structure.TileWidth) {
                         ChangeTileValue(t.North(), t, Direction.N);
                     }
+
                     if (y == structure.TileWidth - 1) {
                         ChangeTileValue(t.West(), t, Direction.W);
                     }
+
                     if (x == structure.TileHeight - 1) {
                         ChangeTileValue(t.South(), t, Direction.S);
                     }
@@ -204,7 +224,7 @@ namespace Andja.Controller {
             if (island == null)
                 return;
             Dictionary<Tile, TileValue> tileValue = IslandsTileToValue[island];
-            lock(tileValue) {
+            lock (tileValue) {
                 for (int x = 0; x < structure.TileWidth; x++) {
                     for (int y = 0; y < structure.TileHeight; y++) {
                         Tile t = structure.Tiles[x * structure.TileHeight + y];
@@ -213,12 +233,15 @@ namespace Andja.Controller {
                         if (x == 0) {
                             ChangeTileValue(t.West(), t, Direction.W);
                         }
+
                         if (y == structure.TileHeight - 1) {
                             ChangeTileValue(t.North(), t, Direction.N);
                         }
+
                         if (x == structure.TileWidth - 1) {
                             ChangeTileValue(t.East(), t, Direction.E);
                         }
+
                         if (y == 0) {
                             ChangeTileValue(t.South(), t, Direction.S);
                         }
@@ -231,43 +254,57 @@ namespace Andja.Controller {
             if (current.Type == TileType.Ocean) {
                 return;
             }
+
             if (current.Structure != null && current.Structure.ShouldAICountTileAsFree() == false) {
                 _cityToCurrentSpaceValueTiles[current.City][current].SetValuesToZero();
                 IslandsTileToValue[current.Island][current].SetValuesToZero();
-            } else {
+            }
+            else {
                 if (previous.Type != current.Type) {
                     _cityToCurrentSpaceValueTiles[current.City][current].SetValue(direction, 1);
                     IslandsTileToValue[current.Island][current].SetValue(direction, 1);
                 }
                 else {
                     if (_cityToCurrentSpaceValueTiles[current.City].ContainsKey(previous)) {
-                        _cityToCurrentSpaceValueTiles[current.City][current].SetValuePlusOne(direction, _cityToCurrentSpaceValueTiles[current.City][previous]);
-                    } 
-                    IslandsTileToValue[current.Island][current].SetValuePlusOne(direction, IslandsTileToValue[current.Island][previous]);
+                        _cityToCurrentSpaceValueTiles[current.City][current].SetValuePlusOne(direction,
+                            _cityToCurrentSpaceValueTiles[current.City][previous]);
+                    }
+
+                    IslandsTileToValue[current.Island][current]
+                        .SetValuePlusOne(direction, IslandsTileToValue[current.Island][previous]);
                 }
             }
+
             ChangeTileValue(current.GetDirectionTile(direction), current, direction);
         }
-        
-        public static bool BuildStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null, bool onStart = false) {
-            return BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNumber, false, false, buildUnit, false, onStart);
+
+        public static bool BuildStructure(AIPlayer player, Structure structure, List<Tile> tiles, Unit buildUnit = null,
+            bool onStart = false) {
+            return BuildController.Instance.BuildOnTile(structure, tiles, player.PlayerNumber, false, false, buildUnit,
+                false, onStart);
         }
-        public static bool BuildStructure(AIPlayer player, Structure structure, Tile tile, Unit buildUnit = null, bool onStart = false) {
+
+        public static bool BuildStructure(AIPlayer player, Structure structure, Tile tile, Unit buildUnit = null,
+            bool onStart = false) {
             return BuildController.Instance.BuildOnTile(structure, structure.GetBuildingTiles(tile),
-                                                player.PlayerNumber, false, false, buildUnit, false, onStart);
+                player.PlayerNumber, false, false, buildUnit, false, onStart);
         }
+
         public static void CalculateIslandTileValues() {
             _islandToMapSpaceValuedTiles = new Dictionary<IIsland, Dictionary<Tile, TileValue>>();
             _islandsTileToValue = new Dictionary<IIsland, Dictionary<Tile, TileValue>>();
 
             foreach (Island island in World.Current.Islands) {
-                 _islandToMapSpaceValuedTiles[island] = TileValue.CalculateStartingValues(island).ToDictionary(entry => entry.Key,
-                                                       entry => entry.Value);
+                _islandToMapSpaceValuedTiles[island] = TileValue.CalculateStartingValues(island).ToDictionary(
+                    entry => entry.Key,
+                    entry => entry.Value);
                 //copy them
-                IslandsTileToValue[island] = TileValue.CalculateStartingValues(island, null, true).ToDictionary(entry => entry.Key,
-                                                       entry => entry.Value);
+                IslandsTileToValue[island] = TileValue.CalculateStartingValues(island, null, true).ToDictionary(
+                    entry => entry.Key,
+                    entry => entry.Value);
             }
         }
+
         /// <summary>
         /// Different Chains *CAN* have completly different required Fertilities and resources.
         /// So we would have to calculate the island values based on each possible combination of supply chains.
@@ -275,7 +312,8 @@ namespace Andja.Controller {
         /// </summary>
         public static void Calculate() {
             PerPopulationLevelDatas = new PerPopulationLevelData[PrototypController.Instance.NumberOfPopulationLevels];
-            IReadOnlyDictionary<int, PopulationLevelPrototypData> levelData = PrototypController.Instance.PopulationLevelDatas;
+            IReadOnlyDictionary<int, PopulationLevelPrototypData> levelData =
+                PrototypController.Instance.PopulationLevelDatas;
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 PerPopulationLevelData ppd = new PerPopulationLevelData();
                 PerPopulationLevelDatas[i] = ppd;
@@ -290,6 +328,7 @@ namespace Andja.Controller {
                         else {
                             ppd.structureNeeds.Add(n);
                         }
+
                         if (n.Data.produceForPeople == null)
                             continue;
                         HashSet<Fertility> fertilities = new HashSet<Fertility>();
@@ -302,19 +341,24 @@ namespace Andja.Controller {
                                 fertilities.IntersectWith(temp);
                             foreach (SupplyChain sc in prod.SupplyChains) {
                                 if (sc.cost.TotalItemCost != null)
-                                    ppd.buildMaterialRequired.Concat(sc.cost.TotalItemCost).GroupBy(x=> x.ID , x => x.count)
+                                    ppd.buildMaterialRequired.Concat(sc.cost.TotalItemCost)
+                                        .GroupBy(x => x.ID, x => x.count)
                                         .Select(g => new Item(g.Key, g.Sum()));
                                 optionalFertilities.Add(sc.cost.requiredFertilites?.Except(fertilities).ToList());
                             }
                         }
+
                         ppd.optionalFertilities.Add(optionalFertilities);
                         ppd.requiredFertilities.Concat(fertilities);
                     }
                 }
-                ppd.atleastRequiredHomes = Mathf.CeilToInt((float)ppd.atleastRequiredPeople / (float)levelData[i].HomeStructure.People);
+
+                ppd.atleastRequiredHomes =
+                    Mathf.CeilToInt((float)ppd.atleastRequiredPeople / (float)levelData[i].HomeStructure.People);
             }
+
             foreach (Item item in PrototypController.Instance.MineableItems) {
-                if(item.Data.UnlockLevel < 0)
+                if (item.Data.UnlockLevel < 0)
                     Debug.LogError(item.ID + " Unlock Level is lower than 0 " + item.Data.UnlockLevel);
                 if (item.Data.UnlockLevel < PrototypController.Instance.NumberOfPopulationLevels)
                     PerPopulationLevelDatas[item.Data.UnlockLevel].newResources.Add(item.ID);

@@ -6,9 +6,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace Andja.Model {
-
     public class PlayerPrototypeData {
-
         //This will contain stuff from the difficulty settings
         //like maximumdebt
         public int maximumDebt = 0;
@@ -16,13 +14,13 @@ namespace Andja.Model {
         public float BalanceFullTime = 60f;
         public float BalanceTicksTime = 4f;
     }
+
     /// <summary>
     /// Controls the Data responding to a Player, like Unlocks and what he owns.
     /// AI's also have this but the calculations are handled by AIPlayer.cs 
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class Player : GEventable, IPlayer {
-
         #region Not Serialized
 
         public bool HasEnoughMoney(int buildCost) {
@@ -42,7 +40,8 @@ namespace Andja.Model {
         public bool HasLost => _hasLost;
         PlayerPrototypeData PlayerPrototypeData => PrototypController.CurrentPlayerPrototypData;
 
-        private int MaximumDebt => PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
+        private int MaximumDebt =>
+            PlayerPrototypeData.maximumDebt; // if we want a maximum debt where you still can buy things
 
         private int _treasuryChange;
         public bool IsHuman => _IsHuman;
@@ -74,43 +73,33 @@ namespace Andja.Model {
         #endregion Not Serialized
 
         #region Serialized
-        [JsonPropertyAttribute]
-        private int _lastTreasuryChange;
 
-        [JsonPropertyAttribute]
-        private string _name;
+        [JsonPropertyAttribute] private int _lastTreasuryChange;
 
-        [JsonPropertyAttribute]
-        private bool _IsHuman;
+        [JsonPropertyAttribute] private string _name;
 
-        [JsonPropertyAttribute]
-        private int _treasuryBalance;
+        [JsonPropertyAttribute] private bool _IsHuman;
 
-        [JsonPropertyAttribute]
-        public Statistics Statistics { get; protected set; }
+        [JsonPropertyAttribute] private int _treasuryBalance;
+
+        [JsonPropertyAttribute] public Statistics Statistics { get; protected set; }
 
         // because only the new level popcount is interesting
         // needs to be saved because you can lose pop due
         // war or death and only the highest ever matters here
-        [JsonPropertyAttribute]
-        private int _maxPopulationLevel;
+        [JsonPropertyAttribute] private int _maxPopulationLevel;
 
-        [JsonPropertyAttribute]
-        private int[] _maxPopulationCounts;
+        [JsonPropertyAttribute] private int[] _maxPopulationCounts;
 
-        [JsonPropertyAttribute]
-        public List<TradeRoute> TradeRoutes { get; protected set; }
+        [JsonPropertyAttribute] public List<TradeRoute> TradeRoutes { get; protected set; }
 
-        [JsonPropertyAttribute]
-        public List<Unit>[] unitGroups { get; protected set; }
+        [JsonPropertyAttribute] public List<Unit>[] unitGroups { get; protected set; }
 
-        [JsonPropertyAttribute]
-        public int Number;
+        [JsonPropertyAttribute] public int Number;
 
-        [JsonPropertyAttribute]
-        protected bool _hasLost;
-        [JsonPropertyAttribute]
-        public AIPlayer AI;
+        [JsonPropertyAttribute] protected bool _hasLost;
+        [JsonPropertyAttribute] public AIPlayer AI;
+
         public int MaxPopulationLevel {
             get { return _maxPopulationLevel; }
             set {
@@ -118,6 +107,7 @@ namespace Andja.Model {
                     Debug.Log("value < maxPopulationLevel");
                     return;
                 }
+
                 _maxPopulationLevel = value;
             }
         }
@@ -158,6 +148,7 @@ namespace Andja.Model {
                 _name = "itsMeAnTotallyHumanHuman";
                 Statistics = new Statistics(Number);
             }
+
             Setup();
         }
 
@@ -175,6 +166,7 @@ namespace Andja.Model {
                 UnlockedStructureNeeds[i] = new HashSet<string>();
                 UnlockedItemNeeds[i] = new HashSet<string>();
             }
+
             MaxPopulationCounts = new int[PrototypController.Instance.NumberOfPopulationLevels];
             RegisterMaxPopulationCountChange(UnlockCheck);
             UnlockCheck(0, 0);
@@ -217,33 +209,40 @@ namespace Andja.Model {
                     UnlockCheck(i, count);
                 }
             }
+
             foreach (Unit item in World.Current.Units.Where(x => x.PlayerNumber == Number)) {
                 OnUnitCreated(item);
             }
+
             CalculateBalance();
             AI?.Load(this);
         }
 
         private void RemoveInvalidNeeds(HashSet<string>[] unlockedNeeds) {
-            Array.ForEach(unlockedNeeds, needList => needList.RemoveWhere(needId => !PrototypController.Instance.ExistsNeedId(needId)));
+            Array.ForEach(unlockedNeeds,
+                needList => needList.RemoveWhere(needId => !PrototypController.Instance.ExistsNeedId(needId)));
         }
 
         private static HashSet<string>[] IncreaseUnlockedArrayIfNeeded(HashSet<string>[] temp) {
             if (temp.Length >= PrototypController.Instance.NumberOfPopulationLevels) {
                 return temp;
             }
+
             Array.Resize(ref temp, PrototypController.Instance.NumberOfPopulationLevels);
             for (int i = 0; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                 if (temp[i] == null)
                     temp[i] = new HashSet<string>();
             }
+
             return temp;
         }
 
         //TODO: make this not so cpu heavy
         public IReadOnlyList<int> GetUnitCityEnterable() {
             List<int> enter = new List<int> { Number, GameData.WorldNumber };
-            enter.AddRange(PlayerController.Instance.GetPlayersWithRelationTypeFor(Number, DiplomacyType.Alliance, DiplomacyType.War));
+            enter.AddRange(
+                PlayerController.Instance.GetPlayersWithRelationTypeFor(Number, DiplomacyType.Alliance,
+                    DiplomacyType.War));
             return enter;
         }
 
@@ -256,6 +255,7 @@ namespace Andja.Model {
             if (level > MaxPopulationLevel) {
                 MaxPopulationLevel = level;
             }
+
             if (MaxPopulationCounts[level] < count) {
                 int old = MaxPopulationCounts[level];
                 MaxPopulationCounts[level] = count;
@@ -271,6 +271,7 @@ namespace Andja.Model {
             foreach (City item in Cities) {
                 value += item.GetPopulationCount(level);
             }
+
             return value;
         }
 
@@ -285,6 +286,7 @@ namespace Andja.Model {
                 else {
                     cbStructureNeedUnlocked?.Invoke(n);
                 }
+
                 for (int i = n.StartLevel; i < PrototypController.Instance.NumberOfPopulationLevels; i++) {
                     if (n.IsItemNeed()) {
                         UnlockedItemNeeds[i].Add(n.ID);
@@ -294,12 +296,14 @@ namespace Andja.Model {
                     }
                 }
             }
+
             if (unlock.structures.Count > 0) {
                 cbStructuresUnlocked?.Invoke(unlock.structures);
                 foreach (Structure s in unlock.structures) {
                     UnlockedStructures.Add(s.ID);
                 }
             }
+
             if (unlock.units.Count > 0) {
                 cbUnitsUnlocked?.Invoke(unlock.units);
                 foreach (Unit u in unlock.units) {
@@ -307,9 +311,11 @@ namespace Andja.Model {
                 }
             }
         }
+
         public bool HasUnitUnlocked(string ID) {
             return UnlockedUnits.Contains(ID);
         }
+
         public HashSet<string> GetUnlockedStructureNeeds(int level) {
             return UnlockedStructureNeeds[level];
         }
@@ -319,11 +325,13 @@ namespace Andja.Model {
             for (int i = 0; i <= level; i++) {
                 needs.UnionWith(UnlockedStructureNeeds[i]);
             }
+
             return needs;
         }
 
         public bool HasUnlockedAllNeeds(int level) {
-            return UnlockedItemNeeds[level].Count + UnlockedStructureNeeds[level].Count >= PrototypController.Instance.GetNeedCountLevel(level);
+            return UnlockedItemNeeds[level].Count + UnlockedStructureNeeds[level].Count >=
+                   PrototypController.Instance.GetNeedCountLevel(level);
         }
 
         public bool HasNeedUnlocked(INeed need) {
@@ -347,6 +355,7 @@ namespace Andja.Model {
             if (money < 0) {
                 return;
             }
+
             TreasuryBalance -= money;
             CheckIfLost();
         }
@@ -355,6 +364,7 @@ namespace Andja.Model {
             if (money < 0) {
                 return;
             }
+
             TreasuryBalance += money;
         }
 
@@ -362,6 +372,7 @@ namespace Andja.Model {
             if (amount < 0) {
                 return;
             }
+
             TreasuryChange -= amount;
         }
 
@@ -369,6 +380,7 @@ namespace Andja.Model {
             if (amount < 0) {
                 return;
             }
+
             TreasuryChange += amount;
         }
 
@@ -403,7 +415,7 @@ namespace Andja.Model {
             cbNewStructure?.Invoke(structure);
         }
 
-        public void OnStructureLost(Structure structure, IWarfare destroyer) {
+        public void OnStructureLost(Structure structure, IAttack attack) {
             //dosmth
             structure.UnregisterOnDestroyCallback(OnStructureLost);
             AllStructures.Remove(structure);
@@ -420,13 +432,13 @@ namespace Andja.Model {
                 Ships.Add((Ship)unit);
         }
 
-        private void OnUnitTakesDamage(Unit unit, IWarfare from) {
+        private void OnUnitTakesDamage(Unit unit, IAttack from) {
             if (PlayerController.currentPlayerNumber == Number) {
                 UI.Model.EventUIManager.Instance.Show(unit, from);
             }
         }
 
-        public void OnUnitDestroy(Unit unit, IWarfare warfare) {
+        public void OnUnitDestroy(Unit unit, IAttack attack) {
             //dosmth
             unit.UnregisterOnDestroyCallback(OnUnitDestroy);
             Units.Remove(unit);
@@ -434,16 +446,19 @@ namespace Andja.Model {
                 Ships.Remove((Ship)unit);
             CheckIfLost();
         }
+
         public Vector2 GetMainCityPosition() {
             if (Cities.Count == 0)
                 return World.Current.Center;
             return Cities.First()?.Warehouse != null ? Cities.First().Warehouse.Center : Cities.First().Island.Center;
         }
+
         public List<Need> GetCopyStructureNeeds(int level) {
             List<Need> list = new List<Need>();
             foreach (string n in UnlockedStructureNeeds[level]) {
                 list.Add(new Need(n));
             }
+
             return list;
         }
 
@@ -474,6 +489,7 @@ namespace Andja.Model {
         public void UnregisterStructureNeedUnlock(Action<Need> onStructureNeedUnlock) {
             cbStructureNeedUnlocked -= onStructureNeedUnlock;
         }
+
         public void UnregisterNeedUnlock(Action<Need> callbackfunc) {
             cbNeedUnlocked -= callbackfunc;
         }
@@ -538,11 +554,9 @@ namespace Andja.Model {
 
         #region igeventable
 
-        public override void OnEventCreate(GameEvent ge) {
-        }
+        public override void OnEventCreate(GameEvent ge) { }
 
-        public override void OnEventEnded(GameEvent ge) {
-        }
+        public override void OnEventEnded(GameEvent ge) { }
 
         public override int GetPlayerNumber() {
             return Number;

@@ -35,7 +35,7 @@ public class OutputStructureTest {
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
         prototypeControllerMock.Setup(m => m.GetEffectPrototypDataForID(OutputStructure.InactiveEffectID)).Returns(() =>
             new EffectPrototypeData() {
-                targets = new TargetGroup(Target.OutputStructure),
+                targets = new TargetGroup(EventTarget.OutputStructure),
             });
         CreateTwoByThree();
     }

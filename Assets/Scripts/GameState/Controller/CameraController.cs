@@ -118,7 +118,7 @@ namespace Andja.Controller {
                 return;
             }
             if (_cameraFollowUnit != null) {
-                MoveCameraToPosition(_cameraFollowUnit.PositionVector2);
+                MoveCameraToPosition(_cameraFollowUnit.Position);
             }
 
             Vector3 cameraMove = new Vector3(0, 0);

@@ -44,8 +44,8 @@ namespace Andja.Model {
         void OnEventCreate(GameEvent ge);
         void OnEventEnded(GameEvent ge);
         void OnTileChanged(Tile t);
-        void OnUnitDestroy(Unit u, IWarfare warfare);
-        void RegisterAnyUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed);
+        void OnUnitDestroy(Unit u, IAttack attack);
+        void RegisterAnyUnitDestroyed(Action<Unit, IAttack> onAnyUnitDestroyed);
         void RegisterCrateDespawned(Action<Crate> onDespawned);
         void RegisterCrateSpawned(Action<Crate> onSpawned);
         void RegisterOnCreateProjectileCallback(Action<Projectile> cb);
@@ -59,7 +59,7 @@ namespace Andja.Model {
         void UnregisterOnCreateProjectileCallback(Action<Projectile> cb);
         void UnregisterTileChanged(Action<Tile> callbackfunc);
         void UnregisterUnitCreated(Action<Unit> callbackfunc);
-        void UnregisterUnitDestroyed(Action<Unit, IWarfare> onAnyUnitDestroyed);
+        void UnregisterUnitDestroyed(Action<Unit, IAttack> onAnyUnitDestroyed);
         void UnregisterWorkerCreated(Action<Worker> callbackfunc);
         void Update(float deltaTime);
     }

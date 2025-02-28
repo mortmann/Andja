@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using GameState.Models.Elements;
 
 namespace Andja.Model {
     public class BaseThingData : LanguageVariables {

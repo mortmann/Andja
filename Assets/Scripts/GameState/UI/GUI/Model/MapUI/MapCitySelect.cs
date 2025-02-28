@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
-namespace Andja.UI.Model {
 
+namespace Andja.UI.Model {
     public class MapCitySelect : MonoBehaviour, IPointerClickHandler {
         public Text CityName;
         public Text Number;
@@ -22,6 +22,7 @@ namespace Andja.UI.Model {
                 SetPosition(city.Tiles.First());
                 OnWarehouseDestroy(null, null);
             }
+
             city.RegisterCityDestroy(OnCityDestroy);
         }
 
@@ -41,7 +42,7 @@ namespace Andja.UI.Model {
                 Unselect();
         }
 
-        public void OnWarehouseDestroy(Structure str, IWarfare destroyer) {
+        public void OnWarehouseDestroy(Structure str, IAttack attack) {
             City.RegisterStructureAdded(OnWarehouseBuild);
             CanvasGroup cg = GetComponent<CanvasGroup>();
             //cg.interactable = false;
@@ -57,6 +58,7 @@ namespace Andja.UI.Model {
             //cg.interactable = true;
             cg.alpha = 1f;
         }
+
         void SetPosition(Tile t) {
             MapImage mi = FindObjectOfType<MapImage>();
             RectTransform rt = mi.mapParts.GetComponent<RectTransform>();
@@ -65,6 +67,7 @@ namespace Andja.UI.Model {
             pos.Scale(scale);
             transform.localPosition = pos;
         }
+
         public void SelectAs(int number) {
             Number.text = "" + number;
             toggle.isOn = true;

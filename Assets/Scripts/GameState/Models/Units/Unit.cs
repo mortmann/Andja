@@ -11,22 +11,13 @@ namespace Andja.Model {
     public class UnitPrototypeData : BaseThingData {
         public int inventoryPlaces;
         public int inventorySize;
-
-        public DamageType damageType;
-        public ArmorType armorType;
-
         public string[] movementSoundName;
         public string[] mainAttackSoundName;
 
         public float buildTime = 1f;
-        public float attackRange = 1f;
-        public float damage = 10;
-        public float attackRate = 1;
         public float speed;
         public float rotationSpeed = 90f;
         public float aggroTime = 2f;
-        public float captureSpeed = 0.01f;
-        public float projectileSpeed = 4.5f;
         public float buildRange = 15;
         public float width = 0;
         public float height = 0;
@@ -80,8 +71,6 @@ namespace Andja.Model {
             return currentMainMode == UnitMainModes.Aggroing;
         }
 
-        public virtual bool CanAttack => CurrentDamage > 0;
-
         public UnitDoModes CurrentDoingMode {
             get => currentDoingMode;
             set => currentDoingMode = value;
@@ -98,7 +87,7 @@ namespace Andja.Model {
 
         #region calculated
 
-        public OutputStructure rangeUStructure;
+        public OutputStructure RangeUStructure;
         protected Action<Unit> cbUnitChanged;
         protected Action<Unit, IAttack> cbUnitDestroyed;
         protected Action<Unit, bool> cbUnitArrivedDestination;
@@ -144,11 +133,7 @@ namespace Andja.Model {
 
         #region prototype
 
-        public float CaptureSpeed => CalculateRealValue(nameof(Data.captureSpeed), Data.captureSpeed);
 
-        public float AttackRange => CalculateRealValue(nameof(Data.attackRange), Data.attackRange);
-        public float Damage => CalculateRealValue(nameof(Data.damage), Data.damage);
-        public float AttackRate => CalculateRealValue(nameof(Data.attackRate), Data.attackRate);
         public float Speed => CalculateRealValue(nameof(Data.speed), Data.speed) * SpeedModifier;
 
         public virtual float SpeedModifier => 1f;
@@ -179,9 +164,10 @@ namespace Andja.Model {
         }
 
         protected UnitPrototypeData unitData;
+        private Attack _attack;
 
         public UnitPrototypeData Data =>
-            unitData ??= PrototypController.Instance.GetUnitPrototypDataForID(ID);
+            unitData ??= PrototypController.Instance.GetUnitPrototypeDataForID(ID);
 
         public bool IsNonPlayer => PlayerNumber == Pirate.Number || PlayerNumber == FlyingTrader.Number;
         public Vector2 CurrentPosition => Position;
@@ -190,19 +176,14 @@ namespace Andja.Model {
 
         public override int PlayerNumber => playerNumber;
 
-        public virtual float CurrentDamage => CalculateRealValue(nameof(CurrentDamage), Data.damage);
-        public virtual float MaximumDamage => CalculateRealValue(nameof(MaximumDamage), Data.damage);
-        public DamageType DamageType => Data.damageType;
-        public ArmorType ArmorType => Data.armorType;
-
         public List<Command> QueuedCommands => queuedCommands == null ? null : new List<Command>(queuedCommands);
-
         public virtual TurningType TurnType => TurningType.OnPoint;
         public virtual PathDestination PathDestination => PathDestination.Exact;
         public virtual PathingMode PathingMode => PathingMode.IslandSinglePoint;
         public virtual bool CanEndInUnwalkable => false;
         public virtual PathHeuristics Heuristic => PathHeuristics.Euclidean;
         public virtual PathDiagonal DiagonalType => PathDiagonal.OnlyNoObstacle;
+        public Attack Attack => _attack ??= GetElement<Attack>();
 
         public IReadOnlyList<int> CanEnterCities =>
             PlayerController.Instance.GetPlayer(PlayerNumber)?.GetUnitCityEnterable();
@@ -236,9 +217,12 @@ namespace Andja.Model {
             this.BuildID = buildID;
             OnBaseThingBuild();
             Setup();
+            AddElement(new Attack(this));
+            Data.elements = new Dictionary<Type, ElementData> { { typeof(AttackPrototypeData), new AttackPrototypeData() } };
         }
 
-        public virtual void Load() {
+        public override void Load() {
+            base.Load();
             Setup();
             Inventory.Load();
             Pathfinding.Load(this);
@@ -378,7 +362,7 @@ namespace Andja.Model {
         }
 
         protected void UpdateAggroRange(float deltaTime) {
-            if (CanAttack == false || CurrentTarget != null) {
+            if (_attack == null || _attack.HasAttack == false || CurrentTarget != null) {
                 return;
             }
 
@@ -389,7 +373,7 @@ namespace Andja.Model {
             //
             // aggroCooldownTimer = AggroTime;
 
-            Collider2D[] c2d = Physics2D.OverlapCircleAll(new Vector2(X, Y), Data.attackRange);
+            Collider2D[] c2d = Physics2D.OverlapCircleAll(new Vector2(X, Y), _attack.AttackRange);
             foreach (var item in c2d) {
                 //check for not null = only to be sure its not null
                 if (!item) {
@@ -417,7 +401,7 @@ namespace Andja.Model {
         }
 
         private bool GiveAggroCommand(Target target) {
-            if (Vector2.Distance(target.CurrentPosition, CurrentPosition) > AttackRange + GameData.UnitAggroRange) {
+            if (Vector2.Distance(target.CurrentPosition, CurrentPosition) > _attack.AttackRange + GameData.UnitAggroRange) {
                 return false; //out of aggrorange
             }
 
@@ -486,7 +470,7 @@ namespace Andja.Model {
         }
 
         public bool UpdateCapture(float deltaTime) {
-            CurrentTarget.Parent.GetElement<Capturable>()?.Capture(GetElement<Capturer>(), CaptureSpeed);
+            CurrentTarget.Parent.GetElement<Capturable>()?.Capture(GetElement<Capturer>());
             return true;
         }
 
@@ -497,23 +481,23 @@ namespace Andja.Model {
         }
 
         public void IsInRangeOfWarehouse(OutputStructure ware) {
-            rangeUStructure = ware;
+            RangeUStructure = ware;
         }
 
         public void TradeItemToNearbyWarehouse(Item clicked) {
-            TradeItemToNearbyWarehouse(clicked, rangeUStructure.City.PlayerTradeAmount);
+            TradeItemToNearbyWarehouse(clicked, RangeUStructure.City.PlayerTradeAmount);
         }
 
         public bool TradeItemToNearbyWarehouse(Item clicked, int amount) {
-            if (rangeUStructure is WarehouseStructure == false) {
+            if (RangeUStructure is WarehouseStructure == false) {
                 return false;
             }
 
-            if (rangeUStructure.PlayerNumber == playerNumber) {
-                rangeUStructure.City.TradeFromShip(this, clicked, amount);
+            if (RangeUStructure.PlayerNumber == playerNumber) {
+                RangeUStructure.City.TradeFromShip(this, clicked, amount);
             }
             else {
-                rangeUStructure.City.BuyingTradeItem(clicked.ID, (Ship)this, amount);
+                RangeUStructure.City.BuyingTradeItem(clicked.ID, (Ship)this, amount);
             }
 
             return true;
@@ -784,20 +768,8 @@ namespace Andja.Model {
 
         #endregion RegisterCallback
 
-        public bool IsAttackableFrom(IAttack attack) {
-            return attack.DamageType.GetDamageMultiplier(ArmorType) > 0;
-        }
-
-        public void TakeDamageFrom(IAttack attack) {
-            ReduceHealth(attack.GetCurrentDamage(ArmorType), attack);
-        }
-
         public bool IsOwnedByCurrentPlayer() {
             return PlayerController.currentPlayerNumber == playerNumber;
-        }
-
-        public virtual float GetCurrentDamage(ArmorType armorType) {
-            return DamageType.GetDamageMultiplier(armorType) * CurrentDamage;
         }
 
         public override void OnEventCreate(GameEvent ge) {

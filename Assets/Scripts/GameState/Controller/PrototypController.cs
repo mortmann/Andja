@@ -371,7 +371,7 @@ namespace Andja.Controller {
                         .OrderBy(item => item.PopulationLevel).First().ID;
         }
 
-        public UnitPrototypeData GetUnitPrototypDataForID(string id) {
+        public UnitPrototypeData GetUnitPrototypeDataForID(string id) {
             return _unitPrototypeDatas[id];
         }
 

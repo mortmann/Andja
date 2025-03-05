@@ -5,7 +5,7 @@
         float DecreaseCaptureSpeed { get; }
         bool Captured { get; }
         int PlayerNumber { get; }
-        void Capture(ICapturer capturer, float progress);
+        void Capture(ICapturer capturer);
         void OnDestroy();
         void OnLoad();
         void OnStart(bool loading = false);

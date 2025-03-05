@@ -33,8 +33,8 @@ namespace Andja.Controller {
 
         public static Sprite GetIcon(string id) {
             id += iconNameAdd;
-            if (_idToIcon.ContainsKey(id)) {
-                return _idToIcon[id];
+            if (_idToIcon.TryGetValue(id, out var icon)) {
+                return icon;
             }
             Debug.LogWarning("Missing Icon " + id);
             return null;
@@ -50,19 +50,19 @@ namespace Andja.Controller {
 
         public static Sprite GetUISprite(string id) {
             id += uiNameAdd;
-            if (_idToUI.ContainsKey(id)) {
-                return _idToUI[id];
+            if (_idToUI.TryGetValue(id, out var sprite)) {
+                return sprite;
             }
             Debug.LogWarning("Missing Icon " + id);
             return null;
         }
 
         public static Sprite GetItemImageForID(string id) {
-            if (_idToItemIcons.ContainsKey(id) == false) {
-                Debug.LogWarning("Item " + id + " is missing image!");
-                return null;
+            if (_idToItemIcons.TryGetValue(id, out var forID)) {
+                return forID;
             }
-            return _idToItemIcons[id];
+            Debug.LogWarning("Item " + id + " is missing image!");
+            return null;
         }
 
         private static void LoadSprites() {

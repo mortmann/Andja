@@ -76,7 +76,7 @@ namespace Andja.Controller {
         Structure GetStructureCopy(string id);
         StructurePrototypeData GetStructurePrototypDataForID(string ID);
         Unit GetUnitForID(string id);
-        UnitPrototypeData GetUnitPrototypDataForID(string id);
+        UnitPrototypeData GetUnitPrototypeDataForID(string id);
         Unlocks GetUnlocksFor(int level, int count);
         WorkerPrototypeData GetWorkerPrototypDataForID(string id);
         DamageType GetWorldDamageType();

@@ -64,20 +64,24 @@
       <aggroTimer>1.0</aggroTimer>
       <attackRange>1.0</attackRange>
       <damage>10.0</damage>
-      <damageType>cannonball</damageType>
-      <armorType>woodenwall</armorType>
-      <attackRate>1.0</attackRate>
       <buildRange>1.0</buildRange>
       <speed>3.5</speed>
       <turnSpeed>2.0</turnSpeed>
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>0.0</projectileSpeed>
       <canBeBuild>true</canBeBuild>
-      <maximumAmountOfCannons>0</maximumAmountOfCannons>
-      <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="ShipAttack">
+            <damageType>cannonball</damageType>
+            <armorType>woodenwall</armorType>
+            <attackRate>1.0</attackRate>
+            <maximumAmountOfCannons>0</maximumAmountOfCannons>
+            <damagePerCannon>1.0</damagePerCannon>
+            <cannonType ID="cannons">
+               <count>0</count>
+            </cannonType>
+         </element>
+      </elements>
    </ship>
    <ship ID="largebattleship">
       <Name>
@@ -122,11 +126,19 @@
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>
       <canBeBuild>true</canBeBuild>
-      <maximumAmountOfCannons>60</maximumAmountOfCannons>
-      <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="ShipAttack">
+            <damageType>cannonball</damageType>
+            <armorType>woodenwall</armorType>
+            <attackRate>1.0</attackRate>
+            <maximumAmountOfCannons>60</maximumAmountOfCannons>
+            <damagePerCannon>1.0</damagePerCannon>
+            <cannonType ID="cannons">
+               <count>0</count>
+            </cannonType>
+         </element>
+      </elements>
+
    </ship>
    <ship ID="smallbattleship">
       <Name>
@@ -171,11 +183,19 @@
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>
       <canBeBuild>true</canBeBuild>
-      <maximumAmountOfCannons>20</maximumAmountOfCannons>
-      <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="ShipAttack">
+            <damageType>cannonball</damageType>
+            <armorType>woodenwall</armorType>
+            <attackRate>1.0</attackRate>
+            <maximumAmountOfCannons>20</maximumAmountOfCannons>
+            <damagePerCannon>1.0</damagePerCannon>
+            <cannonType ID="cannons">
+               <count>0</count>
+            </cannonType>
+         </element>
+      </elements>
+
    </ship>
    <ship ID="battleship">
       <Name>
@@ -220,11 +240,19 @@
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>
       <canBeBuild>true</canBeBuild>
-      <maximumAmountOfCannons>36</maximumAmountOfCannons>
-      <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="ShipAttack">
+            <damageType>cannonball</damageType>
+            <armorType>woodenwall</armorType>
+            <attackRate>1.0</attackRate>
+            <maximumAmountOfCannons>36</maximumAmountOfCannons>
+            <damagePerCannon>1.0</damagePerCannon>
+            <cannonType ID="cannons">
+               <count>0</count>
+            </cannonType>
+         </element>
+      </elements>
+
    </ship>
    <ship ID="ship">
       <Name>
@@ -269,11 +297,18 @@
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>
       <canBeBuild>true</canBeBuild>
-      <maximumAmountOfCannons>20</maximumAmountOfCannons>
-      <damagePerCannon>7.5</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="ShipAttack">
+            <damageType>cannonball</damageType>
+            <armorType>woodenwall</armorType>
+            <attackRate>1.0</attackRate>
+            <maximumAmountOfCannons>20</maximumAmountOfCannons>
+            <damagePerCannon>7.5</damagePerCannon>
+            <cannonType ID="cannons">
+               <count>0</count>
+            </cannonType>
+         </element>
+      </elements>
    </ship>
    <ship ID="pirateship">
       <Name>
@@ -305,11 +340,19 @@
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>15.0</projectileSpeed>
       <canBeBuild>false</canBeBuild>
-      <maximumAmountOfCannons>15</maximumAmountOfCannons>
-      <damagePerCannon>5.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>15</count>
-      </cannonType>
+      <elements>
+         <element type="ShipAttack">
+            <damageType>cannonball</damageType>
+            <armorType>woodenwall</armorType>
+            <attackRate>1.0</attackRate>
+            <maximumAmountOfCannons>15</maximumAmountOfCannons>
+            <damagePerCannon>5.0</damagePerCannon>
+            <cannonType ID="cannons">
+               <count>0</count>
+            </cannonType>
+         </element>
+      </elements>
+
    </ship>
    <ship ID="flyingtradeship">
       <Name>
@@ -343,9 +386,11 @@
       <canBeBuild>false</canBeBuild>
       <maximumAmountOfCannons>15</maximumAmountOfCannons>
       <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="Target">
+            <armorType>woodenwall</armorType>
+         </element>
+      </elements>
    </ship>
    <ship ID="smalltradeship">
       <Name>
@@ -390,11 +435,11 @@
       <aggroTime>0.0</aggroTime>
       <projectileSpeed>0.0</projectileSpeed>
       <canBeBuild>true</canBeBuild>
-      <maximumAmountOfCannons>0</maximumAmountOfCannons>
-      <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="Target">
+            <armorType>woodenwall</armorType>
+         </element>
+      </elements>
    </ship>
    <ship ID="largetradeship">
       <Name>
@@ -441,9 +486,11 @@
       <canBeBuild>true</canBeBuild>
       <maximumAmountOfCannons>0</maximumAmountOfCannons>
       <damagePerCannon>1.0</damagePerCannon>
-      <cannonType ID="cannons">
-         <count>0</count>
-      </cannonType>
+      <elements>
+         <element type="Target">
+            <armorType>woodenwall</armorType>
+         </element>
+      </elements>
    </ship>
    <worker ID="firefighter">
       <toWorkSprites>placeholder</toWorkSprites>

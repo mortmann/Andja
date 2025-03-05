@@ -102,9 +102,10 @@ public class MarketStructureTest {
     public void Capture() {
         Mock<ICapturer> capturer = new Mock<ICapturer>();
         capturer.Setup(w => w.PlayerNumber).Returns(1);
+        capturer.Setup(w => w.CaptureSpeed).Returns(0.1f);
         Capturable capturable = Market.GetElement<Capturable>();
         for (int i = 0; i < 20; i++) {
-            capturable.Capture(capturer.Object, 0.1f);
+            capturable.Capture(capturer.Object);
             capturable.OnUpdate(1f);
             Assert.AreEqual(capturable.MaximumCaptureSpeed * 1f * (i + 1), capturable.CapturedProgress, 0.0001);
         }
@@ -117,20 +118,21 @@ public class MarketStructureTest {
         Mock<ICapturer> capturer = new Mock<ICapturer>();
         capturer.Setup(w => w.PlayerNumber).Returns(1);
         Capturable capturable = Market.GetElement<Capturable>();
-
+        capturer.Setup(w => w.CaptureSpeed).Returns(0.01f);
         for (int i = 0; i < 20; i++) {
-            capturable.Capture(capturer.Object, 0.01f);
+            capturable.Capture(capturer.Object);
             capturable.OnUpdate(1f);
         }
+        capturer.Setup(w => w.CaptureSpeed).Returns(0f);
 
         for (int i = 0; i < 10; i++) {
-            capturable.Capture(capturer.Object, 0);
+            capturable.Capture(capturer.Object);
             capturable.OnUpdate(1f);
         }
 
         AssertThat(capturable.CapturedProgress).IsGreaterThan(0);
         for (int i = 0; i < 10; i++) {
-            capturable.Capture(capturer.Object, 0);
+            capturable.Capture(capturer.Object);
             capturable.OnUpdate(1f);
         }
 
@@ -150,7 +152,8 @@ public class MarketStructureTest {
 
         Market.City = City;
         capturable.CapturedProgress = 1;
-        capturable.Capture(capturer.Object, 10010101);
+        capturer.Setup(w => w.CaptureSpeed).Returns(10010101);
+        capturable.Capture(capturer.Object);
 
         Assert.AreEqual(1, Market.PlayerNumber);
         Assert.IsFalse(capturable.Captured);
@@ -167,7 +170,9 @@ public class MarketStructureTest {
 
         Market.City = City;
         capturable.CapturedProgress = 1;
-        capturable.Capture(capturer.Object, 10010101);
+        capturer.Setup(w => w.CaptureSpeed).Returns(10010101);
+
+        capturable.Capture(capturer.Object);
 
         Assert.IsTrue(Market.IsDestroyed);
     }

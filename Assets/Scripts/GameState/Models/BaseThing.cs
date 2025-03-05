@@ -11,7 +11,6 @@ using UnityEngine;
 public abstract class BaseThing : GEventable {
     protected BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
-
     private Dictionary<Type, Element> Elements = new Dictionary<Type, Element>();
 
     private BaseThingData GetPrototypeData() {
@@ -20,7 +19,7 @@ public abstract class BaseThing : GEventable {
         }
 
         if (this is Unit) {
-            return PrototypController.Instance.GetUnitPrototypDataForID(ID);
+            return PrototypController.Instance.GetUnitPrototypeDataForID(ID);
         }
 
         Log.PROTOTYPE_ERROR("No Prototyp Data Type for this " + this);
@@ -72,7 +71,7 @@ public abstract class BaseThing : GEventable {
         foreach (Element element in Elements.Values) {
             element.OnStart(loading);
         }
-
+        AddMissingElements();
         OnBuild(loading);
     }
 
@@ -151,13 +150,36 @@ public abstract class BaseThing : GEventable {
     public bool AddElement(Element element) {
         return Elements.TryAdd(element.GetType(), element);
     }
+    
+    public virtual void Load() {
+        foreach (Element element in Elements.Values) {
+            element.OnLoad();
+        }
+        AddMissingElements();
+    }
+
+    private void AddMissingElements() {
+        foreach (var element in Data.elements.Values
+                     .Select(data => data.GetNewElement(this))
+                     .Where(element => Elements.ContainsKey(element.GetType()) == false)) {
+            Elements[typeof(Element)] = element;
+        }
+    }
+
 
     public T GetElement<T>() where T : Element {
-        return (T)Elements[typeof(T)];
+        if (Elements.Count == 0) {
+            Debug.Log("Trying to access Element when no exist " + ID);
+            return null;
+        }
+        
+        return (T)Elements.GetValueOrDefault(typeof(T))
+                    ?? Elements.Values.OfType<T>().FirstOrDefault();
     }
 
     public bool HasElement<T>() where T : Element {
-        return Elements.ContainsKey(typeof(T));
+        return Elements.ContainsKey(typeof(T)) 
+               || Elements.Any(el => typeof(T).IsAssignableFrom(el.Value.GetType()));
     }
 
     protected virtual bool OnDestroy(IAttack destroyer = null, bool onLoad = false) {
@@ -165,6 +187,7 @@ public abstract class BaseThing : GEventable {
     }
 
     public T GetElementData<T>() where T : ElementData {
-        return (T)Data.elements[typeof(T)];
+        return (T)Data.elements.GetValueOrDefault(typeof(T))
+               ?? Data.elements.Values.OfType<T>().FirstOrDefault();
     }
 }

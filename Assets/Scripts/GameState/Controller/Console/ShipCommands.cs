@@ -23,7 +23,7 @@ namespace Andja.Controller {
             if (int.TryParse(parameters[0], out int amount) == false) {
                 return false;
             }
-            ship.CannonItem.count = amount;
+            ship.ShipAttack.CannonItem.count = amount;
             return true;
         }
     }

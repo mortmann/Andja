@@ -4,12 +4,16 @@ namespace Andja.Model {
     public class CapturerPrototypeData : ElementData {
         public float captureSpeed = 0.01f;
         public float captureRange = 1f;
+        public override Element GetNewElement(BaseThing thing) {
+            return new Capturer(thing);
+        }
     }
 
     public class Capturer : Element, ICapturer {
         private Unit Unit => (Unit)Parent;
 
         public float CaptureRange => Data.captureRange;
+        public float CaptureSpeed => Parent.CalculateRealValue(nameof(Data.captureSpeed), Data.captureSpeed);
 
         protected CapturerPrototypeData _data;
 

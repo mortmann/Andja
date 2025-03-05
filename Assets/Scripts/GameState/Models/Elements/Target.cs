@@ -7,6 +7,9 @@ using UnityEngine;
 namespace Andja.Model {
     public class TargetPrototypeData : ElementData {
         public ArmorType armorType;
+        public override Element GetNewElement(BaseThing thing) {
+            return new Target(thing);
+        }
     }
 
     public class Target : Element, ITarget {

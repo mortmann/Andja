@@ -126,7 +126,7 @@ namespace Andja.Controller {
                         shipSpawn = player.Cities[0].Warehouse.TradeTile.Vector2;
                         foreach (Item item in startItems) {
                             if (loadout.Units != null && Array.Exists(loadout.Units,
-                                    x => x is Ship s && s.CannonItem.ID == item.ID)) {
+                                    x => x is Ship s && s.ShipAttack.CannonItem.ID == item.ID)) {
                                 continue;
                             }
 
@@ -151,7 +151,7 @@ namespace Andja.Controller {
                     foreach (Item item in startItems) {
                         unit.TryToAddItem(item);
                         if (unit is Ship s) {
-                            if (item.ID != s.CannonItem.ID) continue;
+                            if (item.ID != s.ShipAttack.CannonItem.ID) continue;
                             s.AddCannonsFromInventory(true);
                         }
                     }
@@ -320,7 +320,6 @@ namespace Andja.Controller {
                 island.SetTiles(thisStruct.Tiles);
                 island.Placement = thisStruct.GetPosition();
             }
-
             World.Load();
             //Now turn the loaded World into a playable World
             List<Structure> loadedStructures = new List<Structure>();

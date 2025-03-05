@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Xml;
+using Andja.Controller;
 using Andja.Model;
 using UnityEngine;
 
@@ -10,7 +11,13 @@ namespace GameState.Controller.Prototype.Converter {
             switch (child.Attributes["type"].Value) {
                 case "Capturable":
                     return SetFields(new CapturablePrototypeData(), child);
-                case "Attackable":
+                case "Capturer":
+                    return SetFields(new CapturerPrototypeData(), child);
+                case "Attack":
+                    return SetFields(new AttackPrototypeData(), child);
+                case "ShipAttack":
+                    return SetFields(new ShipAttackPrototypeData(), child);
+                case "Target":
                     return SetFields(new TargetPrototypeData(), child);
                 default:
                     Debug.LogError("Unknown element type");
@@ -18,18 +25,8 @@ namespace GameState.Controller.Prototype.Converter {
             }
         }
 
-        private static ElementData SetFields(ElementData data, XmlNode node) {
-            FieldInfo[] fieldInfos = data.GetType().GetFields();
-            foreach (FieldInfo fieldInfo in fieldInfos) {
-                try {
-                    XmlNode currentNode = node.SelectSingleNode(fieldInfo.Name);
-                    fieldInfo.SetValue(data, Convert.ChangeType(currentNode.InnerXml, fieldInfo.FieldType, System.Globalization.CultureInfo.InvariantCulture));
-                }
-                catch {
-                    Debug.Log(data + " -> " + fieldInfo.Name + " is faulty!");
-                }
-            }
-
+        private static T SetFields<T>(T data, XmlNode node) {
+            BaseConverter<T>.SetData(node, null, ref data);
             return data;
         }
     }

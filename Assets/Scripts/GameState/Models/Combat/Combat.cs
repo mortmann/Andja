@@ -13,6 +13,8 @@ namespace Andja {
         public string ID;
         public string spriteBaseName;
         public bool isProjectile;
+        public float projectileSpeed = 4.5f;
+
         public Dictionary<ArmorType, float> damageMultiplier;
 
         public float GetDamageMultiplier(ArmorType armorType) {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Andja.Controller;
 using Andja.Pathfinding;
 using Andja.Utility;
@@ -6,16 +7,11 @@ using UnityEngine;
 
 namespace Andja.Model {
     public class ShipPrototypeData : UnitPrototypeData {
-        public int maximumAmountOfCannons = 0;
-        public float damagePerCannon = 1;
-        public float length;
-        public float cannonSpeedDebuffMultiplier = 0.1f;
-        public float inventorySpeedDebuffMultiplier = 0.15f;
-        public float damageSpeedDebuffMultiplier = 0.7f;
 
-        //TODO: think about a way it doesnt require each ship to have this
-        //      OR are there sometyp like HEAVY and prototype returns the associated cannon
-        public Item cannonType = null;
+        public float cannonSpeedDebuffMultiplier = 0.1f;
+        public float damageSpeedDebuffMultiplier = 0.7f;
+        public float inventorySpeedDebuffMultiplier = 0.15f;
+        public float length;
     }
 
     //TODO: think about how if ships could be capturable if they are low, at war and the capturing ship can do it?
@@ -25,59 +21,32 @@ namespace Andja.Model {
         [JsonPropertyAttribute] public bool isOffWorld;
         [JsonPropertyAttribute] private Item[] toBuy;
         [JsonPropertyAttribute] private float offWorldTime;
-        [JsonPropertyAttribute] private Item _cannonItem;
         [JsonPropertyAttribute] public int nextTradeRouteStop;
 
-        public Item CannonItem {
-            get {
-                if (_cannonItem == null) {
-                    _cannonItem = ShipData.cannonType.CloneWithCount();
-                }
-
-                return _cannonItem;
-            }
-        }
-
-        protected ShipPrototypeData _shipPrototypData;
-        float ProjectileSpeed => ShipData.projectileSpeed;
-        public float DamagePerCannon => CalculateRealValue(nameof(ShipData.damagePerCannon), ShipData.damagePerCannon);
-
-        public int MaximumAmountOfCannons =>
-            CalculateRealValue(nameof(ShipData.maximumAmountOfCannons), ShipData.maximumAmountOfCannons);
-
-        public override float CurrentDamage =>
-            CalculateRealValue(nameof(CurrentDamage), DamagePerCannon * CannonItem.count);
-
-        public override float MaximumDamage =>
-            CalculateRealValue(nameof(MaximumDamage), MaximumAmountOfCannons * DamagePerCannon);
+        private ShipPrototypeData _shipPrototypeData;
 
         public override bool IsShip => true;
         public override float SpeedModifier => 1 - CannonSpeedDebuff - InventorySpeedDebuff - DamageSpeedDebuff;
 
-        protected float CannonSpeedDebuff => MaximumAmountOfCannons == 0
+        protected float CannonSpeedDebuff => ShipAttack == null || ShipAttack.MaximumAmountOfCannons == 0
             ? 0
-            : ShipData.cannonSpeedDebuffMultiplier * (CannonItem.count / (float)MaximumAmountOfCannons);
+            : ShipData.cannonSpeedDebuffMultiplier * (ShipAttack.CannonItem.count / (float)ShipAttack.MaximumAmountOfCannons);
+
 
         protected float InventorySpeedDebuff =>
             ShipData.inventorySpeedDebuffMultiplier * Inventory.GetFilledPercentage();
 
         protected float DamageSpeedDebuff => ShipData.damageSpeedDebuffMultiplier * (1 - CurrentHealth / MaximumHealth);
 
-        protected int CannonPerSide => Mathf.CeilToInt(CannonItem.count / 2f);
         public override PathingMode PathingMode => PathingMode.World;
         public override TurningType TurnType => TurningType.TurnRadius;
 
-        public ShipPrototypeData ShipData {
-            get {
-                if (_shipPrototypData == null) {
-                    _shipPrototypData = (ShipPrototypeData)PrototypController.Instance.GetUnitPrototypDataForID(ID);
-                }
+        public ShipPrototypeData ShipData => _shipPrototypeData ??= (ShipPrototypeData)PrototypController.Instance.GetUnitPrototypeDataForID(ID);
 
-                return _shipPrototypData;
-            }
+        public ShipAttack ShipAttack;
+
+        public Ship() {
         }
-
-        public Ship() { }
 
         public Ship(Unit unit, int playerNumber, Tile t, uint buildID) {
             ID = unit.ID;
@@ -85,7 +54,6 @@ namespace Andja.Model {
             unitData = unit.Data;
             CurrentHealth = MaximumHealth;
             this.playerNumber = playerNumber;
-            //TODO: replace everywhere with byte and test it
             Inventory = new UnitInventory((byte)InventoryPlaces.ClampZero(255), InventorySize);
             PlayerSetName = "Ship " + Random.Range(0, 1000000000);
             Pathfinding = new OceanPathfinding(t, this);
@@ -99,115 +67,12 @@ namespace Andja.Model {
 
         public Ship(string id, ShipPrototypeData spd) {
             ID = id;
-            _shipPrototypData = spd;
+            _shipPrototypeData = spd;
         }
 
-        // public override void DoAttack(float deltaTime) {
-        //     return;
-        // if (CurrentTarget != null) {
-        //     float shootAngle = nextShoot.rotateToAngle;
-        //
-        //     float arc = 5f;
-        //     bool canShoot = shootAngle <= Pathfinding.rotation + arc && shootAngle >= Pathfinding.rotation - arc;
-        //     Pathfinding.Rotate(nextShoot.rotateToAngle);
-        //     Pathfinding.UpdateDoRotate(deltaTime);
-        //     if (canShoot == false) {
-        //         return;
-        //     }
-        //
-        //     if (AttackCooldownTimer > 0) {
-        //         AttackCooldownTimer -= deltaTime;
-        //         return;
-        //     }
-        //
-        //     Vector3 targetPosition = CurrentTarget.CurrentPosition;
-        //     Vector3 lastMove = CurrentTarget.LastMovement;
-        //     Vector3 projectileDestination = CurrentTarget.CurrentPosition;
-        //     if (Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed, targetPosition,
-        //             lastMove, GameData.Gravity, out Vector3 velocity, out projectileDestination) == false) {
-        //         return;
-        //     }
-        //
-        //     ShotAtPosition(projectileDestination);
-        // }
-        // }
 
         public override bool IsInRange(Target target, float range) {
-            if (CurrentTarget == null)
-                return false;
-            if (CurrentTarget.LastMovement.sqrMagnitude == 0) {
-                if ((CurrentTarget.CurrentPosition - CurrentPosition).magnitude <= AttackRange) {
-                    nextShoot = CalculateShootAngle(CurrentTarget.CurrentPosition);
-                    return true;
-                }
-
-                return false;
-            }
-
-            Vector3 targetPosition = CurrentTarget.CurrentPosition;
-            Vector3 lastMove = CurrentTarget.LastMovement;
-            Vector3 projectileDestination = targetPosition;
-            Shoot shoot = CalculateShootAngle(projectileDestination);
-            float rotateTime = CalculateRotateTime(shoot.rotateByAngle);
-            targetPosition += rotateTime * lastMove;
-            bool can = Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed,
-                targetPosition, lastMove, GameData.Gravity, out Vector3 velocity, out projectileDestination);
-            if (can == false || Vector3.Distance(CurrentPosition, projectileDestination) > AttackRange)
-                return false;
-            nextShoot = CalculateShootAngle(projectileDestination);
-            return true;
-        }
-
-        //TODO: think about making it like this?
-        //calculate in the check range and if in range and possible then just do the shoot calculate there?
-        private Shoot nextShoot;
-
-        public void ShotAtPosition(Vector3 destination) {
-            if (CannonItem.count == 0)
-                return;
-            Vector3 targetSize = new Vector3(1, 1, 0);
-            Vector3 position = CurrentPosition;
-            Vector2 side;
-            float widthOffset = 0;
-            if (nextShoot.sideAngle < 0) {
-                side = Quaternion.Euler(0, 0, Pathfinding.rotation) * new Vector2(0, 1);
-                widthOffset = Width / 2;
-            }
-            else {
-                side = Quaternion.Euler(0, 0, Pathfinding.rotation) * new Vector2(0, -1);
-                widthOffset = -Width / 2;
-            }
-
-            for (int i = 1; i <= CannonPerSide; i++) {
-                Vector3 offset = new Vector3((i) * (Height / MaximumAmountOfCannons) - Height / 2, widthOffset);
-                offset = Quaternion.Euler(0, 0, Rotation) * offset;
-                Vector3 targetOffset = new Vector3(
-                    Random.Range(-targetSize.x / 2, targetSize.x / 2),
-                    Random.Range(-targetSize.y / 2, targetSize.y / 2),
-                    Random.Range(-targetSize.z / 2, targetSize.z / 2)
-                );
-
-                Vector3 velocity = (destination + targetOffset - PositionVector - offset).normalized * ProjectileSpeed;
-                float distance = (destination + targetOffset - PositionVector - offset).magnitude;
-                cbCreateProjectile?.Invoke(new Projectile(GetElement<Attack>(), position + offset, CurrentTarget,
-                    destination + targetOffset, velocity, distance, true));
-            }
-
-            cbSoundCallback?.Invoke(this, "broadside", true);
-        }
-
-        protected Shoot CalculateShootAngle(Vector3 destination) {
-            Vector2 forward = Quaternion.Euler(0, 0, Pathfinding.rotation) * new Vector2(1, 0);
-            Vector2 direction = destination - PositionVector;
-            direction.Normalize();
-            float sideAngle = Mathf.Sign(Vector2.SignedAngle(direction, forward));
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-            return new Shoot {
-                sideAngle = angle,
-                rotateToAngle = angle + (sideAngle) * 90,
-                rotateByAngle = angle - Pathfinding.rotation
-            };
+            return ShipAttack.IsInRange(target, range);
         }
 
         public float CalculateRotateTime(float angle) {
@@ -219,11 +84,9 @@ namespace Andja.Model {
                 CurrentMainMode = UnitMainModes.Idle;
                 return;
             }
-
-            if (Pathfinding.IsAtDestination) {
-                if (CurrentDoingMode == UnitDoModes.Idle) {
-                    SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
-                }
+            if (Pathfinding.IsAtDestination == false) return;
+            if (CurrentDoingMode == UnitDoModes.Idle) {
+                SetDestinationIfPossible(tradeRoute.GetNextDestination(this));
             }
         }
 
@@ -239,6 +102,11 @@ namespace Andja.Model {
 
             tradeRoute.DoCurrentTrade(this);
             CurrentDoingMode = UnitDoModes.Idle;
+        }
+
+        public override void OnBuild(bool loading = false) {
+            base.OnBuild(loading);
+            ShipAttack = GetElement<ShipAttack>();
         }
 
         public void SetTradeRoute(TradeRoute tr) {
@@ -261,16 +129,6 @@ namespace Andja.Model {
             SetDestinationIfPossible(tradeRoute.GetCurrentDestination(this));
         }
 
-        private void SetDestinationIfPossible(Vector2? pos) {
-            if (pos == null)
-                return;
-            SetDestinationIfPossible(pos.Value.x, pos.Value.y);
-        }
-
-        private void SetDestinationIfPossible(Tile tile) {
-            SetDestinationIfPossible(tile.X, tile.Y);
-        }
-
         protected override void UpdateTradeRouteAtDestination() {
             Pathfinding.cbIsAtDestination += OnArriveDestination;
             TradeTime = tradeRoute.AtDestination(this);
@@ -281,7 +139,7 @@ namespace Andja.Model {
         }
 
         public bool HasCannonsToAddInInventory() {
-            return Inventory.HasAnythingOf(CannonItem);
+            return Inventory.HasAnythingOf(ShipAttack.CannonItem);
         }
 
         protected override void UpdateWorldMarket(float deltaTime) {
@@ -324,38 +182,15 @@ namespace Andja.Model {
         }
 
         public void RemoveCannonsToInventory(bool all) {
-            if (all)
-                CannonItem.count -= Inventory.AddItem(CannonItem);
-            else {
-                Item temp = CannonItem.Clone();
-                temp.count = 1;
-                CannonItem.count -= Inventory.AddItem(temp);
-            }
+            ShipAttack?.RemoveCannonsToInventory(all);
         }
 
         public void AddCannonsFromInventory(bool all) {
-            if (all) {
-                Item temp = CannonItem.Clone();
-                temp.count = MaximumAmountOfCannons - CannonItem.count;
-                CannonItem.count += Inventory.GetItemWithMaxItemCount(temp).count;
-            }
-            else {
-                Item temp = CannonItem.Clone();
-                temp.count = Mathf.Min(1, MaximumAmountOfCannons - CannonItem.count);
-                CannonItem.count += Inventory.GetItemWithMaxItemCount(temp).count;
-            }
+            ShipAttack?.AddCannonsFromInventory(all);
         }
 
         public bool CanRemoveCannons() {
-            if (CannonItem.count <= 0) {
-                return false;
-            }
-
-            if (Inventory.HasRemainingSpaceForItem(CannonItem) == false) {
-                return false;
-            }
-
-            return true;
+            return ShipAttack?.CanRemoveCannons() == true;
         }
 
         public void SendToOffworldMarket(Item[] toBuy) {
@@ -390,40 +225,29 @@ namespace Andja.Model {
             return tile.Type == TileType.Ocean;
         }
 
-        /// <summary>
-        /// Returns the added amount of cannons
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        public void AddCannons(Item toAdd) {
-            if (toAdd.ID != CannonItem.ID) {
-                Debug.LogWarning("Tried to add incombatible cannons to this ship!");
+        private void SetDestinationIfPossible(Vector2? pos) {
+            if (pos == null)
                 return;
-            }
-
-            int restneeded = ShipData.maximumAmountOfCannons - CannonItem.count;
-            int added = Mathf.Clamp(toAdd.count, 0, restneeded);
-            CannonItem.count += added;
-            toAdd.count -= added;
-        }
-
-        public override float GetCurrentDamage(ArmorType armorType) {
-            return DamageType.GetDamageMultiplier(armorType) * DamagePerCannon;
+            SetDestinationIfPossible(pos.Value.x, pos.Value.y);
         }
 
         public override void Load() {
             base.Load();
+            ShipAttack = GetElement<ShipAttack>();
             tradeRoute?.LoadShip(this);
-        }
-
-        protected struct Shoot {
-            public float rotateByAngle;
-            public float rotateToAngle;
-            public float sideAngle;
         }
 
         public Player GetOwner() {
             return PlayerController.Instance.GetPlayer(PlayerNumber);
+        }
+
+        public void CreateProjectiles(List<Projectile> projectiles) {
+            projectiles.ForEach(projectile => cbCreateProjectile?.Invoke(projectile));
+            cbSoundCallback?.Invoke(this, "broadside", true);
+        }
+
+        public void ShotAtPosition(Vector3 getLastMousePosition) {
+            ShipAttack.ShotAtPosition(getLastMousePosition);    
         }
     }
 }

@@ -115,9 +115,10 @@ namespace Andja.Controller {
         public void AddUnitFogModule(GameObject gameObject, Unit unit) {
             if (unit.IsOwnedByCurrentPlayer() == false)
                 return;
-            GameObject module = Instantiate(UnitFogModulePrefab);
-            module.transform.localScale = new Vector3(unit.AttackRange * 2, unit.AttackRange * 2);
-            module.transform.SetParent(gameObject.transform, false);
+            GameObject module = Instantiate(UnitFogModulePrefab, gameObject.transform, false);
+            Attack attack = unit.GetElement<Attack>();
+            float range = attack?.AttackRange ?? unit.BuildRange;
+            module.transform.localScale = new Vector3(range * 2, range * 2);
             module.transform.localPosition = Vector3.zero;
         }
         public void AddStructureFogModule(GameObject gameObject, Structure structure) {

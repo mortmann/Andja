@@ -9,30 +9,32 @@ namespace Andja.Model {
         public float attackRate;
         public float attackRange;
         public float projectileSpeed;
+        public override Element GetNewElement(BaseThing thing) {
+            return new Attack(thing);
+        }
     }
-
     public class Attack : Target, IAttack {
+        [JsonProperty] public float AttackCooldownTimer = 1;
+        
         public float AttackRate => Data.attackRate;
         public float AttackRange => Data.attackRange;
         public float ProjectileSpeed => Data.projectileSpeed;
-        public float CurrentDamage => Parent.IsActive ? Data.damage : 0;
-        public float MaximumDamage => Data.damage;
+        public virtual float CurrentDamage => Parent.IsActive ? Damage : 0;
+        public virtual float MaximumDamage => Damage;
         public DamageType DamageType => Data.damageType;
+        protected float Damage => Parent.CalculateRealValue(nameof(Data.damage), Data.damage);
         protected AttackPrototypeData _data;
-        public new AttackPrototypeData Data => _data ??= Parent.GetElementData<AttackPrototypeData>();
-
-        private AttackCommand _attackCommand;
-
+        private new AttackPrototypeData Data => _data ??= Parent.GetElementData<AttackPrototypeData>();
+        private AttackCommand _attackCommand => Unit.CurrentCommand as AttackCommand;
         public Target CurrentTarget => _attackCommand.Target;
-
-        [JsonProperty] public float AttackCooldownTimer = 1;
         private Unit Unit => (Unit)Parent;
-
-        public Attack(BaseThing baseThing) : base(baseThing) { }
-
         public bool HasAttack => CurrentDamage > 0;
 
-        private void DoProjectileDamage(float deltaTime) {
+
+        public Attack(BaseThing baseThing) : base(baseThing) {
+        }
+
+        protected virtual void DoProjectileDamage(float deltaTime) {
             if (CurrentTarget == null) return;
             if (CanAttack(CurrentTarget) == false) return;
 
@@ -74,11 +76,14 @@ namespace Andja.Model {
         public override void OnDestroy() { }
 
         public override void OnUpdate(float deltaTime) {
+            if(HasAttack == false) return;
             if (AttackCooldownTimer > 0) {
                 AttackCooldownTimer -= deltaTime;
                 return;
             }
-
+            if (Unit.CurrentMainMode != UnitMainModes.Attack)
+                return;
+            
             if (CurrentTarget == null) {
                 Unit.GoIdle();
                 return;

@@ -46,7 +46,7 @@ public class MilitaryStructureTest {
         mockutil = new MockUtil();
         var prototypeControllerMock = mockutil.PrototypControllerMock;
         prototypeControllerMock.Setup(m => m.GetStructurePrototypDataForID(ID)).Returns(() => PrototypeData);
-        prototypeControllerMock.Setup(m => m.GetUnitPrototypDataForID(UnitID)).Returns(() => UnitPrototypeData);
+        prototypeControllerMock.Setup(m => m.GetUnitPrototypeDataForID(UnitID)).Returns(() => UnitPrototypeData);
 
         CreateFourByFour();
     }
@@ -70,7 +70,7 @@ public class MilitaryStructureTest {
     [Test]
     public void UpdateBuildUnit() {
         Unit secondInQueue = new Unit("Second", UnitPrototypeData);
-        mockutil.PrototypControllerMock.Setup(m => m.GetUnitPrototypDataForID("Second")).Returns(UnitPrototypeData);
+        mockutil.PrototypControllerMock.Setup(m => m.GetUnitPrototypeDataForID("Second")).Returns(UnitPrototypeData);
         Military.ToBuildUnits = new Queue<Unit>();
         Military.ToBuildUnits.Enqueue(Unit);
         Military.ToBuildUnits.Enqueue(secondInQueue);

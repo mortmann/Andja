@@ -45,7 +45,7 @@ namespace Andja.Controller {
             ReadFile(xmlDoc);
         }
 
-        private void SetData(XmlElement node, string T_ID, ref T data) {
+        public static void SetData(XmlNode node, string T_ID, ref T data) {
             FieldInfo[] fields = typeof(T).GetFields();
             HashSet<string> langs = new HashSet<string>();
             if (typeof(LanguageVariables).IsAssignableFrom(typeof(T))) {
@@ -287,7 +287,7 @@ namespace Andja.Controller {
             }
         }
 
-        private Effect NodeToEffect(XmlNode item) {
+        private static Effect NodeToEffect(XmlNode item) {
             string id = item.InnerXml;
             if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
@@ -298,7 +298,7 @@ namespace Andja.Controller {
             return null;
         }
 
-        private object NodeToDamageType(XmlNode n) {
+        private static object NodeToDamageType(XmlNode n) {
             string id = n.InnerXml;
 
             if (string.IsNullOrEmpty(id)) {
@@ -310,7 +310,7 @@ namespace Andja.Controller {
             return null;
         }
 
-        private object NodeToNeedGroupPrototypData(XmlNode n) {
+        private static object NodeToNeedGroupPrototypData(XmlNode n) {
             string id = n.InnerXml;
 
             if (string.IsNullOrEmpty(id)) {
@@ -323,7 +323,7 @@ namespace Andja.Controller {
             return null;
         }
 
-        private object NodeToArmorType(XmlNode n) {
+        private static object NodeToArmorType(XmlNode n) {
             string id = n.InnerXml;
 
             if (string.IsNullOrEmpty(id)) {
@@ -335,7 +335,7 @@ namespace Andja.Controller {
             return null;
         }
 
-        private Item NodeToItem(XmlNode n) {
+        private static Item NodeToItem(XmlNode n) {
             string id = n.Attributes["ID"].Value;
             if (PrototypController.Instance.AllItems.ContainsKey(id) == false) {
                 Debug.LogError("ITEM ID was not created! " + id + " (" + n.ParentNode.Name + ")");
@@ -351,7 +351,7 @@ namespace Andja.Controller {
             return clone;
         }
 
-        private Unit NodeToUnit(XmlNode n) {
+        private static Unit NodeToUnit(XmlNode n) {
             string id = n.InnerXml;
             if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
@@ -361,7 +361,7 @@ namespace Andja.Controller {
             return null;
         }
 
-        private Structure NodeToStructure(XmlNode n) {
+        private static Structure NodeToStructure(XmlNode n) {
             string id = n.InnerText;
             if (string.IsNullOrEmpty(id)) {
                 return null;//not needed
@@ -372,7 +372,7 @@ namespace Andja.Controller {
             return null;
         }
 
-        private Fertility NodeToFertility(XmlNode n) {
+        private static Fertility NodeToFertility(XmlNode n) {
             string id = n.InnerXml;
             if (string.IsNullOrEmpty(id)) {
                 return null;//not needed

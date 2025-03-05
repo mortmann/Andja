@@ -254,7 +254,7 @@ namespace Andja.Model {
         /// <param name="min"></param>
         /// <param name="maxValue"></param>
         /// <returns></returns>
-        protected float[] CalculateRealValue(string name, float[] currentValues, bool clampToZero = true) {
+        public float[] CalculateRealValue(string name, float[] currentValues, bool clampToZero = true) {
             float[] realValues = new float[currentValues.Length];
             for (int i = 0; i < currentValues.Length; i++) {
                 realValues[i] = CalculateRealValue(name, currentValues[i], clampToZero);
@@ -267,7 +267,7 @@ namespace Andja.Model {
         /// <param name="name"></param>
         /// <param name="currentValue"></param>
         /// <returns></returns>
-        protected int CalculateRealValue(string name, int currentValue, bool clampToZero = true) {
+        public int CalculateRealValue(string name, int currentValue, bool clampToZero = true) {
             return Mathf.RoundToInt(CalculateRealValue(name, (float)currentValue, clampToZero));
         }
 

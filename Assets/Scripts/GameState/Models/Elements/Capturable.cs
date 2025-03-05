@@ -9,6 +9,9 @@ namespace Andja.Model {
         public float takeOverStartGoal = 100;
         public float maximumCaptureSpeed = 0.05f;
         public float decreaseCaptureSpeed = 0.01f;
+        public override Element GetNewElement(BaseThing thing) {
+            return new Capturable(thing as Structure);
+        }
     }
 
     public class Capturable : Element, ICapturable {
@@ -30,13 +33,13 @@ namespace Andja.Model {
             _structure.CalculateRealValue(nameof(Data.decreaseCaptureSpeed), Data.decreaseCaptureSpeed);
 
 
-        public void Capture(ICapturer capturer, float progress) {
+        public void Capture(ICapturer capturer) {
             if (Captured) {
                 DoneCapturing(capturer);
                 return;
             }
 
-            _currentCaptureSpeed = Mathf.Clamp(_currentCaptureSpeed + progress, 0, MaximumCaptureSpeed);
+            _currentCaptureSpeed = Mathf.Clamp(_currentCaptureSpeed + capturer.CaptureSpeed, 0, MaximumCaptureSpeed);
         }
 
         private void DoneCapturing(ICapturer capturer) {

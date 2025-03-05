@@ -361,8 +361,6 @@ namespace Andja.Model {
             ge.EffectTarget(this, false);
         }
 
-        public virtual void Load() { }
-
         public virtual string GetSpriteName() {
             return spriteVariant == null ? SpriteName : SpriteName + "_" + spriteVariant;
         }

@@ -6,11 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Andja.Pathfinding;
 using UnityEngine;
-using Andja.UI.Model;
 
 namespace Andja.Model {
-
-    public enum InputTyp { AND, OR }
 
     public class ProductionPrototypeData : OutputPrototypData {
         public Item[] intake;

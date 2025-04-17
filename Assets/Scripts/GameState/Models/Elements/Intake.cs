@@ -5,20 +5,23 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Andja.Model {
-    public class InputPrototypeData : ElementData {
+    public enum InputTyp { AND, OR }
+
+    public class IntakePrototypeData : ElementData {
         public Item[] input;
         public InputTyp inputTyp;
         public int inputSize = 1;
         public override Element GetNewElement(BaseThing thing) {
-            return new Input(thing);
+            return new Intake(thing);
         }
     }
-    public class Input : Element {
+    
+    public class Intake : Element {
         private Item[] _input;
         public InputTyp InputTyp => Data.inputTyp;
 
-        private InputPrototypeData _data;
-        private InputPrototypeData Data => _data ??= Parent.GetElementData<InputPrototypeData>();
+        private IntakePrototypeData _data;
+        private IntakePrototypeData Data => _data ??= Parent.GetElementData<IntakePrototypeData>();
         [JsonProperty]
         public virtual Item[] Items {
             get => _input ??= Data.input.CloneArray();
@@ -35,7 +38,7 @@ namespace Andja.Model {
             }
         }
         
-        public Input(BaseThing baseThing) : base(baseThing) {
+        public Intake(BaseThing baseThing) : base(baseThing) {
         }
 
         public override void OnStart(bool loading = false) {

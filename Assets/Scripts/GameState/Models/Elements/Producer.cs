@@ -15,40 +15,40 @@ namespace Andja.Model {
         private ProducerPrototypeData _data;
         private ProducerPrototypeData Data => _data ??= Parent.GetElementData<ProducerPrototypeData>();
         public float ProduceTime => Parent.CalculateRealValue(nameof(Data.produceTime), Data.produceTime);
-        [JsonProperty] public float ProduceTimer { get; protected set; }
+        [JsonProperty] public float Timer { get; protected set; }
 
         private Output _output;
-        private Input _input;
+        private Intake _intake;
         
         public Producer(Structure structure) : base(structure) {
         }
 
         public override void OnStart(bool loading = false) {
-            throw new System.NotImplementedException();
+            
         }
 
         public override void OnDestroy() {
-            throw new System.NotImplementedException();
+            
         }
 
         public override void OnUpdate(float deltaTime) {
             if (_output.IsFull()) {
                 return;
             }
-            ProduceTimer += deltaTime;
-            if ((ProduceTimer >= ProduceTime) == false) {
+            Timer += deltaTime;
+            if (ProduceTime > Timer) {
                 return;
             }
-            ProduceTimer = 0;
-            if (_input?.Missing() == true) {
+            Timer = 0;
+            if (_intake?.Missing() == true) {
                 return;
             }
-            _input?.Decrease();
+            _intake?.Decrease();
             _output.Increase();
         }
 
         public override void OnLoad() {
-            throw new System.NotImplementedException();
+            Timer = Mathf.Min(Timer, Data.produceTime);
         }
     }
 }

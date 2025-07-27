@@ -203,7 +203,7 @@ public class HomeStructureTest {
         Home.DowngradeHouse();
         AssertThat(mockutil.CityMock).HasInvoked(c => c.RemovePeople(nextLevelHomePrototypeData.populationLevel, 2)).Once();
         AssertThat(mockutil.CityMock).HasInvoked(c => c.AddPeople(PrototypeData.populationLevel, 2)).Once();
-        AssertThat(Home.ID).IsEqualTo(ID);
+        AssertThat(((IBaseThing)Home).ID).IsEqualTo(ID);
     }
     [Test]
     public void IsMaxLevel() {

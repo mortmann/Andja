@@ -324,7 +324,7 @@ public class ServiceStructureTest {
     }
     class TestEffectStructure : Structure {
         public TestEffectStructure(string ID, Effect effect) {
-            this.ID = ID;
+            ((IBaseThing)this).ID = ID;
             effects = new List<Effect>();
             effects.Add(effect);
         }

@@ -17,7 +17,7 @@ namespace Andja.Model {
         #endregion RuntimeOrOther
 
         public MarketStructure(string id, OutputPrototypData marketData) : this(){
-            this.ID = id;
+            ((IBaseThing)this).ID = id;
             _outputData = marketData;
             AddElement(new AddRangeTilesToCity(this));
             AddElement(new Capturable(this));

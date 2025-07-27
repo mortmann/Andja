@@ -117,10 +117,10 @@ namespace Andja.Model {
         }
 
         private void OnNewStructure(Structure structure) {
-            if (structureToCount.ContainsKey(structure.ID))
-                structureToCount[structure.ID]++;
+            if (structureToCount.ContainsKey(((IBaseThing)structure).ID))
+                structureToCount[((IBaseThing)structure).ID]++;
             else
-                structureToCount[structure.ID] = 1;
+                structureToCount[((IBaseThing)structure).ID] = 1;
 
             if (structure is OutputStructure) {
                 OutputStructure os = structure as OutputStructure;
@@ -271,8 +271,8 @@ namespace Andja.Model {
             //Then we need to build more homes
 
             int alreadyBuild = 0;
-            if (structureToCount.ContainsKey(PrototypController.Instance.BuildableHomeStructure.ID))
-                alreadyBuild = structureToCount[PrototypController.Instance.BuildableHomeStructure.ID];
+            if (structureToCount.ContainsKey(((IBaseThing)PrototypController.Instance.BuildableHomeStructure).ID))
+                alreadyBuild = structureToCount[((IBaseThing)PrototypController.Instance.BuildableHomeStructure).ID];
             if (nextUnlocks.requiredFullHomes - alreadyBuild > 0) {
                 BuildHomeStructure();
             }
@@ -318,10 +318,10 @@ namespace Andja.Model {
             }
 
             if (structures.Length == 1)
-                return structures[0].ID;
-            return structures.Where(x => Player.HasStructureUnlocked(x.ID))
+                return ((IBaseThing)structures[0]).ID;
+            return ((IBaseThing)structures.Where(x => Player.HasStructureUnlocked(x.ID))
                 .OrderBy(x => x.AICalculatedCost() / x.NeedStructureData.MaxHomesInRange)
-                .First().ID;
+                .First()).ID;
         }
 
         private void BuildHomeStructure() {
@@ -334,7 +334,7 @@ namespace Andja.Model {
             var poplevel = PrototypController.Instance.GetPopulationLevelPrototypDataForLevel(0);
             var structureNeeds = AIController.PerPopulationLevelDatas[0].structureNeeds;
             var ns = tempStructures.FindAll(x =>
-                x is NeedStructure && structureNeeds.Any(y => y.Data.structures.Any(z => z.ID == x.ID)));
+                x is NeedStructure && structureNeeds.Any(y => y.Data.structures.Any(z => ((IBaseThing)z).ID == ((IBaseThing)x).ID)));
             if (ns.Count == 0)
                 return;
             var tiles = ns.SelectMany(x => x.RangeTiles)
@@ -358,7 +358,7 @@ namespace Andja.Model {
 
             toBuildStructures.Enqueue(new PlaceStructure {
                 buildTile = tempt,
-                ID = PrototypController.Instance.BuildableHomeStructure.ID,
+                ID = ((IBaseThing)PrototypController.Instance.BuildableHomeStructure).ID,
                 rotation = 0,
                 City = city,
             });
@@ -380,7 +380,7 @@ namespace Andja.Model {
                 var ordered = islandValues.OrderByDescending(x => x.Value);
                 if (ordered.Count() > 0)
                     toBuildStructures.Enqueue(new PlaceStructure {
-                        ID = market.ID,
+                        ID = ((IBaseThing)market).ID,
                         buildTile = ordered.First().tile,
                         rotation = 0,
                         City = city
@@ -597,7 +597,7 @@ namespace Andja.Model {
                                 continue;
                             if (s.CanBuildOnSpot(buildtiles)) {
                                 return new PlaceStructure {
-                                    ID = s.ID,
+                                    ID = ((IBaseThing)s).ID,
                                     buildTile = t.tile,
                                     rotation = s.Rotation,
                                     City = city
@@ -638,7 +638,7 @@ namespace Andja.Model {
                     if (tile == null)
                         continue;
                     return new PlaceStructure {
-                        ID = s.ID,
+                        ID = ((IBaseThing)s).ID,
                         buildTile = tile,
                         rotation = 0,
                         City = city
@@ -685,7 +685,7 @@ namespace Andja.Model {
         }
 
         private void OnLostStructure(Structure structure) {
-            structureToCount[structure.ID]--;
+            structureToCount[((IBaseThing)structure).ID]--;
             if (structure is OutputStructure os) {
                 if (os.Output != null)
                     foreach (Item p in os.Output) {

@@ -16,14 +16,14 @@ namespace Andja.UI {
         public void Show(Structure str, bool hoverOver = true) {
             this.hoverOver = hoverOver;
             this.structure = str;
-            if (UISpriteController.HasIcon(str.ID) == false) {
+            if (UISpriteController.HasIcon(((IBaseThing)str).ID) == false) {
                 GetComponentInChildren<Text>().text = str.SpriteName;
                 if (GetComponentsInChildren<Image>().Length > 1)
                     GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
             }
             else {
                 GetComponentInChildren<Text>()?.gameObject.SetActive(false);
-                GetComponentsInChildren<Image>()[1].overrideSprite = UISpriteController.GetIcon(str.ID);
+                GetComponentsInChildren<Image>()[1].overrideSprite = UISpriteController.GetIcon(((IBaseThing)str).ID);
             }
 
         }
@@ -39,7 +39,7 @@ namespace Andja.UI {
         public void OnPointerEnter(PointerEventData eventData) {
             if (hoverOver == false)
                 return;
-            FindObjectOfType<ToolTip>().Show(structure, PlayerController.CurrentPlayer.HasStructureUnlocked(structure.ID));
+            FindObjectOfType<ToolTip>().Show(structure, PlayerController.CurrentPlayer.HasStructureUnlocked(((IBaseThing)structure).ID));
         }
 
         public void OnPointerExit(PointerEventData eventData) {

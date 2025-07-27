@@ -89,7 +89,7 @@ public class TargetStructureTest {
 
     public class TestTargetStructure : TargetStructure {
         public TestTargetStructure(string iD) {
-            ID = iD;
+            ((IBaseThing)this).ID = iD;
         }
 
 

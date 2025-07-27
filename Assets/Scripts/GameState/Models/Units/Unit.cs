@@ -103,7 +103,7 @@ namespace Andja.Model {
         //TODO decide on this:
         public Command CurrentCommand => queuedCommands.Count == 0 ? null : queuedCommands.Peek();
 
-        public Target CurrentTarget {
+        public ITarget CurrentTarget {
             get {
                 return CurrentCommand switch {
                     AttackCommand command => command.Target,
@@ -167,7 +167,7 @@ namespace Andja.Model {
         private Attack _attack;
 
         public UnitPrototypeData Data =>
-            unitData ??= PrototypController.Instance.GetUnitPrototypeDataForID(ID);
+            unitData ??= PrototypController.Instance.GetUnitPrototypeDataForID(((IBaseThing)this).ID);
 
         public bool IsNonPlayer => PlayerNumber == Pirate.Number || PlayerNumber == FlyingTrader.Number;
         public Vector2 CurrentPosition => Position;
@@ -191,7 +191,7 @@ namespace Andja.Model {
         public bool IsAlive => IsDestroyed == false;
 
         public override string GetID() {
-            return ID;
+            return ((IBaseThing)this).ID;
         }
 
         [JsonConstructor]
@@ -201,12 +201,12 @@ namespace Andja.Model {
         }
 
         public Unit(string id, UnitPrototypeData upd) {
-            ID = id;
+            ((IBaseThing)this).ID = id;
             unitData = upd;
         }
 
         public Unit(Unit unit, int playerNumber, Tile t, uint buildID) {
-            ID = unit.ID;
+            ((IBaseThing)this).ID = ((IBaseThing)unit).ID;
             PatrolCommand = new PatrolCommand();
             unitData = unit.Data;
             CurrentHealth = MaximumHealth;
@@ -217,7 +217,7 @@ namespace Andja.Model {
             this.BuildID = buildID;
             OnBaseThingBuild();
             Setup();
-            AddElement(new Attack(this));
+            AddElement(new UnitAttack(this));
             Data.elements = new Dictionary<Type, ElementData> { { typeof(AttackPrototypeData), new AttackPrototypeData() } };
         }
 
@@ -416,7 +416,7 @@ namespace Andja.Model {
         }
 
         public bool GiveAttackCommand(Target target, bool overrideCurrent = false) {
-            if (GetElement<Attack>()?.CanAttackNowOrReach(target) == false) return false;
+            if (GetElement<UnitAttack>()?.CanAttackNowOrReach(target) == false) return false;
             AddCommand(new AttackCommand(target), overrideCurrent);
             return true;
         }

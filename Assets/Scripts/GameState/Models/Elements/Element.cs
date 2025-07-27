@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Andja.Model {
     public abstract class Element {
-        public BaseThing Parent { get; }
+        public IBaseThing Parent { get; }
         public int PlayerNumber => Parent.PlayerNumber;
 
-        public Element(BaseThing baseThing) {
+        protected Element(BaseThing baseThing) {
             Parent = baseThing;
         }
 

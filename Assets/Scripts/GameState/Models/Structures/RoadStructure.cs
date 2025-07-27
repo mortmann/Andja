@@ -27,7 +27,7 @@ namespace Andja.Model {
         }
         private RoadStructurePrototypeData _roadStructureData;
         public RoadStructurePrototypeData RoadStructureData =>
-            _roadStructureData ??= (RoadStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            _roadStructureData ??= (RoadStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         public float MovementCost => RoadStructureData.movementCost;
 
@@ -37,7 +37,7 @@ namespace Andja.Model {
         private Action<Route, Route> _cbRouteChanged;
 
         public RoadStructure(string ID, StructurePrototypeData spd) {
-            this.ID = ID;
+            ((IBaseThing)this).ID = ID;
             this.prototypeData = spd;
         }
 

@@ -193,7 +193,7 @@ namespace Andja.Model {
         }
 
         public StructurePrototypeData Data =>
-            (StructurePrototypeData)(prototypeData ??= PrototypController.Instance.GetStructurePrototypDataForID(ID));
+            (StructurePrototypeData)(prototypeData ??= PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID));
 
         private Vector2 _center;
 
@@ -250,7 +250,7 @@ namespace Andja.Model {
         protected List<RoadStructure> Roads = new();
 
         protected void BaseCopyData(Structure str) {
-            ID = str.ID;
+            ((IBaseThing)this).ID = ((IBaseThing)str).ID;
             prototypeData = str.Data;
         }
 
@@ -500,7 +500,7 @@ namespace Andja.Model {
             Climate c = BuildTile.Island.Climate;
             if (ClimateSpriteModifier.ContainsKey(c) == false) return;
             spriteVariant = ClimateSpriteModifier[c][Random.Range(0, ClimateSpriteModifier[c].Length)];
-            spriteVariant += StructureSpriteController.GetRandomVariant(ID, spriteVariant);
+            spriteVariant += StructureSpriteController.GetRandomVariant(((IBaseThing)this).ID, spriteVariant);
         }
 
         public static bool IsTileCityViable(Tile t, int player) {
@@ -562,7 +562,7 @@ namespace Andja.Model {
         }
 
         public void UpgradeTo(string ID) {
-            this.ID = ID;
+            ((IBaseThing)this).ID = ID;
             OnUpgrade();
             cbStructureChanged?.Invoke(this);
         }
@@ -584,7 +584,7 @@ namespace Andja.Model {
         }
 
         public override string GetID() {
-            return ID;
+            return ((IBaseThing)this).ID;
         } // only needs to get changed WHEN there is diffrent ids
 
         #endregion igeventable

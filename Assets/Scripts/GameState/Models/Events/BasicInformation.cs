@@ -72,11 +72,11 @@ namespace Andja.UI {
             translation = UILanguageController.Instance.GetTranslationData(Type);
         }
 
-        public static BasicInformation CreateUnitDamage(Unit unit, BaseThing baseThing) {
+        public static BasicInformation CreateUnitDamage(Unit unit, IBaseThing baseThing) {
             return new UnitUnderAttack(unit, baseThing);
         }
 
-        public static BasicInformation CreateStructureDamage(Structure structure, BaseThing baseThing) {
+        public static BasicInformation CreateStructureDamage(Structure structure, IBaseThing baseThing) {
             return new StructureUnderAttack(structure, baseThing);
         }
 
@@ -100,12 +100,12 @@ namespace Andja.UI {
     [JsonObject(MemberSerialization.OptIn)]
     public abstract class AttackInformation : BasicInformation {
         [JsonProperty] protected uint buildID;
-        [JsonProperty] protected BaseThing BaseThing;
+        [JsonProperty] protected IBaseThing BaseThing;
 
         public AttackInformation() { }
 
         public AttackInformation(InformationType type, Func<Vector2> getPosition, object[] titleValues,
-            object[] descriptionValues, string spriteName, uint buildID, BaseThing baseThing) :
+            object[] descriptionValues, string spriteName, uint buildID, IBaseThing baseThing) :
             base(type, getPosition, titleValues, descriptionValues, spriteName) {
             this.buildID = buildID;
             BaseThing = baseThing;
@@ -119,7 +119,7 @@ namespace Andja.UI {
     public class UnitUnderAttack : AttackInformation {
         public UnitUnderAttack() { }
 
-        public UnitUnderAttack(Unit Unit, BaseThing baseThing) :
+        public UnitUnderAttack(Unit Unit, IBaseThing baseThing) :
             base(InformationType.UnitUnderAttack,
                 () => Unit.PositionVector,
                 new string[] { Unit.Name },
@@ -129,7 +129,7 @@ namespace Andja.UI {
                 baseThing
             ) { }
 
-        private static string GetAttackerName(BaseThing baseThing) {
+        private static string GetAttackerName(IBaseThing baseThing) {
             return baseThing.PlayerNumber == GameData.PirateNumber
                 ? UILanguageController.Instance.GetStaticVariables(StaticLanguageVariables.Pirate)
                 : PlayerController.Instance.GetPlayer(baseThing.PlayerNumber).Name;
@@ -143,7 +143,7 @@ namespace Andja.UI {
     public class StructureUnderAttack : AttackInformation {
         public StructureUnderAttack() { }
 
-        public StructureUnderAttack(Structure Structure, BaseThing baseThing) :
+        public StructureUnderAttack(Structure Structure, IBaseThing baseThing) :
             base(InformationType.StructureUnderAttack,
                 () => Structure.Center,
                 new[] { Structure.Name },

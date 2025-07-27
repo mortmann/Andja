@@ -20,15 +20,15 @@ namespace Andja.Model {
     public class NeedStructure : TargetStructure {
         private NeedStructurePrototypeData _needStructureData;
         public NeedStructurePrototypeData NeedStructureData =>
-            _needStructureData ??= (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            _needStructureData ??= (NeedStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         public NeedStructure(string pid, NeedStructurePrototypeData nspd) {
-            this.ID = pid;
+            ((IBaseThing)this).ID = pid;
             this._needStructureData = nspd;
         }
 
         public NeedStructure(string pid) {
-            this.ID = pid;
+            ((IBaseThing)this).ID = pid;
         }
 
         public NeedStructure(NeedStructure b) {

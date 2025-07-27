@@ -10,11 +10,14 @@ namespace Andja.Model {
         public float attackRange;
         public float projectileSpeed;
         public override Element GetNewElement(BaseThing thing) {
-            return new Attack(thing);
+            if (thing is Unit) {
+                return new UnitAttack(thing);
+            }
+            return new StructureAttack(thing);
         }
     }
-    public class Attack : Target, IAttack {
-        [JsonProperty] public float AttackCooldownTimer = 1;
+    public abstract class Attack : Target, IAttack {
+        [JsonProperty] public float Cooldown = 1;
         
         public float AttackRate => Data.attackRate;
         public float AttackRange => Data.attackRange;
@@ -25,21 +28,20 @@ namespace Andja.Model {
         protected float Damage => Parent.CalculateRealValue(nameof(Data.damage), Data.damage);
         protected AttackPrototypeData _data;
         private new AttackPrototypeData Data => _data ??= Parent.GetElementData<AttackPrototypeData>();
-        private AttackCommand _attackCommand => Unit.CurrentCommand as AttackCommand;
-        public Target CurrentTarget => _attackCommand.Target;
-        private Unit Unit => (Unit)Parent;
+        protected virtual AttackCommand AttackCommand => null;
+        public ITarget CurrentTarget => AttackCommand.Target;
         public bool HasAttack => CurrentDamage > 0;
 
 
-        public Attack(BaseThing baseThing) : base(baseThing) {
+        protected Attack(BaseThing baseThing) : base(baseThing) {
         }
 
         protected virtual void DoProjectileDamage(float deltaTime) {
             if (CurrentTarget == null) return;
             if (CanAttack(CurrentTarget) == false) return;
 
-            if (AttackCooldownTimer > 0) {
-                AttackCooldownTimer = Mathf.Clamp(AttackCooldownTimer - deltaTime, 0, AttackRate);
+            if (Cooldown > 0) {
+                Cooldown = Mathf.Clamp(Cooldown - deltaTime, 0, AttackRate);
                 return;
             }
 
@@ -52,19 +54,15 @@ namespace Andja.Model {
                 distance, true));
         }
 
-        public bool CanAttack(Target target) {
+        public bool CanAttack(ITarget target) {
             return IsAllowedToAttack(target) && Parent.IsInRange(target, AttackRange);
         }
 
-        private bool IsAllowedToAttack(Target target) {
+        private bool IsAllowedToAttack(ITarget target) {
             if (CurrentDamage <= 0)
                 return false;
             return target.IsAttackableFrom(this)
                    && PlayerController.Instance.ArePlayersAtWar(CurrentTarget.PlayerNumber, Parent.PlayerNumber);
-        }
-
-        public bool CanAttackNowOrReach(Target target) {
-            return CanAttack(target) || Unit.CanReach(Unit.ClosestTargetPosition(target.CurrentPosition));
         }
 
         public float GetCurrentDamage(ArmorType armorType) {
@@ -77,29 +75,26 @@ namespace Andja.Model {
 
         public override void OnUpdate(float deltaTime) {
             if(HasAttack == false) return;
-            if (AttackCooldownTimer > 0) {
-                AttackCooldownTimer -= deltaTime;
+            if (Cooldown > 0) {
+                Cooldown -= deltaTime;
                 return;
             }
-            if (Unit.CurrentMainMode != UnitMainModes.Attack)
-                return;
-            
             if (CurrentTarget == null) {
-                Unit.GoIdle();
+                StopAttack();
                 return;
             }
 
             if (CurrentTarget.Parent.IsDestroyed) {
-                Unit.GoIdle();
+                StopAttack();
                 return;
             }
 
             if (PlayerController.Instance.ArePlayersAtWar(CurrentTarget.PlayerNumber, Parent.PlayerNumber) == false) {
-                Unit.GoIdle();
+                StopAttack();
                 return;
             }
 
-            if (Unit.IsInRange(CurrentTarget, AttackRange) == false) {
+            if (Parent.IsInRange(CurrentTarget, AttackRange) == false) {
                 return;
             }
 
@@ -111,73 +106,18 @@ namespace Andja.Model {
             }
         }
 
+        protected virtual void StopAttack() {
+            
+        }
+
         private void DoDirectDamage(float deltaTime) {
             if (Parent is Unit unit)
                 unit.Pathfinding.UpdateDoRotate(deltaTime);
-            AttackCooldownTimer = AttackRate;
+            Cooldown = AttackRate;
             CurrentTarget.TakeDamageFrom(this);
         }
 
         public override void OnLoad() { }
-
-
-        public void UpdateAttack() {
-            if (HasAttack && Parent.IsInRange(CurrentTarget, AttackRange) == false) {
-                if (Unit.CurrentDoingMode != UnitDoModes.Move) {
-                    Unit.Pathfinding.cbIsAtDestination += OnArriveDestination;
-                    Vector2 dest = CurrentTarget.CurrentPosition;
-                    Unit.SetDestinationIfPossible(dest.x, dest.y);
-                }
-            }
-            else if (Unit.CurrentDoingMode != UnitDoModes.Fight) {
-                //is in range start fighting
-                Unit.CurrentDoingMode = UnitDoModes.Fight;
-            }
-        }
-
-        private void OnArriveDestination(bool atDest) {
-            if (atDest == false) {
-                return;
-            }
-
-            if (CurrentTarget != null)
-                Unit.CurrentDoingMode = UnitDoModes.Fight;
-
-            Unit.Pathfinding.cbIsAtDestination -= OnArriveDestination;
-        }
-
-        private void UpdateAggroing() {
-            if (HasAttack == false || CurrentTarget == null) {
-                Unit.CurrentMainMode = UnitMainModes.Idle;
-                return;
-            }
-
-            //not in Range -> get in range
-            if (Parent.IsInRange(CurrentTarget, AttackRange) == false) {
-                if (Unit.CurrentDoingMode != UnitDoModes.Move) {
-                    Vector2 dest = CurrentTarget.CurrentPosition;
-                    if (Vector2.Distance(dest, CurrentPosition) < AttackRange + GameData.UnitAggroRange) {
-                        Unit.SetDestinationIfPossible(dest.x, dest.y);
-                    }
-                }
-
-                AggroCommand aggro = Unit.CurrentCommand as AggroCommand;
-                if (Vector2.Distance(aggro.StartPosition, CurrentPosition) > GameData.UnitAggroRange) {
-                    //Maybe just send it back to the startposition BUT not finish aggro -> if the other 
-                    //is following it could get in range again and we could reaggro without the need to 
-                    //go back to the startposition completly -> which requires this to 
-                    // update aggro range & move at the sametime
-                    aggro.SetFinished();
-                    Unit.GiveMovementCommand(aggro.StartPosition);
-                    Debug.Log("Finished AGGRO returning to start");
-                }
-            }
-            else {
-                //IN range go ahead fight
-                if (Unit.CurrentDoingMode != UnitDoModes.Fight)
-                    Unit.CurrentDoingMode = UnitDoModes.Fight;
-            }
-        }
 
         public static implicit operator Attack(BaseThing baseThing) {
             return baseThing.GetElement<Attack>();

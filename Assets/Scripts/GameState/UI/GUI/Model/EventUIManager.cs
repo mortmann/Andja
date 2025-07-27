@@ -43,7 +43,7 @@ namespace Andja.UI.Model {
             Destroy(eventMessage.gameObject);
         }
 
-        public void Show(BaseThing baseThing, IAttack attack) {
+        public void Show(IBaseThing baseThing, IAttack attack) {
             if (baseThing is Unit unit) {
                 Show(unit, attack);
             }
@@ -66,9 +66,9 @@ namespace Andja.UI.Model {
         }
 
         private bool CheckShown(uint eventable, IAttack attack) {
-            return messages.Exists(m => m.Information is AttackInformation a && a.IsSame(eventable, attack)
-                                                                             && DateTime.Now.Subtract(m.ShownTime)
-                                                                                 .TotalSeconds <= onScreenTimer);
+            return messages.Exists(m => m.Information is AttackInformation a 
+                                        && a.IsSame(eventable, attack)
+                                        && DateTime.Now.Subtract(m.ShownTime).TotalSeconds <= onScreenTimer);
         }
 
         /// <summary>

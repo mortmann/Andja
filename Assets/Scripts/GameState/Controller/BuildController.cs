@@ -385,9 +385,9 @@ namespace Andja.Controller {
             bool isUpgrade = false;
             if (tiles.All(x => x.Structure != null
                                && x.Structure.CanBeUpgradedTo != null
-                               && Array.Exists(x.Structure.CanBeUpgradedTo, x => x == structure.ID))) {
+                               && Array.Exists(x.Structure.CanBeUpgradedTo, x => x == ((IBaseThing)structure).ID))) {
                 //We can upgrade the building instead
-                tiles[0].Structure.UpgradeTo(structure.ID);
+                tiles[0].Structure.UpgradeTo(((IBaseThing)structure).ID);
                 isUpgrade = true;
             }
             else

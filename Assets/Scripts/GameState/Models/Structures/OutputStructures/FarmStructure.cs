@@ -43,7 +43,7 @@ namespace Andja.Model {
         private FarmPrototypeData _farmData;
 
         public FarmPrototypeData FarmData =>
-            _farmData ??= (FarmPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            _farmData ??= (FarmPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         #endregion RuntimeOrOther
 
@@ -51,14 +51,14 @@ namespace Andja.Model {
 
         private float GetFullWorkedTiles() {
             if (Growable == null) return WorkingTilesCount;
-            return RangeTiles.Where(t => Growable.ID.Equals(t.Structure?.ID))
+            return RangeTiles.Where(t => ((IBaseThing)Growable).ID.Equals(((IBaseThing)t.Structure)?.ID))
                 .Select(t => t.Structure as GrowableStructure)
                 .Select(g => 1f / g.BeingWorkedBy).Sum();
         }
 
         public FarmStructure(string id, FarmPrototypeData fpd) {
             _farmData = fpd;
-            this.ID = id;
+            ((IBaseThing)this).ID = id;
         }
 
         protected FarmStructure(FarmStructure f) {
@@ -79,7 +79,7 @@ namespace Andja.Model {
         public override void OnBuild(bool loading = false) {
             readyToHarvestGrowable = new List<GrowableStructure>();
             foreach (var rangeTile in RangeTiles.Where(rangeTile => Growable != null || rangeTile.Structure == null
-                                            || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(rangeTile.Structure.ID))) {
+                                            || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(((IBaseThing)rangeTile.Structure).ID))) {
                 OnTileStructureChange(rangeTile.Structure, null);
             }
             foreach (Tile rangeTile in RangeTiles) {
@@ -133,7 +133,7 @@ namespace Andja.Model {
 
         public void OnGrowableChanged(Structure str) {
             if (str is GrowableStructure grow) {
-                if (grow.ID != Growable.ID) {
+                if (((IBaseThing)grow).ID != ((IBaseThing)Growable).ID) {
                     grow.UnregisterOnChangedCallback(OnGrowableChanged);
                     return;
                 }
@@ -155,22 +155,22 @@ namespace Andja.Model {
         /// <param name="obj"></param>
         public void OnTileStructureChange(Structure now, Structure old) {
             if (Growable == null) {
-                if (now == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID)) {
+                if (now == null || PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(((IBaseThing)now).ID)) {
                     WorkingTilesCount++;
                 }
                 else
-                if (old == null && PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(now.ID) == false) {
+                if (old == null && PrototypController.Instance.AllNaturalSpawningStructureIDs.Contains(((IBaseThing)now).ID) == false) {
                     WorkingTilesCount--;
                 }
                 return;
             }
-            if (old != null && old.ID == Growable.ID) {
+            if (old != null && ((IBaseThing)old).ID == ((IBaseThing)Growable).ID) {
                 WorkingTilesCount--;
             }
             if (now == null) {
                 return;
             }
-            if (now.ID != Growable.ID) return;
+            if (((IBaseThing)now).ID != ((IBaseThing)Growable).ID) return;
             WorkingTilesCount++;
             now.RegisterOnChangedCallback(OnGrowableChanged);
             GrowableStructure g = now as GrowableStructure;
@@ -232,7 +232,7 @@ namespace Andja.Model {
                 item.Destroy();
             }
             foreach (Tile tile in RangeTiles) {
-                if (tile.Structure is GrowableStructure g && g.ID == Growable.ID) {
+                if (tile.Structure is GrowableStructure g && ((IBaseThing)g).ID == ((IBaseThing)Growable).ID) {
                     g.SetBeingWorked(false);
                 }
             }
@@ -254,7 +254,7 @@ namespace Andja.Model {
             }
             int count = 0;
             foreach (var item in hs.Where(item => item != null)) {
-                if (item.Structure != null && item.Structure.ID == Growable.ID) {
+                if (item.Structure != null && ((IBaseThing)item.Structure).ID == ((IBaseThing)Growable).ID) {
                     count++;
                 }
                 else

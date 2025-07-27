@@ -1,6 +1,7 @@
 ﻿using Andja.Controller;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Andja.Model.Components;
 using UnityEngine;
 
 namespace Andja.Model {
@@ -8,14 +9,6 @@ namespace Andja.Model {
         public Unit[] canBeBuildUnits;
         public float buildTimeModifier;
         public int buildQueueLength = 1;
-
-        public DamageType damageType;
-
-        //kinda double with units but no clue yet how to reduce this duplication
-        public float damage;
-        public float attackRate;
-        public float attackRange;
-        public float projectileSpeed;
 
         public bool canBuildShips; //is set in prototypcontroller
     }
@@ -28,10 +21,7 @@ namespace Andja.Model {
         public bool CanBuildShips => MilitaryStructureData.canBuildShips;
         public float ProgressPercentage => buildTimer / CurrentlyBuildingUnit?.BuildTime ?? 0;
         public Unit[] CanBeBuildUnits => MilitaryStructureData.canBeBuildUnits;
-        public float AttackRate => MilitaryStructureData.attackRate;
-        public float AttackRange => MilitaryStructureData.attackRange;
-        public float ProjectileSpeed => MilitaryStructureData.projectileSpeed;
-
+        public AttackCommand AttackCommand;
         public float BuildTimeModifier => CalculateRealValue(nameof(MilitaryStructureData.buildTimeModifier),
             MilitaryStructureData.buildTimeModifier);
 
@@ -40,14 +30,11 @@ namespace Andja.Model {
 
         public Unit CurrentlyBuildingUnit => toBuildUnits.Count > 0 ? toBuildUnits.Peek() : null;
 
-        [JsonPropertyAttribute] protected float attackCooldownTimer;
-        [JsonPropertyAttribute] protected ITarget CurrentTarget;
-
         protected MilitaryPrototypeData militaryStructureData;
 
         public MilitaryPrototypeData MilitaryStructureData =>
             militaryStructureData ??=
-                (MilitaryPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                (MilitaryPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         public MilitaryStructure() { }
 
@@ -56,7 +43,7 @@ namespace Andja.Model {
         }
 
         public MilitaryStructure(string iD, MilitaryPrototypeData mpd) {
-            ID = iD;
+            ((IBaseThing)this).ID = iD;
             this.militaryStructureData = mpd;
         }
 
@@ -107,31 +94,37 @@ namespace Andja.Model {
                 return;
             }
 
+            UpdateAttackRangeCheck(deltaTime);
             UpdateBuildUnit(deltaTime);
-            UpdateAttackTarget(deltaTime);
         }
 
-        public void UpdateAttackTarget(float deltaTime) {
-            // if (CurrentTarget == null) return;
-            // if (CanAttack(CurrentTarget) == false) {
-            //     CurrentTarget = null;
-            //     return;
-            // }
-            //
-            // if (attackCooldownTimer > 0) {
-            //     attackCooldownTimer = Mathf.Clamp(attackCooldownTimer - deltaTime, 0, AttackRate);
-            //     return;
-            // }
-            //
-            // if (Projectile.PredictiveAim(CurrentPosition, ProjectileSpeed,
-            //         CurrentTarget.CurrentPosition, CurrentTarget.LastMovement, GameData.Gravity,
-            //         out Vector3 pSpeed, out Vector3 pDestination)
-            //     == false) return;
-            // float distance = (new Vector3(CurrentPosition.x, CurrentPosition.y) - pDestination).magnitude;
-            // World.Current.OnCreateProjectile(new Projectile(GetElement<Attack>(), Center, CurrentTarget, pDestination,
-            //     pSpeed, distance,
-            //     true));
+        private void UpdateAttackRangeCheck(float deltaTime) {
+            Collider2D[] c2d = Physics2D.OverlapCircleAll(Center, GetElement<Attack>().AttackRange);
+            foreach (var item in c2d) {
+                //check for not null = only to be sure its not null
+                if (!item) {
+                    continue;
+                }
+
+                TargetHoldingScript targetableHoldingScript = item.transform.GetComponent<TargetHoldingScript>();
+                if (!targetableHoldingScript || targetableHoldingScript.IsUnit == false) {
+                    continue;
+                }
+
+                Target target = targetableHoldingScript.Holding;
+                if (target == null || target.PlayerNumber == PlayerNumber) {
+                    continue;
+                }
+
+                //see if players are at war
+                if (PlayerController.Instance.ArePlayersAtWar(PlayerNumber, target.PlayerNumber) == false) {
+                    continue;
+                }
+
+                AttackCommand = new AttackCommand(target);
+            }
         }
+
 
         public void UpdateBuildUnit(float deltaTime) {
             if (CurrentlyBuildingUnit == null) return;

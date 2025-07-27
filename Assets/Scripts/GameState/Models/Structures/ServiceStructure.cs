@@ -75,7 +75,7 @@ namespace Andja.Model {
 
         //TODO: make it possible service structure to need certain items every time unit to function(otherwise inactive)
         public ServiceStructurePrototypeData ServiceData => serviceData ??=
-            (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            (ServiceStructurePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
 
         public ServiceStructure() { }
@@ -85,7 +85,7 @@ namespace Andja.Model {
         }
 
         public ServiceStructure(string iD, ServiceStructurePrototypeData sspd) {
-            ID = iD;
+            ((IBaseThing)this).ID = iD;
             serviceData = sspd;
         }
 
@@ -128,7 +128,7 @@ namespace Andja.Model {
 
         private bool IsStructureTileEffected(Tile t) {
             if (t.Structure == null) return false;
-            return SpecificRange == null || SpecificRange.Any(str => str.ID == t.Structure.ID);
+            return SpecificRange == null || SpecificRange.Any(str => ((IBaseThing)str).ID == ((IBaseThing)t.Structure).ID);
         }
 
         protected void SetCallbacks() {

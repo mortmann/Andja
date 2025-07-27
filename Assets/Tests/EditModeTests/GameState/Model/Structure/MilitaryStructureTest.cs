@@ -21,20 +21,23 @@ public class MilitaryStructureTest {
     string UnitID = "UnitID";
     Unit Unit;
     UnitPrototypeData UnitPrototypeData;
+    private AttackPrototypeData _attackPrototypeData;
 
     [SetUp]
     public void SetUp() {
         Military = new TestMilitary(ID, null);
         MilitaryAttack = Military.GetElement<Attack>();
+        _attackPrototypeData = new AttackPrototypeData() {
+            damage = 5,
+            attackRange = 6,
+            projectileSpeed = 10,
+        };
         PrototypeData = new MilitaryPrototypeData() {
             ID = ID,
             structureRange = 4,
             buildTimeModifier = 1,
             buildQueueLength = 2,
-            damage = 5,
-            attackRange = 6,
-            projectileSpeed = 10,
-            elements = { { typeof(AttackPrototypeData), new AttackPrototypeData() } }
+            elements = { { typeof(AttackPrototypeData), _attackPrototypeData } }
         };
         Unit = new Unit(UnitID, null);
         UnitPrototypeData = new UnitPrototypeData() {
@@ -80,7 +83,7 @@ public class MilitaryStructureTest {
             Military.UpdateBuildUnit(0.2f);
         }
 
-        Assert.AreEqual(Military.CurrentlyBuildingUnit.ID, secondInQueue.ID);
+        Assert.AreEqual(((IBaseThing)Military.CurrentlyBuildingUnit).ID, ((IBaseThing)secondInQueue).ID);
         mockutil.WorldMock.Verify(x => x.CreateUnit(Unit, It.IsAny<Player>(), World.Current.GetTileAt(1, 1), 0),
             Times.Once());
     }
@@ -131,110 +134,109 @@ public class MilitaryStructureTest {
 
     [Test]
     public void UpdateAttackTarget() {
-        Military.AttackCooldownTimer = 1;
-
-        Mock<ITarget> target = new Mock<ITarget>();
-        target.Setup(t => t.IsAttackableFrom(MilitaryAttack)).Returns(true);
-        target.SetupGet(t => t.CurrentPosition).Returns(new Vector2(2, 2));
+        MilitaryAttack.Cooldown = 1;
+        var target = SetupTarget();
         target.SetupGet(t => t.ArmorType).Returns(new ArmorType { ID = "canDamage" });
         mockutil.PlayerControllerMock.Setup(p => p.ArePlayersAtWar(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
-        PrototypeData.damageType = new DamageType() {
+        _attackPrototypeData.damageType = new DamageType() {
             damageMultiplier = new Dictionary<ArmorType, float> {
                 { new ArmorType { ID = "canDamage" }, 1 }
             }
         };
-        Military.Target = target.Object;
+        SetTarget(target);
 
-        Military.UpdateAttackTarget(1);
+        MilitaryAttack.OnUpdate(1);
 
-        AssertThat(Military.AttackCooldownTimer).IsEqualTo(0);
+        AssertThat(MilitaryAttack.Cooldown).IsEqualTo(0);
 
-        Military.UpdateAttackTarget(1);
+        MilitaryAttack.OnUpdate(1);
 
         AssertThat(mockutil.WorldMock).HasInvoked(w => w.OnCreateProjectile(It.IsAny<Projectile>()));
     }
 
-    [Test]
-    public void UpdateAttackTarget_NotAtWar() {
-        Military.AttackCooldownTimer = 1;
-
+    private Mock<ITarget> SetupTarget() {
         Mock<ITarget> target = new Mock<ITarget>();
+        Mock<IBaseThing> baseTarget = new Mock<IBaseThing>();
         target.Setup(t => t.IsAttackableFrom(MilitaryAttack)).Returns(true);
         target.SetupGet(t => t.CurrentPosition).Returns(new Vector2(2, 2));
+        target.SetupGet(t => t.Parent).Returns(baseTarget.Object);
+        return target;
+    }
+
+    private void SetTarget(Mock<ITarget> target) {
+        Military.AttackCommand = new AttackCommand(target.Object);
+    }
+
+    [Test]
+    public void UpdateAttackTarget_NotAtWar() {
+        MilitaryAttack.Cooldown = 1;
+
+        var target = SetupTarget();
         target.SetupGet(t => t.ArmorType).Returns(new ArmorType { ID = "canDamage" });
         mockutil.PlayerControllerMock.Setup(p => p.ArePlayersAtWar(It.IsAny<int>(), It.IsAny<int>())).Returns(false);
-        PrototypeData.damageType = new DamageType() {
+        _attackPrototypeData.damageType = new DamageType() {
             damageMultiplier = new Dictionary<ArmorType, float> {
                 { new ArmorType { ID = "canDamage" }, 1 }
             }
         };
-        Military.Target = target.Object;
+        SetTarget(target);
 
-        Military.UpdateAttackTarget(1);
+        MilitaryAttack.OnUpdate(1);
 
-        AssertThat(Military.AttackCooldownTimer).IsEqualTo(1);
+        AssertThat(MilitaryAttack.Cooldown).IsEqualTo(1);
     }
 
     [Test]
     public void UpdateAttackTarget_NoTarget() {
-        Military.AttackCooldownTimer = 1;
+        MilitaryAttack.Cooldown = 1;
 
-        Military.UpdateAttackTarget(1);
+        MilitaryAttack.OnUpdate(1);
 
-        AssertThat(Military.AttackCooldownTimer).IsEqualTo(1);
+        AssertThat(MilitaryAttack.Cooldown).IsEqualTo(1);
     }
 
     [Test]
     public void UpdateAttackTarget_TargetNotInRange() {
-        Military.AttackCooldownTimer = 1;
-        Mock<ITarget> target = new Mock<ITarget>();
-        target.Setup(t => t.IsAttackableFrom(MilitaryAttack)).Returns(true);
-        Military.Target = target.Object;
-        mockutil.PlayerControllerMock.Setup(p => p.ArePlayersAtWar(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+        MilitaryAttack.Cooldown = 1;
+        var target = SetupTarget();
         target.SetupGet(t => t.ArmorType).Returns(new ArmorType { ID = "canDamage" });
-        PrototypeData.damageType = new DamageType() {
+        SetTarget(target);
+        mockutil.PlayerControllerMock.Setup(p => p.ArePlayersAtWar(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+        _attackPrototypeData.damageType = new DamageType() {
             damageMultiplier = new Dictionary<ArmorType, float> {
                 { new ArmorType { ID = "canDamage" }, 1 }
             }
         };
-        Military.Target = target.Object;
+        SetTarget(target);
         target.SetupGet(t => t.CurrentPosition).Returns(new Vector2(200, 202));
-        Military.UpdateAttackTarget(1);
+        MilitaryAttack.OnUpdate(1);
 
-        AssertThat(Military.AttackCooldownTimer).IsEqualTo(1);
+        AssertThat(MilitaryAttack.Cooldown).IsEqualTo(1);
     }
 
     [Test]
     public void UpdateAttackTarget_CannotAttack() {
-        Military.AttackCooldownTimer = 1;
-        Mock<ITarget> target = new Mock<ITarget>();
-        target.Setup(t => t.IsAttackableFrom(MilitaryAttack)).Returns(false);
-        Military.Target = target.Object;
+        MilitaryAttack.Cooldown = 1;
+        var target = SetupTarget();
         mockutil.PlayerControllerMock.Setup(p => p.ArePlayersAtWar(It.IsAny<int>(), It.IsAny<int>())).Returns(true);
-        target.SetupGet(t => t.CurrentPosition).Returns(new Vector2(2, 2));
         target.SetupGet(t => t.ArmorType).Returns(new ArmorType { ID = "cannotDamage" });
-        PrototypeData.damageType = new DamageType() {
+        _attackPrototypeData.damageType = new DamageType() {
             damageMultiplier = new Dictionary<ArmorType, float> {
                 { new ArmorType { ID = "cannotDamage" }, 0 }
             }
         };
-        Military.Target = target.Object;
+        SetTarget(target);
 
-        Military.UpdateAttackTarget(1);
+        MilitaryAttack.OnUpdate(1);
 
-        AssertThat(Military.AttackCooldownTimer).IsEqualTo(1);
+        AssertThat(MilitaryAttack.Cooldown).IsEqualTo(1);
     }
 
     class TestMilitary : MilitaryStructure {
-        public ITarget Target {
-            get => CurrentTarget;
-            set => CurrentTarget = value;
-        }
-
         public TestMilitary(string iD, MilitaryPrototypeData mpd) : base(iD, mpd) {
-            AddElement(new Attack(this));
+            AddElement(new StructureAttack(this));
         }
-
+        
         public Queue<Unit> ToBuildUnits {
             get => toBuildUnits;
             set => toBuildUnits = value;
@@ -245,9 +247,5 @@ public class MilitaryStructureTest {
             set => toPlaceUnitTiles = value;
         }
 
-        public float AttackCooldownTimer {
-            get => attackCooldownTimer;
-            set => attackCooldownTimer = value;
-        }
     }
 }

@@ -8,25 +8,24 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseThing : GEventable {
+public abstract class BaseThing : GEventable, IBaseThing {
+    [JsonPropertyAttribute] public string ID  { get; set;}
     protected BaseThingData prototypeData;
     private BaseThingData Data => prototypeData ??= GetPrototypeData();
-    private Dictionary<Type, Element> Elements = new Dictionary<Type, Element>();
+    private Dictionary<Type, Element> Elements = new();
 
     private BaseThingData GetPrototypeData() {
         if (this is Structure) {
-            return PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            return PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
         }
 
         if (this is Unit) {
-            return PrototypController.Instance.GetUnitPrototypeDataForID(ID);
+            return PrototypController.Instance.GetUnitPrototypeDataForID(((IBaseThing)this).ID);
         }
 
         Log.PROTOTYPE_ERROR("No Prototyp Data Type for this " + this);
         return null;
     }
-
-    [JsonPropertyAttribute] public string ID;
 
     [JsonPropertyAttribute] protected float currentHealth;
 
@@ -143,7 +142,7 @@ public abstract class BaseThing : GEventable {
         return OnDestroy(destroyer, onLoad);
     }
 
-    public virtual bool IsInRange(Target target, float range) {
+    public virtual bool IsInRange(ITarget target, float range) {
         return (target.CurrentPosition - Position).magnitude <= range;
     }
 
@@ -169,7 +168,7 @@ public abstract class BaseThing : GEventable {
 
     public T GetElement<T>() where T : Element {
         if (Elements.Count == 0) {
-            Debug.Log("Trying to access Element when no exist " + ID);
+            Debug.Log("Trying to access Element when no exist " + ((IBaseThing)this).ID);
             return null;
         }
         

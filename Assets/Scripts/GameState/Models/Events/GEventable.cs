@@ -23,6 +23,33 @@ namespace Andja.Model {
         bool HasEffect(Effect effect);
         bool HasAnyEffect(params Effect[] effects);
         bool RemoveEffect(Effect effect, bool all = false);
+
+        /// <summary>
+        /// USE this for any variable thats supposed to be able to be modified
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="currentValue"></param>
+        /// <returns></returns>
+        float CalculateRealValue(string name, float currentValue, bool clampToZero = true);
+
+        /// <summary>
+        /// USE this for any variable thats supposed to be able to be modified clamp ben
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="currentValues"></param>
+        /// <param name="min"></param>
+        /// <param name="maxValue"></param>
+        /// <returns></returns>
+        float[] CalculateRealValue(string name, float[] currentValues, bool clampToZero = true);
+
+        /// <summary>
+        /// USE this for any variable thats supposed to be able to be modified
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="currentValue"></param>
+        /// <returns></returns>
+        int CalculateRealValue(string name, int currentValue, bool clampToZero = true);
+
         void RegisterOnEffectChangedCallback(Action<GEventable, Effect, bool> cb);
         void UnregisterOnEffectChangedCallback(Action<GEventable, Effect, bool> cb);
     }

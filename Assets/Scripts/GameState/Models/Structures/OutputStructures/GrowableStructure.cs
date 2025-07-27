@@ -39,7 +39,7 @@ namespace Andja.Model {
         public override string SortingLayer => GrowableData.isFloor ? "Road" : "Structures";
 
         public GrowablePrototypeData GrowableData =>
-                _growableData ??= (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                _growableData ??= (GrowablePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         protected float TimePerStage => (ProduceTime / (float)AgeStages);
         protected const float GrowTickTime = 1f;
@@ -51,7 +51,7 @@ namespace Andja.Model {
         #endregion RuntimeOrOther
 
         public GrowableStructure(string id, GrowablePrototypeData _growableData) {
-            this.ID = id;
+            ((IBaseThing)this).ID = id;
             this._growableData = _growableData;
         }
 
@@ -98,7 +98,7 @@ namespace Andja.Model {
 
         public override bool SpecialCheckForBuild(System.Collections.Generic.List<Tile> tiles) {
             //this should be only ever 1 but for whateverreason it is not it still checks and doesnt really matter anyway
-            return tiles.Where(t => t.Structure != null).All(t => t.Structure.ID != ID);
+            return tiles.Where(t => t.Structure != null).All(t => ((IBaseThing)t.Structure).ID != ((IBaseThing)this).ID);
         }
 
         protected void Produce() {

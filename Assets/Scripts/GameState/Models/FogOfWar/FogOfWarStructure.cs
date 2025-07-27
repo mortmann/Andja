@@ -79,7 +79,7 @@ namespace Andja.FogOfWar {
                 return;
             }
 
-            Data.id = str.ID;
+            Data.id = ((IBaseThing)str).ID;
             Data.rotation = str.Rotation;
             structure = null;
             Data.buildID = 0;

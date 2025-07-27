@@ -200,7 +200,7 @@ namespace Andja.Model {
             if (Array.Exists(NoBuildLand, x => Type == x))
                 return false;
             if (Structure != null) {
-                if (upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x => x == upgradeTo.ID)) {
+                if (upgradeTo != null && Structure.CanBeUpgraded && Array.Exists(Structure.CanBeUpgradedTo, x => x == ((IBaseThing)upgradeTo).ID)) {
                     return true;
                 }
                 if (Structure.CanBeBuildOver == false) {

@@ -146,7 +146,7 @@ namespace Andja.Model {
         }
 
         public bool IsSatisfiedThroughStructure(List<NeedStructure> strs) {
-            return Array.Exists(Structures, x => strs.Exists(y => y.ID == x.ID));
+            return Array.Exists(Structures, x => strs.Exists(y => ((IBaseThing)y).ID == ((IBaseThing)x).ID));
         }
 
         public float GetFulfillment(int populationLevel) {

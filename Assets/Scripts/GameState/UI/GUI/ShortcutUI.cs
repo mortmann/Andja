@@ -131,12 +131,12 @@ namespace Andja.UI {
 
         private void CreateButton(Structure structure, GameObject parent) {
             Button go = Instantiate(buildButtonPrefab);
-            go.name = "ShortCut " + structure.ID;
+            go.name = "ShortCut " + ((IBaseThing)structure).ID;
             StructureBuildUI structureBuildUI = go.GetComponent<StructureBuildUI>();
             structureBuildUI.Show(structure, true);
             go.GetComponent<Button>().onClick.RemoveAllListeners();
             go.GetComponent<Button>().onClick.AddListener(() => { 
-                BuildMenuUIController.Instance.OnClick(structure.ID);
+                BuildMenuUIController.Instance.OnClick(((IBaseThing)structure).ID);
             });
             go.transform.SetParent(parent.transform, false);
             go.transform.localPosition = Vector3.zero;
@@ -146,7 +146,7 @@ namespace Andja.UI {
             go.GetComponent<Image>().color = c;
             parent.transform.GetChild(0).gameObject.SetActive(false);
             shortcutParentToButton[parent] = structureBuildUI;
-            ShortcutIds[shortcutsParentsGO.IndexOf(parent)] = structure.ID;
+            ShortcutIds[shortcutsParentsGO.IndexOf(parent)] = ((IBaseThing)structure).ID;
         }
         private void OnDestroy() {
             Instance = null;

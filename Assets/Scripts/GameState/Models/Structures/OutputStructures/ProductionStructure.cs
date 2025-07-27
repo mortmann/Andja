@@ -67,10 +67,10 @@ namespace Andja.Model {
         private ProductionPrototypeData _productionData;
 
         public ProductionPrototypeData ProductionData =>
-            _productionData ??= (ProductionPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            _productionData ??= (ProductionPrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         public ProductionStructure(string id, ProductionPrototypeData productionData) {
-            this.ID = id;
+            ((IBaseThing)this).ID = id;
             this._productionData = productionData;
         }
 
@@ -332,7 +332,7 @@ namespace Andja.Model {
                 _intake = _intake.ReplaceKeepCounts(ProductionData.intake);
             } else {
                 if (Array.Exists(ProductionData.intake, x => x.ID == _intake[0].ID) != false) return;
-                Debug.LogWarning("Prototype Intake Data changed for " + ID + " 'OR' does not contain last produced. " +
+                Debug.LogWarning("Prototype Intake Data changed for " + ((IBaseThing)this).ID + " 'OR' does not contain last produced. " +
                                  "Updated to first in array.");
                 _intake[0] = ProductionData.intake[0].Clone();
             }

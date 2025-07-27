@@ -335,8 +335,8 @@ public class FarmStructureTest {
         farm.OnDestroy();
         AssertThat(farm.Workers).AllSatisfy(w => w.IsAlive == false);
         AssertThat(farm.RangeTiles.Select(t => t.Structure as GrowableStructure))
-            .AllSatisfy(g => g.ID == GrowableID && false == g.IsBeingWorked 
-                                         || g.ID != GrowableID && g.IsBeingWorked);
+            .AllSatisfy(g => ((IBaseThing)g).ID == GrowableID && false == g.IsBeingWorked 
+                                         || ((IBaseThing)g).ID != GrowableID && g.IsBeingWorked);
     }
 
 

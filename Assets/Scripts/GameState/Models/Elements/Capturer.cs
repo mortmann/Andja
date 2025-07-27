@@ -44,7 +44,7 @@ namespace Andja.Model {
                 return false;
             }
 
-            return Parent.IsInRange(capturable.Parent, CaptureRange) ||
+            return Parent.IsInRange(capturable.Parent.GetElement<Target>(), CaptureRange) ||
                    Unit.GiveMovementCommand(Unit.ClosestTargetPosition(capturable.Parent.Position));
         }
     }

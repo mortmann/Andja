@@ -66,7 +66,7 @@ namespace Andja.Model {
 
         public OutputPrototypData OutputData {
             get {
-                return _outputData ??= (OutputPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+                return _outputData ??= (OutputPrototypData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
             }
         }
 

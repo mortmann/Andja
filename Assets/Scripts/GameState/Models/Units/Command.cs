@@ -36,10 +36,10 @@ namespace Andja.Model {
         public override UnitMainModes MainMode => UnitMainModes.Attack;
         public override Vector2 Position => Target.CurrentPosition;
 
-        [JsonPropertyAttribute] public Target Target;
+        [JsonPropertyAttribute] public ITarget Target;
 
-        public AttackCommand(Target target) {
-            this.Target = target;
+        public AttackCommand(ITarget target) {
+            Target = target;
         }
 
         public AttackCommand() {

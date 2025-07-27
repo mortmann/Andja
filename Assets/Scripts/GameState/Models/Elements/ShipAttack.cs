@@ -54,8 +54,8 @@ namespace Andja.Model {
                 return;
             }
             
-            if (AttackCooldownTimer > 0) {
-                AttackCooldownTimer -= deltaTime;
+            if (Cooldown > 0) {
+                Cooldown -= deltaTime;
                 return;
             }
             

@@ -21,7 +21,7 @@ namespace Andja.Model {
 
         private WarehousePrototypData _warehouseData;
         public WarehousePrototypData WarehouseData =>
-            _warehouseData ??= (WarehousePrototypData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            _warehouseData ??= (WarehousePrototypData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         #endregion RuntimeOrOther
 

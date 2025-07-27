@@ -41,7 +41,7 @@ namespace Andja.Model {
         public override PathingMode PathingMode => PathingMode.World;
         public override TurningType TurnType => TurningType.TurnRadius;
 
-        public ShipPrototypeData ShipData => _shipPrototypeData ??= (ShipPrototypeData)PrototypController.Instance.GetUnitPrototypeDataForID(ID);
+        public ShipPrototypeData ShipData => _shipPrototypeData ??= (ShipPrototypeData)PrototypController.Instance.GetUnitPrototypeDataForID(((IBaseThing)this).ID);
 
         public ShipAttack ShipAttack;
 
@@ -49,7 +49,7 @@ namespace Andja.Model {
         }
 
         public Ship(Unit unit, int playerNumber, Tile t, uint buildID) {
-            ID = unit.ID;
+            ((IBaseThing)this).ID = ((IBaseThing)unit).ID;
             PatrolCommand = new PatrolCommand();
             unitData = unit.Data;
             CurrentHealth = MaximumHealth;
@@ -66,14 +66,10 @@ namespace Andja.Model {
         }
 
         public Ship(string id, ShipPrototypeData spd) {
-            ID = id;
+            ((IBaseThing)this).ID = id;
             _shipPrototypeData = spd;
         }
 
-
-        public override bool IsInRange(Target target, float range) {
-            return ShipAttack.IsInRange(target, range);
-        }
 
         public float CalculateRotateTime(float angle) {
             return Mathf.Abs(angle) / RotationSpeed;

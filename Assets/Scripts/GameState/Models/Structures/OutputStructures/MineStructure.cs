@@ -21,14 +21,14 @@ namespace Andja.Model {
         private MinePrototypeData _mineData;
 
         public MinePrototypeData MineData =>
-            _mineData ??= (MinePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+            _mineData ??= (MinePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         #endregion RuntimeOrOther
 
         public static ResourceMode CurrentResourceMode = ResourceMode.PerMine;
 
         public MineStructure(string pid, MinePrototypeData mineData) {
-            this.ID = pid;
+            ((IBaseThing)this).ID = pid;
             _mineData = mineData;
         }
 

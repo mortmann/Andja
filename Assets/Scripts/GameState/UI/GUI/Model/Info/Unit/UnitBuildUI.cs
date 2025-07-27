@@ -24,7 +24,7 @@ namespace Andja.UI.Model {
 
         public void OnPointerEnter(PointerEventData eventData) {
             if(unit != null)
-                FindObjectOfType<ToolTip>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(unit.ID));
+                FindObjectOfType<ToolTip>().Show(unit, PlayerController.CurrentPlayer.HasUnitUnlocked(((IBaseThing)unit).ID));
         }
 
         public void OnPointerExit(PointerEventData eventData) {

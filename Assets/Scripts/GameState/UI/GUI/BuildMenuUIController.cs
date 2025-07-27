@@ -68,7 +68,7 @@ namespace Andja.UI {
                     continue;
                 }
                 Button b = Instantiate(buildButtonPrefab);
-                b.name = s.ID;
+                b.name = ((IBaseThing)s).ID;
                 string type = s.GetType().Name;
                 if (groupGameObjects.ContainsKey(type) == false) {
                     groupGameObjects[type] = Instantiate(GroupPrefab);
@@ -84,7 +84,7 @@ namespace Andja.UI {
                 if (s.PopulationLevel != selectedPopulationLevel) {
                     b.gameObject.SetActive(false);
                 }
-                b.interactable = BuildController.Instance.AllStructuresEnabled || Player.HasStructureUnlocked(s.ID);
+                b.interactable = BuildController.Instance.AllStructuresEnabled || Player.HasStructureUnlocked(((IBaseThing)s).ID);
             }
 
             //check em if they are active
@@ -123,8 +123,8 @@ namespace Andja.UI {
                 if(structure.CanBeBuild == false) {
                     continue;
                 }
-                nameToGOMap[structure.ID].interactable = true;
-                nameToGOMap[structure.ID].SetNormalColor(new Color32(0, 220, 0, 255));
+                nameToGOMap[((IBaseThing)structure).ID].interactable = true;
+                nameToGOMap[((IBaseThing)structure).ID].SetNormalColor(new Color32(0, 220, 0, 255));
             }
         }
 

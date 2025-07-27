@@ -300,14 +300,14 @@ namespace Andja.Model {
             if (unlock.structures.Count > 0) {
                 cbStructuresUnlocked?.Invoke(unlock.structures);
                 foreach (Structure s in unlock.structures) {
-                    UnlockedStructures.Add(s.ID);
+                    UnlockedStructures.Add(((IBaseThing)s).ID);
                 }
             }
 
             if (unlock.units.Count > 0) {
                 cbUnitsUnlocked?.Invoke(unlock.units);
                 foreach (Unit u in unlock.units) {
-                    UnlockedUnits.Add(u.ID);
+                    UnlockedUnits.Add(((IBaseThing)u).ID);
                 }
             }
         }

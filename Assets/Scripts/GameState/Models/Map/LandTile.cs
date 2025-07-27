@@ -29,8 +29,8 @@ namespace Andja.Model {
                 if (_structures != null && _structures == value) {
                     return;
                 }
-                if (_structures != null && null != value && _structures.ID == value.ID) {
-                    Debug.LogWarning("Structure got build over even tho it is the same ID! Is this wanted?? " + value.ID);
+                if (_structures != null && null != value && ((IBaseThing)_structures).ID == ((IBaseThing)value).ID) {
+                    Debug.LogWarning("Structure got build over even tho it is the same ID! Is this wanted?? " + ((IBaseThing)value).ID);
                     return;
                 }
                 Structure oldStructure = _structures;

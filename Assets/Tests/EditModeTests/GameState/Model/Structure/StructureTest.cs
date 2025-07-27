@@ -636,7 +636,7 @@ public class StructureTest {
         public string SpriteVariant => spriteVariant;
 
         public TestStructure(string iD) {
-            ID = iD;
+            ((IBaseThing)this).ID = iD;
         }
 
         public override bool SpecialCheckForBuild(List<Tile> tiles) {

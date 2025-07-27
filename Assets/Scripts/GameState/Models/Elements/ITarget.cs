@@ -2,6 +2,7 @@
 
 namespace Andja.Model {
     public interface ITarget {
+        IBaseThing Parent { get; }
         Vector2 CurrentPosition { get; }
         Vector2 LastMovement { get; }
         int PlayerNumber { get; }

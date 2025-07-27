@@ -333,11 +333,11 @@ public class OutputStructureTest {
         }
         public TestOutputStructure() { }
         public TestOutputStructure(string ID, OutputPrototypData data) {
-            this.ID = ID;
+            ((IBaseThing)this).ID = ID;
             _outputData = data;
         }
         public override Structure Clone() {
-            return new TestOutputStructure(ID, _outputData);
+            return new TestOutputStructure(((IBaseThing)this).ID, _outputData);
         }
         public override void OnBuild(bool loading = false) {
         }

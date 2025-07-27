@@ -43,7 +43,7 @@ namespace Andja.Controller {
                 (id, data) => {
                     idToStructure[id] = new FarmStructure(id, data);
                     idToPrototypData[id] = data;
-                    if (data.growable.ID == "farmland") {
+                    if (((IBaseThing)data.growable).ID == "farmland") {
                         //for now hardcoded. maybe gonna change this
                         //but this is just the "empty" setting for growable
                         data.growable = null;

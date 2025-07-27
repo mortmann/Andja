@@ -367,8 +367,8 @@ namespace Andja.Controller {
 
         public string GetFirstLevelStructureIDForStructureType(Type type) {
             //TODO: optimize this
-            return new List<Structure>(_structurePrototypes.Values).FindAll(x => type == x.GetType())
-                        .OrderBy(item => item.PopulationLevel).First().ID;
+            return ((IBaseThing)new List<Structure>(_structurePrototypes.Values).FindAll(x => type == x.GetType())
+                .OrderBy(item => item.PopulationLevel).First()).ID;
         }
 
         public UnitPrototypeData GetUnitPrototypeDataForID(string id) {

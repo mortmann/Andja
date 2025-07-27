@@ -15,7 +15,7 @@ namespace Andja.Controller {
                 return;
             if (t.Structure.CanBeBuild == false)
                 return;
-            BuildController.Instance.StartStructureBuild(t.Structure.ID);
+            BuildController.Instance.StartStructureBuild(((IBaseThing)t.Structure).ID);
         }
     }
 }

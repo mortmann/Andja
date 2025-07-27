@@ -36,7 +36,7 @@ namespace Andja.Model {
 
         protected HomePrototypeData _homeData;
 
-        public HomePrototypeData HomeData => _homeData ??= (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(ID);
+        public HomePrototypeData HomeData => _homeData ??= (HomePrototypeData)PrototypController.Instance.GetStructurePrototypDataForID(((IBaseThing)this).ID);
 
         public CitizenMoods CurrentMood { get; protected set; }
         protected List<NeedStructure> NeedStructures;
@@ -62,7 +62,7 @@ namespace Andja.Model {
         #endregion RuntimeOrOther
 
         public HomeStructure(string pid, HomePrototypeData proto) {
-            this.ID = pid;
+            ((IBaseThing)this).ID = pid;
             this._homeData = proto;
             People = 1;
         }
@@ -263,7 +263,7 @@ namespace Andja.Model {
                 return false;
             }
             CloseExtraUI();
-            ID = NextLevel.ID;
+            ((IBaseThing)this).ID = ((IBaseThing)NextLevel).ID;
             City.RemovePeople(PopulationLevel, People);
             City.RemoveItems(NextLevel.BuildingItems);
             City.ReduceTreasureFromOwner(NextLevel.BuildCost);
@@ -277,7 +277,7 @@ namespace Andja.Model {
             _homeData = null;
         }
         public void DowngradeHouse() {
-            ID = PrevLevel.ID;
+            ((IBaseThing)this).ID = ((IBaseThing)PrevLevel).ID;
             City.RemovePeople(PopulationLevel, People);
             _homeData = null;
             prototypeData = null;
